@@ -820,6 +820,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapWidth: 22
   mapHeight: 20.41
+  initialNumResources: 3
+  generationRate: 0
+  maxNumResources: 10
   walkableArea: {fileID: 1161352035}
   exterior: {fileID: 2111714629}
   storageRoom: {fileID: 1376754036}
@@ -908,7 +911,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1379450856}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.72, y: 7.06, z: 0}
+  m_LocalPosition: {x: 5.71, y: 7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -991,6 +994,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c716eb608ee1e9f46aa5d7620608b42c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialNumPredators: 0
   antManager: {fileID: 974215176}
   predatorPrefab: {fileID: 3903535058118962514, guid: 37fbd535028c2b8448045d6fe0b14f2c, type: 3}
   predatorSpawn: {fileID: 1379450857}

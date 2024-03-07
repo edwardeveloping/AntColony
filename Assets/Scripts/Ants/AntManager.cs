@@ -77,7 +77,7 @@ public class AntManager : MonoBehaviour
             return false;
         }
 
-        if (antToKill is AntGatherer)
+        if (antToKill is AntGatherer) // If the ant to kill is a gatherer.
         {
             if (!antGathererObjectList.Remove(antToKill.gameObject)) // Try to remove antGatherer object from antGathererObject list.
             {
@@ -86,9 +86,9 @@ public class AntManager : MonoBehaviour
             }
         }
 
-        Destroy(antToKill.gameObject);
+        Destroy(antToKill.gameObject); // Destroy game object.
 
-        Debug.Log("AntGathererList size: " + antGathererObjectList.Count + ", AntList size: " + antObjectList.Count);
+        //Debug.Log("AntGathererList size: " + antGathererObjectList.Count + ", AntList size: " + antObjectList.Count);
         return true;
     }
 }

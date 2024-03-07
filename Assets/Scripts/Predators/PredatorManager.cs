@@ -5,6 +5,8 @@ using UnityEngine.UIElements;
 
 public class PredatorManager : MonoBehaviour
 {
+    [SerializeField] int initialNumPredators;
+
     [SerializeField] AntManager antManager;
     [SerializeField] GameObject predatorPrefab;
 
@@ -15,8 +17,10 @@ public class PredatorManager : MonoBehaviour
 
     public void Initialize()
     {
-        predators.Add(GeneratePredator(7, 3));
-        predators[0].ChaseTarget(antManager.antGathererObjectList[0]);
+        for(int i= 0; i < initialNumPredators; i++)
+        {
+            GeneratePredatorAtSpawn();
+        }
     }
     public Predator GeneratePredatorAtSpawn()
     {

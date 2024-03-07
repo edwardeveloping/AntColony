@@ -15,6 +15,6 @@ public class Colony : MonoBehaviour
     public void Initialize()
     {
         antManager.GenerateAnt(0, 0, AntManager.Role.Gatherer);
-        GameObject ant = antManager.GenerateAnt(1, 0, AntManager.Role.Gatherer);
+        antManager.GenerateAnt(1, 0, AntManager.Role.Gatherer);
     }
 }

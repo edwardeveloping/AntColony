@@ -6,40 +6,16 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering;
 
-public abstract class Ant : MonoBehaviour
+public abstract class Ant : MovableObject
 {
-    NavMeshAgent agent;
     public AntManager antManager;
-
     public Transform refugeZone; // Location to flee when in danger.
-    private void Awake()
-    {
-        agent = GetComponent<NavMeshAgent>();
-        agent.updateRotation = false;
-        agent.updateUpAxis = false;
-    }
 
     // BASICS.
     public abstract void Initialize();
 
-    // MOVEMENT.
-    public void MoveTo(float x, float y)
-    {
-        agent.isStopped = false;
-        agent.SetDestination(new Vector3(x,y,0));
-    }
-    public void MoveTo(Vector3 pos)
-    {
-        agent.isStopped = false;
-        agent.SetDestination(pos);
-    }
-    public void Stop()
-    {
-        agent.isStopped = true;
-    }
-
+ 
     // COMBAT.
-
     public bool EnterCombat()
     {
         Stop();
@@ -54,12 +30,10 @@ public abstract class Ant : MonoBehaviour
         Flee();
         return false;
     }
-
     public void Flee() 
     {
         MoveTo(refugeZone.position);
     }
-
     public void Die()
     {
         antManager.KillAnt(this);

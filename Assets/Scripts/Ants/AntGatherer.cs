@@ -9,7 +9,6 @@ public class AntGatherer : Ant
     public GameObject storageRoom;
 
     GameObject assignedResource;
-    bool carryingResource = false;
 
     public override void Initialize()
     {
@@ -36,9 +35,7 @@ public class AntGatherer : Ant
     }
     public override void ArrivedAtRoom(Room room)
     {
-        carryingResource = false;
         storageRoom.GetComponent<Room>().Add(1);
-
         LookForResource();
     }
 
