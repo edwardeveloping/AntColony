@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 1212623302490873353}
   - component: {fileID: 4106201414750242664}
   - component: {fileID: 7429024215711517711}
-  - component: {fileID: 3232507109070441358}
   - component: {fileID: 7036551233144126652}
   - component: {fileID: 7912510468472247190}
+  - component: {fileID: 3232507109070441358}
   m_Layer: 0
   m_Name: AntWorker
   m_TagString: Untagged
@@ -110,18 +110,6 @@ NavMeshAgent:
   m_BaseOffset: 0.5
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!114 &3232507109070441358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3903535058118962514}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90e2766b1d549344c8926654835c1659, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!58 &7036551233144126652
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -184,3 +172,17 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &3232507109070441358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3903535058118962514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90e2766b1d549344c8926654835c1659, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  antManager: {fileID: 0}
+  refugeZone: {fileID: 0}

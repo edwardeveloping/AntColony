@@ -39,5 +39,8 @@ public class AntGatherer : Ant
         LookForResource();
     }
 
-    
+    public override void WhenCombatWon()
+    {
+        Flee();
+    }
 }

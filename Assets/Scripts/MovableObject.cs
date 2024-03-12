@@ -6,11 +6,14 @@ using UnityEngine.AI;
 public class MovableObject : MonoBehaviour
 {
     NavMeshAgent agent;
+
+    const float BASE_SPEED = 5;
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         agent.updateUpAxis = false;
+        agent.speed = BASE_SPEED;
     }
 
     // MOVEMENT.

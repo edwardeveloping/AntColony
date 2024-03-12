@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 7429024215711517711}
   - component: {fileID: 7036551233144126652}
   - component: {fileID: 7912510468472247190}
-  - component: {fileID: 3242742505633518612}
+  - component: {fileID: 4546396860396036548}
   m_Layer: 0
-  m_Name: AntGatherer
+  m_Name: AntBuilder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -78,7 +78,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 0.72967786, g: 0.23137254, b: 1, a: 1}
+  m_Color: {r: 0.682585, g: 1, b: 0.23137254, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -172,7 +172,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &3242742505633518612
+--- !u!114 &4546396860396036548
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -181,10 +181,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 3903535058118962514}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32333386b3e903d489c0d34b48bce417, type: 3}
+  m_Script: {fileID: 11500000, guid: cec14bd5ab4119f4795b33e5a5f3a537, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   antManager: {fileID: 0}
   refugeZone: {fileID: 0}
-  map: {fileID: 0}
-  storageRoom: {fileID: 0}

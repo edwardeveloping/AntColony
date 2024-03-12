@@ -19,6 +19,10 @@ public class AntManager : MonoBehaviour
 
     [SerializeField] GameObject antWorkerPrefab;
     [SerializeField] GameObject antGathererPrefab;
+    [SerializeField] GameObject antBuilderPrefab;
+    [SerializeField] GameObject antSoldierPrefab;
+    [SerializeField] GameObject antLarvaPrefab;
+    [SerializeField] GameObject antQueenPrefab;
 
 
     private List<GameObject> antObjectList = new List<GameObject>();
@@ -35,9 +39,11 @@ public class AntManager : MonoBehaviour
                 break;
 
             case Role.Builder:
+                antObj = Instantiate(antBuilderPrefab, new Vector2(x, y), Quaternion.identity);
                 break;
 
             case Role.Soldier:
+                antObj = Instantiate(antSoldierPrefab, new Vector2(x, y), Quaternion.identity);
                 break;
 
             case Role.Gatherer:
@@ -48,10 +54,11 @@ public class AntManager : MonoBehaviour
                 antGathererObjectList.Add(antObj); // Add ant to antGathererList.
                 break;
             case Role.Larva:
+                antObj = Instantiate(antLarvaPrefab, new Vector2(x, y), Quaternion.identity);
                 break;
 
             case Role.Queen:
-
+                antObj = Instantiate(antQueenPrefab, new Vector2(x, y), Quaternion.identity);
                 break;
 
             default:

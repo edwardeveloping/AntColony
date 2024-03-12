@@ -36,7 +36,7 @@ public class Map : MonoBehaviour
             GenerateResource();
         }
 
-        if(generationRate < 0)
+        if(generationRate > 0)
         {
             InvokeRepeating("GenerateResource", generationRate, generationRate);
         }

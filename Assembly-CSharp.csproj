@@ -59,13 +59,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Predators\PredatorManager.cs" />
+    <Compile Include="Assets\Scripts\Ants\AntSoldier.cs" />
     <Compile Include="Assets\Scripts\Room.cs" />
     <Compile Include="Assets\Scripts\Ants\AntManager.cs" />
     <Compile Include="Assets\Scripts\MovableObject.cs" />
+    <Compile Include="Assets\Scripts\Ants\AntLarva.cs" />
     <Compile Include="Assets\Scripts\Ants\AntGatherer.cs" />
+    <Compile Include="Assets\Scripts\Ants\AntBuilder.cs" />
     <Compile Include="Assets\Scripts\Ants\AntWorker.cs" />
     <Compile Include="Assets\Scripts\Map.cs" />
     <Compile Include="Assets\Scripts\Colony.cs" />
+    <Compile Include="Assets\Scripts\Ants\AntQueen.cs" />
     <Compile Include="Assets\Scripts\Resource.cs" />
     <Compile Include="Assets\Scripts\Predators\Predator.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />

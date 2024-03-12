@@ -11,23 +11,29 @@ public abstract class Ant : MovableObject
     public AntManager antManager;
     public Transform refugeZone; // Location to flee when in danger.
 
+    protected float fightingStrength = 50;
+
     // BASICS.
     public abstract void Initialize();
+    public void ChangeRole(AntManager.Role role)
+    {
+        antManager.GenerateAnt(transform.position.x, transform.position.y, role);
+        Die();
+    }
 
- 
     // COMBAT.
     public bool EnterCombat()
     {
         Stop();
         
-        if (Random.Range(0, 2) == 0) // 50% probability.
+        if (Random.Range(0, 100) > fightingStrength)
         {
             // if == 0 preedator wins.
             return true;
         }
         // if == 1 ant wins.
 
-        Flee();
+        WhenCombatWon();
         return false;
     }
     public void Flee() 
@@ -38,7 +44,7 @@ public abstract class Ant : MovableObject
     {
         antManager.KillAnt(this);
     }
-
+    public abstract void WhenCombatWon();
     // UTILITIES.
     public abstract void ArrivedAtRoom(Room room);
     public abstract void ArrivedAtResource(GameObject resource);
