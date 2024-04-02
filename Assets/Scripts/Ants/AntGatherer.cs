@@ -13,7 +13,7 @@ public class AntGatherer : Ant
 
     public override void Initialize()
     {
-        Explore(); // Comenzar explorando
+        LookForResource();
     }
 
     // Buscar recurso para recolección
@@ -48,7 +48,7 @@ public class AntGatherer : Ant
             storageRoom.GetComponent<Room>().Add(1); // Agregar comida a la sala de almacenamiento
             comidaCargada = false; // Marcar que ya no tiene comida cargada
         }
-        Explore(); // Buscar más recursos
+        LookForResource();
     }
 
     // Cuando gana un combate
@@ -57,11 +57,6 @@ public class AntGatherer : Ant
         Flee(); // Huir
     }
 
-    // Explorar la superficie en busca de comida
-    void Explore()
-    {
-        MoveTo(RandomPosition()); // Moverse a una posición aleatoria en la superficie
-    }
 
     // Esperar un tiempo antes de realizar otra acción
     void WaitForAction()
@@ -72,13 +67,6 @@ public class AntGatherer : Ant
             LookForResource(); // Cuando el tiempo de espera haya terminado, buscar más recursos
             tiempoEspera = 3f; // Reiniciar el tiempo de espera
         }
-    }
-
-    // Obtener una posición aleatoria en la superficie
-    Vector3 RandomPosition()
-    {
-        // Implementación para obtener una posición aleatoria
-        return map.GetRandomWalkablePosition();
     }
 
     // Actualizar

@@ -101,31 +101,4 @@ public class Map : MonoBehaviour
         unasignedResources.Add(resource);
     }
 
-    public Vector3 GetRandomWalkablePosition()
-    {
-        // Obtener los límites del área caminable
-        Vector3 walkableAreaPosition = walkableArea.transform.position;
-        Vector3 walkableAreaScale = walkableArea.transform.localScale;
-
-        // Generar una posición aleatoria dentro del área caminable
-        Vector3 randomPosition = new Vector3(
-          Random.Range(walkableAreaPosition.x - walkableAreaScale.x / 2f, walkableAreaPosition.x + walkableAreaScale.x / 2f),
-          Random.Range(walkableAreaPosition.y - walkableAreaScale.y / 2f, walkableAreaPosition.y + walkableAreaScale.y / 2f),
-          walkableAreaPosition.z // Mantener la coordenada Z del área caminable
-        );
-
-        // Chequear colisión con una esfera pequeña
-        while (Physics.CheckSphere(randomPosition, 0.1f)) // Ajustar el radio de la esfera según el tamaño de las hormigas
-        {
-            // Si colisiona, generar una nueva posición aleatoria
-            randomPosition = new Vector3(
-              Random.Range(walkableAreaPosition.x - walkableAreaScale.x / 2f, walkableAreaPosition.x + walkableAreaScale.x / 2f),
-              Random.Range(walkableAreaPosition.y - walkableAreaScale.y / 2f, walkableAreaPosition.y + walkableAreaScale.y / 2f),
-              walkableAreaPosition.z // Mantener la coordenada Z del área caminable
-            );
-        }
-
-        return randomPosition;
-    }
-
 }
