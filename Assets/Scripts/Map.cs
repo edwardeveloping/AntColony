@@ -127,4 +127,65 @@ public class Map : MonoBehaviour
 
         return randomPosition;
     }
+
+    public bool IsResourceAtPosition(Vector3 position)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.1f); // Ajusta el radio según el tamaño de los recursos
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.CompareTag("Resource")) // Ajusta la etiqueta según corresponda a tus recursos
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool IsPredatorAtPosition(Vector3 position)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.1f); // Ajusta el radio según el tamaño de los depredadores
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.CompareTag("Predator")) // Ajusta la etiqueta según corresponda a tus depredadores
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public bool CollectResourceAtPosition(Vector3 position)
+    {
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(position, 0.1f); // Ajusta el radio según el tamaño de los recursos
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.CompareTag("Resource")) // Ajusta la etiqueta según corresponda a tus recursos
+            {
+                Destroy(collider.gameObject);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Vector3 GetClosestExit()
+    {
+        Vector3 closestExit = Vector3.zero;
+        float closestDistance = Mathf.Infinity;
+
+        // Suponiendo que tienes una lista de las posiciones de las salidas en tu mapa
+        List<Vector3> exitPositions = new List<Vector3>(); // Debes llenar esta lista con las posiciones de todas las salidas
+
+        foreach (Vector3 exitPosition in exitPositions)
+        {
+            float distance = Vector3.Distance(transform.position, exitPosition);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestExit = exitPosition;
+            }
+        }
+
+        return closestExit;
+    }
 }
