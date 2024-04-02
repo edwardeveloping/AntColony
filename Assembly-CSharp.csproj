@@ -95,7 +95,6 @@
     <Compile Include="Assets\Scripts\Ants\AntLarva.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + BT - House and Enemy\Scripts\RestarButtonNoKey.cs" />
     <Compile Include="Assets\Scripts\Ants\AntGatherer.cs" />
-    <Compile Include="Assets\Scripts\Comportamientos\ComportamientoRecolectoras.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\BehaviourRunners\DemoSOUtilityRunner.cs" />
     <Compile Include="Assets\Scripts\Ants\AntBuilder.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT + FSM + US - Pizza\Scripts\BehaviourRunners\PizzaBoyEditorRunner.cs" />
