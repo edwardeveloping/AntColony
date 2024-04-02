@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering.UI;
 
 public class AntGatherer : Ant
 {
@@ -12,53 +9,84 @@ public class AntGatherer : Ant
 
     public float tiempoEspera = 3f;
     public bool comidaCargada = false;
+    public bool climaFavorable = true; // Variable para representar si el clima es favorable
 
     public override void Initialize()
     {
-        LookForResource();
+        Explore(); // Comenzar explorando
     }
+
+    // Buscar recurso para recolección
     public void LookForResource()
     {
-        assignedResource = map.RequestResource(); // Request a resource to go pick up (it will remove the resource from the list)
-        if (assignedResource != null)
+        if (climaFavorable) // Verificar si el clima es favorable antes de buscar recursos
         {
-            MoveTo(assignedResource.transform.position); // Head that way.
+            assignedResource = map.RequestResource(); // Solicitar un recurso para recoger (se eliminará de la lista)
+            if (assignedResource != null)
+            {
+                MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
+            }
         }
     }
+
+    // Cuando llega al recurso
     public override void ArrivedAtResource(GameObject resource)
     {
-        if (assignedResource == resource && !comidaCargada) // If the ant collided with its assigned resource pick it up
+        if (assignedResource == resource && !comidaCargada) // Si la hormiga colisiona con su recurso asignado y no tiene comida cargada
         {
-            Destroy(resource);
-            comidaCargada = true;
-            MoveTo(storageRoom.transform.position);
+            Destroy(resource); // Destruir el recurso
+            comidaCargada = true; // Marcar que tiene comida cargada
+            MoveTo(storageRoom.transform.position); // Moverse hacia la sala de almacenamiento
         }
     }
+
+    // Cuando llega a la sala
     public override void ArrivedAtRoom(Room room)
     {
-        if (comidaCargada)
+        if (comidaCargada) // Si tiene comida cargada
         {
-            storageRoom.GetComponent<Room>().Add(1);
-            comidaCargada = false;
+            storageRoom.GetComponent<Room>().Add(1); // Agregar comida a la sala de almacenamiento
+            comidaCargada = false; // Marcar que ya no tiene comida cargada
         }
-        LookForResource();
+        Explore(); // Buscar más recursos
     }
 
+    // Cuando gana un combate
     public override void WhenCombatWon()
     {
-        Flee();
+        Flee(); // Huir
     }
 
+    // Explorar la superficie en busca de comida
+    void Explore()
+    {
+        MoveTo(RandomPosition()); // Moverse a una posición aleatoria en la superficie
+    }
+
+    // Esperar un tiempo antes de realizar otra acción
+    void WaitForAction()
+    {
+        tiempoEspera -= Time.deltaTime;
+        if (tiempoEspera <= 0)
+        {
+            LookForResource(); // Cuando el tiempo de espera haya terminado, buscar más recursos
+            tiempoEspera = 3f; // Reiniciar el tiempo de espera
+        }
+    }
+
+    // Obtener una posición aleatoria en la superficie
+    Vector3 RandomPosition()
+    {
+        // Implementación para obtener una posición aleatoria
+        return map.GetRandomWalkablePosition();
+    }
+
+    // Actualizar
     void Update()
     {
-        if (tiempoEspera > 0)
+        if (!climaFavorable) // Si el clima no es favorable, esperar
         {
-            tiempoEspera -= Time.deltaTime;
-        }
-        else if (tiempoEspera <= 0)
-        {
-            LookForResource();
+            WaitForAction();
         }
     }
 }
-
