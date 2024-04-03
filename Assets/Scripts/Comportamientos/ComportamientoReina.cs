@@ -24,17 +24,55 @@ public class ComportamientoReina : MonoBehaviour
     public PushPerception LayEggPush;
     public PushPerception LowLifePush;
 
-    public System.Action StartWaitForFood;
-    public Func<Status> UpdateWaitForFood;
 
-    public System.Action StartLayEgg;
-    public Func<Status> UpdateLayEgg;
+    //LÓGICA DE LOS ESTADOS
+    public System.Action StartWaitForFood = () => {
+        // Implementa la lógica para que la reina espere a ser alimentada
+        // Esto podría incluir animaciones, sonidos, etc.
+        Debug.Log("Esperando a ser alimentada...");
+    };
+    public Func<Status> UpdateWaitForFood = () => {
+        // Implementa la lógica para actualizar el estado de la reina mientras espera a ser alimentada
+        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
+        Debug.Log("Actualizando estado mientras espera a ser alimentada...");
+        return Status.Running; // Ejemplo: devolver un estado ficticio
+    };
 
-    public System.Action StartGenerateRoyalJelly;
-    public Func<Status> UpdateGenerateRoyalJelly;
+    public System.Action StartLayEgg = () => {
+        // Implementa la lógica para que la reina espere a ser alimentada
+        // Esto podría incluir animaciones, sonidos, etc.
+        Debug.Log("Poniendo huevo...");
+    };
+    public Func<Status> UpdateLayEgg = () => {
+        // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
+        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
+        Debug.Log("Actualizando estado mientras la reina pone un huevo...");
+        return Status.Running; // Ejemplo: devolver un estado ficticio
+    };
 
-    public System.Action StartDie;
-    public Func<Status> UpdateDie;
+    public System.Action StartGenerateRoyalJelly = () => {
+        // Implementa la lógica para que la reina espere a ser alimentada
+        // Esto podría incluir animaciones, sonidos, etc.
+        Debug.Log("Generando Jalea Real...");
+    };
+    public Func<Status> UpdateGenerateRoyalJelly = () => {
+        // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
+        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
+        Debug.Log("Actualizando estado mientras la reina genera Jalea Real...");
+        return Status.Running; // Ejemplo: devolver un estado ficticio
+    };
+
+    public System.Action StartDie = () => {
+        // Implementa la lógica para que la reina espere a ser alimentada
+        // Esto podría incluir animaciones, sonidos, etc.
+        Debug.Log("Muriendo...");
+    };
+    public Func<Status> UpdateDie = () => {
+        // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
+        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
+        Debug.Log("Actualizando estado mientras la reina muere...");
+        return Status.Running; // Ejemplo: devolver un estado ficticio
+    };
 
     public float lifeTime;
 
@@ -77,11 +115,17 @@ public class ComportamientoReina : MonoBehaviour
         LayEggPush = new PushPerception(layEggToWaitForFood);
         LowLifePush = new PushPerception(fedToGenerateJelly);
 
-        // Implementar lógica para los métodos de inicio y actualización aquí
+       
 
         return QueenBehaviour;
     }
 }
+
+
+
+
+
+
 
 
 /*
