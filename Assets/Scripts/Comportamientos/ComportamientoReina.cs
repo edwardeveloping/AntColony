@@ -26,56 +26,9 @@ public class ComportamientoReina : MonoBehaviour
 
 
     //LÓGICA DE LOS ESTADOS
-    public System.Action StartWaitForFood = () => {
-        // Implementa la lógica para que la reina espere a ser alimentada
-        // Esto podría incluir animaciones, sonidos, etc.
-        Debug.Log("Esperando a ser alimentada...");
-    };
-    public Func<Status> UpdateWaitForFood = () => {
-        // Implementa la lógica para actualizar el estado de la reina mientras espera a ser alimentada
-        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
-        Debug.Log("Actualizando estado mientras espera a ser alimentada...");
-        return Status.Running; // Ejemplo: devolver un estado ficticio
-    };
-
-    public System.Action StartLayEgg = () => {
-        // Implementa la lógica para que la reina espere a ser alimentada
-        // Esto podría incluir animaciones, sonidos, etc.
-        Debug.Log("Poniendo huevo...");
-    };
-    public Func<Status> UpdateLayEgg = () => {
-        // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
-        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
-        Debug.Log("Actualizando estado mientras la reina pone un huevo...");
-        return Status.Running; // Ejemplo: devolver un estado ficticio
-    };
-
-    public System.Action StartGenerateRoyalJelly = () => {
-        // Implementa la lógica para que la reina espere a ser alimentada
-        // Esto podría incluir animaciones, sonidos, etc.
-        Debug.Log("Generando Jalea Real...");
-    };
-    public Func<Status> UpdateGenerateRoyalJelly = () => {
-        // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
-        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
-        Debug.Log("Actualizando estado mientras la reina genera Jalea Real...");
-        return Status.Running; // Ejemplo: devolver un estado ficticio
-    };
-
-    public System.Action StartDie = () => {
-        // Implementa la lógica para que la reina espere a ser alimentada
-        // Esto podría incluir animaciones, sonidos, etc.
-        Debug.Log("Muriendo...");
-    };
-    public Func<Status> UpdateDie = () => {
-        // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
-        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
-        Debug.Log("Actualizando estado mientras la reina muere...");
-        return Status.Running; // Ejemplo: devolver un estado ficticio
-    };
-
-    public float lifeTime;
-
+    
+    
+    public AntQueen reina;
     public FSM QueenBehaviour = new FSM();
 
     protected BehaviourGraph CreateGraph()
@@ -83,22 +36,22 @@ public class ComportamientoReina : MonoBehaviour
 
         //CREAMOS LOS ESTADOS
         FunctionalAction WaitForFoodAction = new FunctionalAction();
-        WaitForFoodAction.onStarted = StartWaitForFood;
-        WaitForFoodAction.onUpdated = UpdateWaitForFood;
+        WaitForFoodAction.onStarted = reina.StartWaitForFood;
+        WaitForFoodAction.onUpdated = reina.UpdateWaitForFood;
         State WaitForFoodState = QueenBehaviour.CreateState("WaitForFood", WaitForFoodAction);
 
         FunctionalAction LayEggAction = new FunctionalAction();
-        LayEggAction.onStarted = StartLayEgg;
-        LayEggAction.onUpdated = UpdateLayEgg;
+        LayEggAction.onStarted = reina.StartLayEgg;
+        LayEggAction.onUpdated = reina.UpdateLayEgg;
         State LayEggState = QueenBehaviour.CreateState("lay_egg", LayEggAction);
 
         FunctionalAction GenerateRoyalJellyAction = new FunctionalAction();
-        GenerateRoyalJellyAction.onStarted = StartGenerateRoyalJelly;
-        GenerateRoyalJellyAction.onUpdated = UpdateGenerateRoyalJelly;
+        GenerateRoyalJellyAction.onStarted = reina.StartGenerateRoyalJelly;
+        GenerateRoyalJellyAction.onUpdated = reina.UpdateGenerateRoyalJelly;
         State GenerateRoyalJellyState = QueenBehaviour.CreateState("generate_royal_jelly", GenerateRoyalJellyAction);
 
         FunctionalAction DieAction = new FunctionalAction();
-        DieAction.onStarted = StartDie; // Implementa este método para destruir la entidad
+        DieAction.onStarted = reina.StartDie; // Implementa este método para destruir la entidad
         State DieState = QueenBehaviour.CreateState("Die", DieAction);
 
         //CREAMOS LAS TRANSICIONES
