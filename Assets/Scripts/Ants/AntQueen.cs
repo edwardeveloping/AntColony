@@ -4,9 +4,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
+using static AntManager;
 
 public class AntQueen : Ant
 {
+    public AntManager antManager;
     public float tiempoDeVida;
     public float tiempoVidaLimite;
     public float tiempoIncubacion = 10f;
@@ -25,6 +28,8 @@ public class AntQueen : Ant
         StartWaitForFood = () =>
         {
             Debug.Log("Esperando a ser alimentada...");
+            //Cuando este alimentada?
+            alimentada = true;
         };
 
         UpdateWaitForFood = () =>
@@ -35,6 +40,7 @@ public class AntQueen : Ant
                 // Verificar si el tiempo de vida es menor que x
                 if (tiempoDeVida < tiempoVidaLimite)
                 {
+                    
                     // Cambiar al estado de poner huevo
                     StartLayEgg();
                     return Status.Success;
@@ -57,11 +63,11 @@ public class AntQueen : Ant
         {
             Debug.Log("Poniendo huevo...");
             float tiempoTranscurridoIncubacion = 0f;
-            while (tiempoTranscurridoIncubacion < tiemoFabricacionJalea)
+            while (tiempoTranscurridoIncubacion < tiempoIncubacion)
             {
                 // Actualizar el tiempo transcurrido
                 tiempoTranscurridoIncubacion += Time.deltaTime;
-                jalea = true;
+                
 
                 //AQUÍ SE GENERARÁ UNA LARVA
             };
@@ -70,10 +76,11 @@ public class AntQueen : Ant
             {
                 tiempoTranscurridoIncubacion += Time.deltaTime;
 
-                if (incubado && tiempoTranscurridoIncubacion >= tiemoFabricacionJalea)
+                if (alimentada && tiempoTranscurridoIncubacion >= tiempoIncubacion)
                 {
-                    jalea = false;
+                    alimentada = false;
                     StartWaitForFood(); // Vuelve al estado de espera
+                    GameObject larvaObj = antManager.GenerateAnt(transform.position.x, transform.position.y, AntManager.Role.Larva);
                     return Status.Success;
                 }
                 else
@@ -92,7 +99,6 @@ public class AntQueen : Ant
             {
                 // Actualizar el tiempo transcurrido
                 tiempoTranscurridoGenerarJalea += Time.deltaTime;
-                jalea = true;
 
                 //AQUÍ SE GENERARÁ la Jalea
             };
@@ -101,9 +107,9 @@ public class AntQueen : Ant
             {
                 tiempoTranscurridoGenerarJalea += Time.deltaTime;
 
-                if (jalea && tiempoTranscurridoGenerarJalea >= tiempoIncubacion)
+                if (alimentada && tiempoTranscurridoGenerarJalea >= tiempoIncubacion)
                 {
-                    incubado = false;
+                    alimentada = false;
                     StartWaitForFood(); // Vuelve al estado de espera
                     return Status.Success;
                 }
