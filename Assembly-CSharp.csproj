@@ -90,6 +90,7 @@
     <Compile Include="Assets\Scripts\Room.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\SeatSmartObject.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + FSM - Radar\Scripts\Actions\LightAction.cs" />
+    <Compile Include="Assets\ExteriorArea.cs" />
     <Compile Include="Assets\Scripts\Ants\AntManager.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - House\Scripts\Door.cs" />
     <Compile Include="Assets\Scripts\MovableObject.cs" />

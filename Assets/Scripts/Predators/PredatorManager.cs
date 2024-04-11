@@ -14,7 +14,7 @@ public class PredatorManager : MonoBehaviour
 
     [SerializeField] Transform predatorSpawn;
 
-    List<Predator> predators = new List<Predator>();
+    public List<Predator> predators = new List<Predator>();
 
 
     public void Initialize()
@@ -33,6 +33,10 @@ public class PredatorManager : MonoBehaviour
         Predator predator = Instantiate(predatorPrefab, new Vector3(x, y, 0), Quaternion.identity).GetComponent<Predator>();
         predator.predatorManager = this;
         predator.map = map;
+
+        //Añadimos a la lista
+        predators.Add(predator);
+
         return predator;
     }
 
