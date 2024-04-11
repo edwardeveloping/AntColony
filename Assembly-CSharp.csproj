@@ -58,6 +58,7 @@
     <Analyzer Include="C:\Program Files\Unity 2022.3.2f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Predators\PredatorVision.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\ToiletSmartObject.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM - Chicken run\Scripts\BehaviourRunners\PlayerFSMEditorRunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + FSM - Radar\Scripts\DestroyVehicles.cs" />
@@ -102,7 +103,6 @@
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\BathubSmartObject.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM - Chicken run\Scripts\CameraFollow.cs" />
     <Compile Include="Assets\Scripts\Ants\AntWorker.cs" />
-    <Compile Include="Assets\PredatorVision.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\BathroomDrawerSmartObject.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT + FSM + US - Pizza\Scripts\BehaviourRunners\PizzaBoyRunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\AppleSmartObject.cs" />

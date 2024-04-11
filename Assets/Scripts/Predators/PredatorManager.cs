@@ -10,6 +10,8 @@ public class PredatorManager : MonoBehaviour
     [SerializeField] AntManager antManager;
     [SerializeField] GameObject predatorPrefab;
 
+    [SerializeField] Map map;
+
     [SerializeField] Transform predatorSpawn;
 
     List<Predator> predators = new List<Predator>();
@@ -30,6 +32,7 @@ public class PredatorManager : MonoBehaviour
     {
         Predator predator = Instantiate(predatorPrefab, new Vector3(x, y, 0), Quaternion.identity).GetComponent<Predator>();
         predator.predatorManager = this;
+        predator.map = map;
         return predator;
     }
 
