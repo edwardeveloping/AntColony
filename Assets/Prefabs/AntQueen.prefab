@@ -186,3 +186,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   antManager: {fileID: 0}
   refugeZone: {fileID: 0}
+  antManager: {fileID: 0}
+  tiempoDeVida: 0
+  tiempoVidaLimite: 0
+  tiempoIncubacion: 10
+  tiemoFabricacionJalea: 15

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3242742505633518612}
   m_Layer: 0
   m_Name: AntGatherer
-  m_TagString: Untagged
+  m_TagString: Ant
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -188,3 +188,6 @@ MonoBehaviour:
   refugeZone: {fileID: 0}
   map: {fileID: 0}
   storageRoom: {fileID: 0}
+  tiempoEspera: 3
+  comidaCargada: 0
+  climaFavorable: 1
