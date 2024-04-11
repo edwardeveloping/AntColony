@@ -44,4 +44,40 @@ public class PredatorManager : MonoBehaviour
     {
         return null;
     }
+    private void Update()
+    {
+        Starvation();
+    }
+    public void Starvation()
+    {
+        for (int i= 0;i < predators.Count;i++)
+        {
+            if (predators[i].hungry <= 0)
+            {
+                Destroy(predators[i].gameObject);
+                predators[i] = null;
+
+                //reajustamos la lista
+                List<Predator> auxList = new List<Predator>();
+                for (int j= 0;j < predators.Count;j++)
+                {
+                    if (predators[j] != null)
+                    {
+                        auxList.Add(predators[j]);
+                    }
+                }
+
+                //Actualizamos lista de depredadores y vaciamos la anterior
+                predators.Clear();
+
+                for (int j= 0; j < auxList.Count; j++)
+                {
+                    predators.Add(auxList[j]);
+                }
+
+                auxList.Clear();
+            }
+        }
+
+    }
 }

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ant
   - Predator
+  - PredatorArea
   layers:
   - Default
   - TransparentFX

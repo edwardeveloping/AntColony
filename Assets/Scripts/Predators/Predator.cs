@@ -12,6 +12,8 @@ public class Predator : MovableObject
     public GameObject antTarget;
     public bool inVisionRange;
 
+    public float hungry;
+
     public Map map;
     public GameObject exterior;
 
@@ -21,10 +23,14 @@ public class Predator : MovableObject
     {
         inVisionRange = false;
         randomPos = map.RandomPositionInsideBounds();
+        hungry = 100;
     }
 
     private void Update()
     {
+        //Hambre
+        hungry -= Time.deltaTime * 8; //Se muere desde predators manager
+
 
         if (inVisionRange)
         {
@@ -42,6 +48,7 @@ public class Predator : MovableObject
 
 
     }
+
 
     // COMBAT.
     
@@ -63,11 +70,11 @@ public class Predator : MovableObject
         }
     }
 
-    /*private void OnCollisionEnter2D(Collision2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject == antTarget) // If the object it collisioned with is its target.
+        if(collision.gameObject.CompareTag("Ant"))
         {
-            if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
+            /*if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
             {
                 Debug.Log("Predator won.");
                 antTarget.GetComponent<Ant>().Die(); // Kill ant.
@@ -78,9 +85,14 @@ public class Predator : MovableObject
             {
                 Debug.Log("Ant won");
                 GetStunned(); // Gets stunned.
-            }
+            }*/
+
+            antTarget.GetComponent<Ant>().Die(); // Kill ant.
+            predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
             antTarget = null;
+            hungry = 100;
+
         }
-    }*/
+    }
     
 }
