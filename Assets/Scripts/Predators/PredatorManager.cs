@@ -47,7 +47,20 @@ public class PredatorManager : MonoBehaviour
     private void Update()
     {
         Starvation();
+        NoPredators();
     }
+
+    public void NoPredators()
+    {
+        if (predators.Count <= 0)
+        {
+            for (int i = 0; i < initialNumPredators; i++)
+            {
+                GeneratePredatorAtSpawn();
+            }
+        }
+    }
+
     public void Starvation()
     {
         for (int i= 0;i < predators.Count;i++)

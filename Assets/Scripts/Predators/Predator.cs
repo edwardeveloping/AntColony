@@ -33,10 +33,8 @@ public class Predator : MovableObject
 
 
         if (inVisionRange)
-        {
-            
+        { 
             MoveTo(antTarget.transform.position);
-
         }
         
         else
@@ -92,6 +90,12 @@ public class Predator : MovableObject
             antTarget = null;
             hungry = 100;
 
+        }
+
+        //BUG => A veces se atascan dos depredadores cuando tienen direcciones opuestas, en caso de que ninguno este persiguiendo a una hormiga, solucionaremos
+        if (collision.gameObject.CompareTag("Predator") && inVisionRange == false) //comparamos solo con el actual, porque el otro se comparara en su propio script
+        {
+            randomPos = map.RandomPositionInsideBounds(); //nueva posicion random
         }
     }
     

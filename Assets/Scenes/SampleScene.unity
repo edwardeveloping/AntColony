@@ -1438,7 +1438,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c716eb608ee1e9f46aa5d7620608b42c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialNumPredators: 2
+  initialNumPredators: 10
   antManager: {fileID: 974215176}
   predatorPrefab: {fileID: 3903535058118962514, guid: 37fbd535028c2b8448045d6fe0b14f2c, type: 3}
   map: {fileID: 1256182793}
