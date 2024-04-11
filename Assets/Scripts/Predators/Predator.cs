@@ -8,6 +8,12 @@ public class Predator : MovableObject
 
     public PredatorManager predatorManager;
     GameObject antTarget;
+    public bool inVisionRange;
+
+    private void Start()
+    {
+        inVisionRange = false;
+    }
 
     private void Update()
     {
