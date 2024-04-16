@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class AntLarva : Ant
 {
+
+    //Variables
+
     public override void Initialize()
     {
         
