@@ -10,7 +10,6 @@ public class AntLarva : Ant
     public float hungry = 5f;
     public string type = "Gatherer";
     [SerializeField] public Colony colony;
-    [SerializeField] public AntManager antManager;
 
     private void Update()
     {
@@ -24,7 +23,7 @@ public class AntLarva : Ant
 
         if (hungry <= 0 )
         {
-            antManager.KillAnt(this);
+            base.Die();
         }
     }
 

@@ -59,7 +59,6 @@ public class AntManager : MonoBehaviour
             case Role.Larva:
                 antObj = Instantiate(antLarvaPrefab, new Vector2(x, y), Quaternion.identity);
                 antObj.GetComponent<AntLarva>().colony = colony;
-                antObj.GetComponent<AntLarva>().antManager = this;
 
                 antLarvaList.Add(antObj);
                 break;
