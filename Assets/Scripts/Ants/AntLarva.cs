@@ -7,18 +7,28 @@ public class AntLarva : Ant
 
     //Variables
     public float bornTime = 10f;
+    public float hungry = 5f;
     public string type = "Gatherer";
     [SerializeField] public Colony colony;
+    [SerializeField] public AntManager antManager;
 
     private void Update()
     {
         bornTime -= Time.deltaTime;
+        hungry -= Time.deltaTime;
 
         if ( bornTime <= 0)
         {
             Born();
         }
+
+        if (hungry <= 0 )
+        {
+            antManager.KillAnt(this);
+        }
     }
+
+    
 
     public void Born()
     {

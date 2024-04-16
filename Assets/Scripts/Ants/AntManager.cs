@@ -59,6 +59,7 @@ public class AntManager : MonoBehaviour
             case Role.Larva:
                 antObj = Instantiate(antLarvaPrefab, new Vector2(x, y), Quaternion.identity);
                 antObj.GetComponent<AntLarva>().colony = colony;
+                antObj.GetComponent<AntLarva>().antManager = this;
 
                 antLarvaList.Add(antObj);
                 break;
@@ -93,6 +94,15 @@ public class AntManager : MonoBehaviour
         if (antToKill is AntGatherer) // If the ant to kill is a gatherer.
         {
             if (!antGathererObjectList.Remove(antToKill.gameObject)) // Try to remove antGatherer object from antGathererObject list.
+            {
+                Debug.Log("Tried to kill an ant, but it was not found in antGathererObjectList");
+                return false;
+            }
+        }
+
+        if (antToKill is AntLarva) // If the ant to kill is a gatherer.
+        {
+            if (!antLarvaList.Remove(antToKill.gameObject)) // Try to remove antGatherer object from antGathererObject list.
             {
                 Debug.Log("Tried to kill an ant, but it was not found in antGathererObjectList");
                 return false;
