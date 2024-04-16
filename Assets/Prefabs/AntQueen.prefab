@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7429024215711517711}
   - component: {fileID: 7036551233144126652}
   - component: {fileID: 7912510468472247190}
-  - component: {fileID: 1520037910500211979}
+  - component: {fileID: 8168317811724764354}
   m_Layer: 0
   m_Name: AntQueen
   m_TagString: Untagged
@@ -95,7 +95,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3903535058118962514}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
@@ -172,7 +172,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &1520037910500211979
+--- !u!114 &8168317811724764354
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -186,8 +186,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   antManager: {fileID: 0}
   refugeZone: {fileID: 0}
-  antManager: {fileID: 0}
+  detectionRadius: 5
   tiempoDeVida: 0
-  tiempoVidaLimite: 0
+  tiempoVidaLimite: 100000
   tiempoIncubacion: 10
   tiemoFabricacionJalea: 15
+  progressBarPrefab: {fileID: 1278619833499010580, guid: 58863c945ee5641438034cb3dcab37b4, type: 3}

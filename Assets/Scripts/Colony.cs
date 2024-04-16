@@ -16,5 +16,6 @@ public class Colony : MonoBehaviour
     {
         antManager.GenerateAnt(0, 0, AntManager.Role.Gatherer);
         antManager.GenerateAnt(1, 0, AntManager.Role.Gatherer);
+        antManager.GenerateAnt(13, -5, AntManager.Role.Queen);
     }
 }

@@ -13,66 +13,79 @@ using Action = System.Action;
 
 public class ComportamientoReina : MonoBehaviour
 {
-    public StateTransition FedStateTrans;
-    public StateTransition UnfedStateTrans;
-    public StateTransition LayEggStateTrans;
-    public StateTransition LowLifeStateTrans;
-    public StateTransition DieStateTrans;
+    /*  public StateTransition FedStateTrans;
+      public StateTransition UnfedStateTrans;
+      public StateTransition LayEggStateTrans;
+      public StateTransition LowLifeStateTrans;
+      public StateTransition DieStateTrans;
 
-    public PushPerception FedPush;
-    public PushPerception UnfedPush;
-    public PushPerception LayEggPush;
-    public PushPerception LowLifePush;
-
-
-    //LÓGICA DE LOS ESTADOS
-    
-    
-    public AntQueen reina;
-    public FSM QueenBehaviour = new FSM();
-
-    protected BehaviourGraph CreateGraph()
-    {
-
-        //CREAMOS LOS ESTADOS
-        FunctionalAction WaitForFoodAction = new FunctionalAction();
-        WaitForFoodAction.onStarted = reina.StartWaitForFood;
-        WaitForFoodAction.onUpdated = reina.UpdateWaitForFood;
-        State WaitForFoodState = QueenBehaviour.CreateState("WaitForFood", WaitForFoodAction);
-
-        FunctionalAction LayEggAction = new FunctionalAction();
-        LayEggAction.onStarted = reina.StartLayEgg;
-        LayEggAction.onUpdated = reina.UpdateLayEgg;
-        State LayEggState = QueenBehaviour.CreateState("lay_egg", LayEggAction);
-
-        FunctionalAction GenerateRoyalJellyAction = new FunctionalAction();
-        GenerateRoyalJellyAction.onStarted = reina.StartGenerateRoyalJelly;
-        GenerateRoyalJellyAction.onUpdated = reina.UpdateGenerateRoyalJelly;
-        State GenerateRoyalJellyState = QueenBehaviour.CreateState("generate_royal_jelly", GenerateRoyalJellyAction);
-
-        FunctionalAction DieAction = new FunctionalAction();
-        DieAction.onStarted = reina.StartDie; // Implementa este método para destruir la entidad
-        State DieState = QueenBehaviour.CreateState("Die", DieAction);
-
-        //CREAMOS LAS TRANSICIONES
-        Transition fedToLayEgg = QueenBehaviour.CreateTransition(WaitForFoodState, LayEggState, statusFlags: StatusFlags.Success);
-        Transition layEggToWaitForFood = QueenBehaviour.CreateTransition(LayEggState, WaitForFoodState, statusFlags: StatusFlags.Success);
-        Transition fedToGenerateJelly = QueenBehaviour.CreateTransition(WaitForFoodState, GenerateRoyalJellyState, statusFlags: StatusFlags.Success);
-        Transition deathTransition = QueenBehaviour.CreateTransition(GenerateRoyalJellyState, DieState, statusFlags: StatusFlags.Success);
-        Transition waitForFoodToWaitForFood = QueenBehaviour.CreateTransition(WaitForFoodState, WaitForFoodState, statusFlags: StatusFlags.Success);
+      public PushPerception FedPush;
+      public PushPerception UnfedPush;
+      public PushPerception LayEggPush;
+      public PushPerception LowLifePush;
 
 
-        //CREAMOS PERCEPCIONES
-        FedPush = new PushPerception(fedToLayEgg);
-        UnfedPush = new PushPerception(waitForFoodToWaitForFood);
-        LayEggPush = new PushPerception(layEggToWaitForFood);
-        LowLifePush = new PushPerception(fedToGenerateJelly);
+      //LÓGICA DE LOS ESTADOS
 
-       
 
-        return QueenBehaviour;
-    }
+      public AntQueen reina;
+      public FSM QueenBehaviour = new FSM();
+
+      void Start()
+      {
+          reina = FindObjectOfType<AntQueen>(); // Encuentra la instancia de AntQueen en la escena
+          if (reina == null)
+          {
+              Debug.LogError("No se encontró ninguna instancia de AntQueen en la escena.");
+          }
+      }
+
+      protected BehaviourGraph CreateGraph()
+      {
+
+          //CREAMOS LOS ESTADOS
+          FunctionalAction WaitForFoodAction = new FunctionalAction();
+          WaitForFoodAction.onStarted = reina.StartWaitForFood;
+          WaitForFoodAction.onUpdated = reina.UpdateWaitForFood;
+          State WaitForFoodState = QueenBehaviour.CreateState("WaitForFood", WaitForFoodAction);
+
+          FunctionalAction LayEggAction = new FunctionalAction();
+          LayEggAction.onStarted = reina.StartLayEgg;
+          LayEggAction.onUpdated = reina.UpdateLayEgg;
+          State LayEggState = QueenBehaviour.CreateState("lay_egg", LayEggAction);
+
+          FunctionalAction GenerateRoyalJellyAction = new FunctionalAction();
+          GenerateRoyalJellyAction.onStarted = reina.StartGenerateRoyalJelly;
+          GenerateRoyalJellyAction.onUpdated = reina.UpdateGenerateRoyalJelly;
+          State GenerateRoyalJellyState = QueenBehaviour.CreateState("generate_royal_jelly", GenerateRoyalJellyAction);
+
+          FunctionalAction DieAction = new FunctionalAction();
+          DieAction.onStarted = reina.StartDie; // Implementa este método para destruir la entidad
+          State DieState = QueenBehaviour.CreateState("Die", DieAction);
+
+          //CREAMOS LAS TRANSICIONES
+          Transition fedToLayEgg = QueenBehaviour.CreateTransition(WaitForFoodState, LayEggState, statusFlags: StatusFlags.Success);
+          Transition layEggToWaitForFood = QueenBehaviour.CreateTransition(LayEggState, WaitForFoodState, statusFlags: StatusFlags.Success);
+          Transition fedToGenerateJelly = QueenBehaviour.CreateTransition(WaitForFoodState, GenerateRoyalJellyState, statusFlags: StatusFlags.Success);
+          Transition deathTransition = QueenBehaviour.CreateTransition(GenerateRoyalJellyState, DieState, statusFlags: StatusFlags.Success);
+          Transition waitForFoodToWaitForFood = QueenBehaviour.CreateTransition(WaitForFoodState, WaitForFoodState, statusFlags: StatusFlags.Success);
+
+
+          //CREAMOS PERCEPCIONES
+          FedPush = new PushPerception(fedToLayEgg);
+          UnfedPush = new PushPerception(waitForFoodToWaitForFood);
+          LayEggPush = new PushPerception(layEggToWaitForFood);
+          LowLifePush = new PushPerception(fedToGenerateJelly);
+
+
+
+          return QueenBehaviour;
+      }
+    */
 }
+
+
+
 
 
 
