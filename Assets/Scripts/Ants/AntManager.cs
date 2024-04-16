@@ -24,9 +24,12 @@ public class AntManager : MonoBehaviour
     [SerializeField] GameObject antLarvaPrefab;
     [SerializeField] GameObject antQueenPrefab;
 
+    [SerializeField] public Colony colony;
+
 
     private List<GameObject> antObjectList = new List<GameObject>();
     public List<GameObject> antGathererObjectList = new List<GameObject>();
+    public List<GameObject> antLarvaList = new List<GameObject>();
 
     public GameObject GenerateAnt(float x, float y, Role role)
     {
@@ -55,6 +58,9 @@ public class AntManager : MonoBehaviour
                 break;
             case Role.Larva:
                 antObj = Instantiate(antLarvaPrefab, new Vector2(x, y), Quaternion.identity);
+                antObj.GetComponent<AntLarva>().colony = colony;
+
+                antLarvaList.Add(antObj);
                 break;
 
             case Role.Queen:

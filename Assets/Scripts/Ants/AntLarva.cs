@@ -31,6 +31,8 @@ public class AntLarva : Ant
         {
             colony.Initialize("Worker");
         }
+
+        Destroy(this.gameObject);
     }
     public override void Initialize()
     {
