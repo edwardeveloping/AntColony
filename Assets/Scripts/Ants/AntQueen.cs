@@ -15,9 +15,9 @@ public class AntQueen : Ant
     public float tiempoIncubacion = 10f;
     public float tiemoFabricacionJalea = 15f;
 
-    public GameObject progressBarPrefab; // Prefab de la barra de progreso
-    private GameObject progressBarInstance; // Instancia de la barra de progreso
-    private Slider progressBar; // Referencia al objeto Slider de la barra de progreso
+    //public GameObject progressBarPrefab; // Prefab de la barra de progreso
+    //private GameObject progressBarInstance; // Instancia de la barra de progreso
+    //private Slider progressBar; // Referencia al objeto Slider de la barra de progreso
 
     bool alimentada = false;
     bool incubado = false;
@@ -85,8 +85,7 @@ public class AntQueen : Ant
         {
             float tiempoTranscurridoIncubacion = 0f;
 
-        // Crear la barra de progreso
-        CreateProgressBar();
+       
 
 
         // Esperar el tiempo de incubación
@@ -94,15 +93,13 @@ public class AntQueen : Ant
             {
                 // Actualizar el tiempo transcurrido
                 tiempoTranscurridoIncubacion += Time.deltaTime;
-                UpdateProgressBar(tiempoTranscurridoIncubacion);
+                
 
             
                 yield return null; // Esperar un frame
             }
 
         
-            // Destruir la barra de progreso después de la incubación
-            DestroyProgressBar();
 
             // Generar la larva después de la incubación
             GenerateLarva();
@@ -124,30 +121,7 @@ public class AntQueen : Ant
             StartWaitForFood();
         }
 
-    private void CreateProgressBar()
-    {
-        // Instanciar el prefab de la barra de progreso
-        progressBarInstance = Instantiate(progressBarPrefab, transform.position + new Vector3(0, 1, 0), Quaternion.identity);
-        // Obtener referencia al Slider de la barra de progreso
-        progressBar = progressBarInstance.GetComponentInChildren<Slider>();
-        // Establecer el valor máximo de la barra de progreso
-        progressBar.maxValue = tiempoIncubacion;
-        // Iniciar la barra de progreso con un valor de 0
-        progressBar.value = 0;
-    }
-
-    // Método para actualizar la barra de progreso
-    private void UpdateProgressBar(float value)
-    {
-        // Actualizar el valor de la barra de progreso
-        progressBar.value = value;
-    }
-
-    private void DestroyProgressBar()
-    {
-        // Destruir la instancia de la barra de progreso
-        Destroy(progressBarInstance);
-    }
+    
 
 
     public override void ArrivedAtResource(GameObject resource) { }
