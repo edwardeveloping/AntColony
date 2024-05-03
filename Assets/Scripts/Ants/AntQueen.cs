@@ -108,18 +108,26 @@ public class AntQueen : Ant
         // Método para generar la larva
         private void GenerateLarva()
         {
-            Debug.Log("Generando larva...");
+        Debug.Log("Generando larva...");
 
-            // Calcular la posición de generación de la larva cerca de la reina
-            Vector3 queenPosition = transform.position;
-            Vector3 larvaPosition = queenPosition + new Vector3(0.5f, 0f, 0f);
+        // Calcular la posición de generación de la larva cerca de la reina
+        Vector3 queenPosition = transform.position;
 
-            // Generar la larva en la posición calculada
-            GameObject larvaObj = antManager.GenerateAnt(larvaPosition.x, larvaPosition.y, AntManager.Role.Larva);
+        // Definir el rango máximo desde la posición de la reina para generar la larva
+        float maxRange = 1.0f;
 
-            // Volver a esperar a ser alimentada
-            StartWaitForFood();
-        }
+        // Generar un vector aleatorio dentro de un círculo unitario y escalarlo al rango máximo
+        Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * maxRange;
+
+        // Calcular la posición de la larva sumando el desplazamiento aleatorio alrededor de la reina
+        Vector3 larvaPosition = queenPosition + new Vector3(randomOffset.x, randomOffset.y, 0f);
+
+        // Generar la larva en la posición calculada
+        GameObject larvaObj = antManager.GenerateAnt(larvaPosition.x, larvaPosition.y, AntManager.Role.Larva);
+
+        // Volver a esperar a ser alimentada
+        StartWaitForFood();
+    }
 
     
 
