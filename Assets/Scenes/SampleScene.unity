@@ -791,7 +791,9 @@ MonoBehaviour:
   antSoldierPrefab: {fileID: 3903535058118962514, guid: cabfc3e13e75aaa47b46b965be7d6e53, type: 3}
   antLarvaPrefab: {fileID: 3903535058118962514, guid: 3dd6f7759d79b2044b6a82fd1a3de647, type: 3}
   antQueenPrefab: {fileID: 3903535058118962514, guid: 0d68343353e8a6c4286e79bf0a841167, type: 3}
+  colony: {fileID: 0}
   antGathererObjectList: []
+  antLarvaList: []
 --- !u!4 &974215177
 Transform:
   m_ObjectHideFlags: 0

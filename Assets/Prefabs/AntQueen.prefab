@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7429024215711517711}
   - component: {fileID: 7036551233144126652}
   - component: {fileID: 7912510468472247190}
-  - component: {fileID: 1520037910500211979}
+  - component: {fileID: 519509049213287914}
   m_Layer: 0
   m_Name: AntQueen
   m_TagString: Untagged
@@ -30,8 +30,8 @@ Transform:
   m_GameObject: {fileID: 3903535058118962514}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -95,7 +95,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3903535058118962514}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.5
   m_Speed: 3.5
@@ -172,7 +172,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &1520037910500211979
+--- !u!114 &519509049213287914
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -186,7 +186,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   antManager: {fileID: 0}
   refugeZone: {fileID: 0}
-  antManager: {fileID: 0}
+  detectionRadius: 5
   tiempoDeVida: 0
   tiempoVidaLimite: 0
   tiempoIncubacion: 10

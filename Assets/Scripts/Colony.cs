@@ -26,6 +26,9 @@ public class Colony : MonoBehaviour
             {
                 GenerateLarva();
             }
+
+            GenerateQueen();
+
         }
 
         if (s == "Gatherer")
@@ -58,5 +61,12 @@ public class Colony : MonoBehaviour
     public void GenerateWorker()
     {
 
+    }
+
+    public void GenerateQueen()
+    {
+        GameObject queenObj = antManager.GenerateAnt(13, -5, AntManager.Role.Queen);
+        //queenObj.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
+        
     }
 }

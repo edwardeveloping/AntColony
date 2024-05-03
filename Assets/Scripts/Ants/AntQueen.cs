@@ -4,16 +4,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 using static AntManager;
 
 public class AntQueen : Ant
 {
-    public AntManager antManager;
-    public float tiempoDeVida;
-    public float tiempoVidaLimite;
+    public float detectionRadius = 5f;
+    public float tiempoDeVida = 0f;
+    public float tiempoVidaLimite = 100000f;
     public float tiempoIncubacion = 10f;
     public float tiemoFabricacionJalea = 15f;
+
+    //public GameObject progressBarPrefab; // Prefab de la barra de progreso
+    //private GameObject progressBarInstance; // Instancia de la barra de progreso
+    //private Slider progressBar; // Referencia al objeto Slider de la barra de progreso
 
     bool alimentada = false;
     bool incubado = false;
@@ -25,156 +29,107 @@ public class AntQueen : Ant
     }
     public override void Initialize()
     {
-        StartWaitForFood = () =>
-        {
-            Debug.Log("Esperando a ser alimentada...");
-            //Cuando este alimentada?
-            alimentada = true;
-        };
+        StartWaitForFood();
+    }
 
-        UpdateWaitForFood = () =>
-        {
-            // Verificar si la reina está alimentada
-            if (alimentada)
-            {
-                // Verificar si el tiempo de vida es menor que x
-                if (tiempoDeVida < tiempoVidaLimite)
-                {
-                    
-                    // Cambiar al estado de poner huevo
-                    StartLayEgg();
-                    return Status.Success;
-                }
-                else
-                {
-                    // Generar jalea real
-                    StartGenerateRoyalJelly();
-                    return Status.Success;
-                }
-            }
-            else
-            {
-                // No cambiar de estado
-                return Status.Running;
-            }
-        };
 
-        StartLayEgg = () =>
-        {
-            Debug.Log("Poniendo huevo...");
-            float tiempoTranscurridoIncubacion = 0f;
-            while (tiempoTranscurridoIncubacion < tiempoIncubacion)
-            {
-                // Actualizar el tiempo transcurrido
-                tiempoTranscurridoIncubacion += Time.deltaTime;
-                
 
-                //AQUÍ SE GENERARÁ UNA LARVA
-            };
-
-            UpdateLayEgg = () =>
-            {
-                tiempoTranscurridoIncubacion += Time.deltaTime;
-
-                if (alimentada && tiempoTranscurridoIncubacion >= tiempoIncubacion)
-                {
-                    alimentada = false;
-                    StartWaitForFood(); // Vuelve al estado de espera
-                    GameObject larvaObj = antManager.GenerateAnt(transform.position.x, transform.position.y, AntManager.Role.Larva);
-                    return Status.Success;
-                }
-                else
-                {
-                    // Verificar otras condiciones si es necesario
-                    return Status.Running;
-                }
-            };
-        };
-
-        StartGenerateRoyalJelly = () =>
-        {
-            Debug.Log("Generando Jalea Real...");
-            float tiempoTranscurridoGenerarJalea = 0f;
-            while (tiempoTranscurridoGenerarJalea < tiempoIncubacion)
-            {
-                // Actualizar el tiempo transcurrido
-                tiempoTranscurridoGenerarJalea += Time.deltaTime;
-
-                //AQUÍ SE GENERARÁ la Jalea
-            };
-
-            UpdateGenerateRoyalJelly = () =>
-            {
-                tiempoTranscurridoGenerarJalea += Time.deltaTime;
-
-                if (alimentada && tiempoTranscurridoGenerarJalea >= tiempoIncubacion)
-                {
-                    alimentada = false;
-                    StartWaitForFood(); // Vuelve al estado de espera
-                    return Status.Success;
-                }
-                else
-                {
-                    // Verificar otras condiciones si es necesario
-                    return Status.Running;
-                }
-            };
-
-            StartDie = () =>
-            {
-                Die();
-            };
-        };
-        }
-    public System.Action StartWaitForFood = () => {
-        // Implementa la lógica para que la reina espere a ser alimentada
-        // Esto podría incluir animaciones, sonidos, etc.
-        Debug.Log("Generando Jalea Real...");
-    };
-    public Func<Status> UpdateWaitForFood = () => {
-        // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
-        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
-        Debug.Log("Actualizando estado mientras la reina pone un huevo...");
-        return Status.Running; // Ejemplo: devolver un estado ficticio
-    };
-
-    public System.Action StartLayEgg = () =>
+    //METODOS
+    public void StartWaitForFood()
     {
-        // Implementa la lógica para que la reina espere a ser alimentada
-        // Esto podría incluir animaciones, sonidos, etc.
-        Debug.Log("Generando Jalea Real...");
-    };
+        Debug.Log("Esperando a ser alimentada...");
 
-    public Func<Status> UpdateLayEgg = () => {
-        // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
-        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
-        Debug.Log("Actualizando estado mientras la reina pone un huevo...");
-        return Status.Running; // Ejemplo: devolver un estado ficticio
-    };
+        StartCoroutine(PollForFood());
+    }
 
-    public System.Action StartGenerateRoyalJelly = () => {
-        // Implementa la lógica para que la reina espere a ser alimentada
-        // Esto podría incluir animaciones, sonidos, etc.
-        Debug.Log("Generando Jalea Real...");
-    };
-    public Func<Status> UpdateGenerateRoyalJelly = () => {
-        // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
-        // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
-        Debug.Log("Actualizando estado mientras la reina genera Jalea Real...");
-        return Status.Running; // Ejemplo: devolver un estado ficticio
-    };
+    private IEnumerator PollForFood()
+    {
+        while (!alimentada) // Seguirá en el bucle hasta que esté alimentada
+        {
+            // Detectar colisiones con objetos en el rango usando OverlapCircle
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, detectionRadius);
 
-    public System.Action StartDie = () => {
-        // Implementa la lógica para que la reina espere a ser alimentada
-        // Esto podría incluir animaciones, sonidos, etc.
-        Debug.Log("Muriendo...");
-    };
-    
+            // Iterar sobre los colisionadores encontrados
+            foreach (Collider2D collider in colliders)
+            {
+                // Verificar si el objeto que entra en el rango es comida
+                if (collider.CompareTag("Food"))
+                {
+                    // Destruir la comida
+                    Destroy(collider.gameObject);
+                    // Marcar a la reina como alimentada
+                    alimentada = true;
+                    // Iniciar la puesta de huevo
+                    StartLayEgg();
+                    // Salir del bucle ya que hemos encontrado comida
+                    break;
+                }
+            }
+
+            // Esperar un corto tiempo antes de volver a verificar
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    // Método para poner un huevo
+    public void StartLayEgg()
+    {
+        Debug.Log("Poniendo huevo...");
+
+        // Iniciar el proceso de incubación
+        StartCoroutine(IncubateEgg());
+    }
+
+    // Método para incubar el huevo durante un tiempo determinado
+    private IEnumerator IncubateEgg()
+    {
+        float tiempoTranscurridoIncubacion = 0f;
 
 
 
 
-    public override void ArrivedAtResource(GameObject resource){}
-    public override void ArrivedAtRoom(Room room){}
-    public override void WhenCombatWon(){}
+        // Esperar el tiempo de incubación
+        while (tiempoTranscurridoIncubacion < tiempoIncubacion)
+        {
+            // Actualizar el tiempo transcurrido
+            tiempoTranscurridoIncubacion += Time.deltaTime;
+
+
+
+            yield return null; // Esperar un frame
+        }
+
+
+
+        // Generar la larva después de la incubación
+        GenerateLarva();
+    }
+
+    // Método para generar la larva
+    private void GenerateLarva()
+    {
+        Debug.Log("Generando larva...");
+
+        // Calcular la posición de generación de la larva cerca de la reina
+        Vector3 queenPosition = transform.position;
+
+        // Definir el rango máximo desde la posición de la reina para generar la larva
+        float maxRange = 1.0f;
+
+        // Generar un vector aleatorio dentro de un círculo unitario y escalarlo al rango máximo
+        Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * maxRange;
+
+        // Calcular la posición de la larva sumando el desplazamiento aleatorio alrededor de la reina
+        Vector3 larvaPosition = queenPosition + new Vector3(randomOffset.x, randomOffset.y, 0f);
+
+        // Generar la larva en la posición calculada
+        GameObject larvaObj = antManager.GenerateAnt(larvaPosition.x, larvaPosition.y, AntManager.Role.Larva);
+
+        // Volver a esperar a ser alimentada
+        StartWaitForFood();
+    }
+
+    public override void ArrivedAtResource(GameObject resource) { }
+    public override void ArrivedAtRoom(Room room) { }
+    public override void WhenCombatWon() { }
 }
