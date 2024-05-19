@@ -29,6 +29,7 @@ public class AntManager : MonoBehaviour
 
     private List<GameObject> antObjectList = new List<GameObject>();
     public List<GameObject> antGathererObjectList = new List<GameObject>();
+    public List<GameObject> antWorkerObjectList = new List<GameObject>();
     public List<GameObject> antLarvaList = new List<GameObject>();
 
     public GameObject GenerateAnt(float x, float y, Role role)
@@ -39,6 +40,12 @@ public class AntManager : MonoBehaviour
         {
             case Role.Worker:
                 antObj = Instantiate(antWorkerPrefab, new Vector2(x, y), Quaternion.identity);
+                antObj.GetComponent<AntWorker>().map = map;
+                antObj.GetComponent<AntWorker>().storageRoom = map.storageRoom.GetComponent<Room>();
+                antObj.GetComponent<AntWorker>().raisingRoom = map.raisingRoom.GetComponent<Room>();
+                antObj.GetComponent<AntWorker>().queenRoom = map.queenRoom.GetComponent<Room>();
+
+                antWorkerObjectList.Add(antObj);
                 break;
 
             case Role.Builder:

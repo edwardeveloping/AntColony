@@ -22,10 +22,18 @@ public class Colony : MonoBehaviour
                 GenerateGatherer();
             }
 
-            for (int i = 0;i < 2; i++)
+            for (int i = 0; i < 2; i++)
+            {
+                GenerateWorker();
+            }
+
+            for (int i = 0; i < 0; i++)
             {
                 GenerateLarva();
             }
+
+            GenerateQueen();
+
         }
 
         if (s == "Gatherer")
@@ -57,6 +65,14 @@ public class Colony : MonoBehaviour
 
     public void GenerateWorker()
     {
+        antManager.GenerateAnt(0, -5, AntManager.Role.Worker);
+    }
+
+    public void GenerateQueen()
+    {
+        GameObject queenObj = antManager.GenerateAnt(13, -5, AntManager.Role.Queen);
+        //queenObj.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
 
     }
+
 }

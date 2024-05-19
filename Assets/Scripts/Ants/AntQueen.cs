@@ -9,7 +9,7 @@ using static AntManager;
 
 public class AntQueen : Ant
 {
-    public AntManager antManager;
+    //public AntManager antManager;
     public float tiempoDeVida;
     public float tiempoVidaLimite;
     public float tiempoIncubacion = 10f;
