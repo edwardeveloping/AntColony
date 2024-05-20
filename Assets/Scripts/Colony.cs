@@ -15,14 +15,15 @@ public class Colony : MonoBehaviour
 
     public void Initialize(string s)
     {
-        if (s == "Init")
+        if (s == "Init") //INICIALIZACION
         {
             for (int i = 0; i < 2; i++)
             {
                 GenerateGatherer();
+                GenerateWorker();
             }
 
-            for (int i = 0;i < 2; i++)
+            for (int i = 0; i < 2; i++)
             {
                 GenerateLarva();
             }
@@ -60,13 +61,14 @@ public class Colony : MonoBehaviour
 
     public void GenerateWorker()
     {
-
+        antManager.GenerateAnt(0, -5, AntManager.Role.Worker);
     }
 
     public void GenerateQueen()
     {
         GameObject queenObj = antManager.GenerateAnt(13, -5, AntManager.Role.Queen);
         //queenObj.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
-        
+
     }
+
 }
