@@ -72,7 +72,10 @@ public class AntManager : MonoBehaviour
 
             case Role.Queen:
                 antObj = Instantiate(antQueenPrefab, new Vector2(x, y), Quaternion.identity);
+                antObj.GetComponent<AntQueen>().breedingRoom = map.breedingRoom.GetComponent<Room>();
+                antObj.GetComponent<AntQueen>().queenRoom = map.queenRoom.GetComponent<Room>();
                 break;
+                
 
             default:
                 Debug.Log("Error: Ant type not valid. Parameter given: " + role.ToString());
