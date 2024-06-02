@@ -11,7 +11,7 @@ public class AntManager : MonoBehaviour
         Builder,
         Soldier,
         Gatherer,
-        Larva, 
+        Larva,
         Queen
     }
 
@@ -43,6 +43,7 @@ public class AntManager : MonoBehaviour
                 antObj.GetComponent<AntWorker>().map = map;
                 antObj.GetComponent<AntWorker>().storageRoom = map.storageRoom.GetComponent<Room>();
                 antObj.GetComponent<AntWorker>().raisingRoom = map.raisingRoom.GetComponent<Room>();
+                antObj.GetComponent<AntWorker>().breedingRoom = map.breedingRoom.GetComponent<Room>();
                 antObj.GetComponent<AntWorker>().queenRoom = map.queenRoom.GetComponent<Room>();
 
                 antWorkerObjectList.Add(antObj);
@@ -66,6 +67,7 @@ public class AntManager : MonoBehaviour
             case Role.Larva:
                 antObj = Instantiate(antLarvaPrefab, new Vector2(x, y), Quaternion.identity);
                 antObj.GetComponent<AntLarva>().colony = colony;
+                antObj.GetComponent<AntLarva>().raisingRoom = map.raisingRoom.GetComponent<Room>();
 
                 antLarvaList.Add(antObj);
                 break;
@@ -75,7 +77,7 @@ public class AntManager : MonoBehaviour
                 antObj.GetComponent<AntQueen>().breedingRoom = map.breedingRoom.GetComponent<Room>();
                 antObj.GetComponent<AntQueen>().queenRoom = map.queenRoom.GetComponent<Room>();
                 break;
-                
+
 
             default:
                 Debug.Log("Error: Ant type not valid. Parameter given: " + role.ToString());

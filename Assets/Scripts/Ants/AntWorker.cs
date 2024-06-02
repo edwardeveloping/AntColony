@@ -9,15 +9,17 @@ public class AntWorker : Ant
     public enum Recurso
     {
         ComidaReina,
-        ComidaLarvas,
-        Larva,
+        IrComidaLarvas,
+        LlevarComidaLarvas,
+        IrLarva,
+        LlevarLarva,
         Nada
-    }//Dice la accion que esta haciendo la worker
+    } //Dice la accion que esta haciendo la worker
 
     public Room storageRoom;
     public Room raisingRoom;
+    public Room breedingRoom;
     public Room queenRoom;
-
 
     public Recurso recursoCargado = Recurso.Nada;
 
@@ -26,14 +28,15 @@ public class AntWorker : Ant
     GameObject assignedLarva;
     public Map map;
 
-    public GameObject resource;
-
     public override void Initialize()
     {
         //Si hay una larva en el mapa la lleva a la raisingRoom si no alimenta a la Queen
         //Cambiar para seguir la logica del documento
-        if (antManager.antLarvaList.Count > 0)
-            GetLarvasToRaisingRoom();
+        if (breedingRoom.count > 0)
+        {
+            breedingRoom.Remove(1);
+            GetToBreedingRoom();
+        }
         else
         {
             FeedTheQueen();
@@ -53,34 +56,11 @@ public class AntWorker : Ant
                 MoveTo(queenRoom.transform.position);
             }
 
-            if (recursoCargado == Recurso.ComidaLarvas)
+            if (recursoCargado == Recurso.IrComidaLarvas)
             {
                 Destroy(resource); // Destruir el recurso
-                MoveTo(assignedLarva.transform.position);
-            }
-        }
-    }
-
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        //Cuando colisiona con la larva o la lleva a la raisingRoom o la alimenta dependiendo de la accion que este haciendo
-        if (collision.gameObject.TryGetComponent<AntLarva>(out var aux))
-        {
-            if (recursoCargado == Recurso.Larva)
-            {
-                assignedLarva.GetComponent<AntLarva>().FollowTo(raisingRoom.transform.position);
-                antManager.antLarvaList.Remove(assignedLarva);
-                Debug.Log("he cogido a la larva");
+                recursoCargado = Recurso.LlevarComidaLarvas;
                 MoveTo(raisingRoom.transform.position);
-            }
-
-            if (recursoCargado == Recurso.ComidaLarvas)
-            {
-                var auxComida = Instantiate(this.resource);
-                auxComida.transform.position = gameObject.transform.position;
-                recursoCargado = Recurso.Nada;
-                Debug.Log("he alimentado a la larva");
-                Initialize();
             }
         }
     }
@@ -99,9 +79,10 @@ public class AntWorker : Ant
                     MoveTo(queenRoom.transform.position);
                 }
 
-                if (recursoCargado == Recurso.ComidaLarvas)
+                if (recursoCargado == Recurso.IrComidaLarvas)
                 {
-                    MoveTo(assignedLarva.transform.position);
+                    recursoCargado = Recurso.LlevarComidaLarvas;
+                    MoveTo(raisingRoom.transform.position);
                 }
             }
             else
@@ -111,17 +92,37 @@ public class AntWorker : Ant
         }
 
         //Si llega a la raisingRoom con una larva "la deja" y va a alimentarla si esa es la tarea
-        if (raisingRoom == room && recursoCargado == Recurso.Larva)
+        if (raisingRoom == room && recursoCargado == Recurso.LlevarLarva)
         {
+            recursoCargado = Recurso.IrComidaLarvas;
+            MoveTo(storageRoom.transform.position);
+        }
+
+        if (raisingRoom == room && recursoCargado == Recurso.LlevarComidaLarvas)
+        {
+            raisingRoom.Add(1);
+            assignedLarva = null;
             recursoCargado = Recurso.Nada;
-            FeedTheLarva();
+            Initialize();
+        }
+
+        //Si llega a la breading coge una larva y la lleva a la raisingRoom si esa es la tarea
+        if (breedingRoom == room && recursoCargado == Recurso.IrLarva)
+        {
+            assignedLarva = antManager.GenerateAnt(breedingRoom.transform.position.x,
+                breedingRoom.transform.position.y, AntManager.Role.Larva);
+
+            assignedLarva.GetComponent<AntLarva>().FollowTo(raisingRoom.transform.position);
+            Debug.Log("he cogido a la larva");
+
+            recursoCargado = Recurso.LlevarLarva;
+            MoveTo(raisingRoom.transform.position);
         }
 
         //Si llega a la sala de la reina deja la comida si esa es la tarea
         if (queenRoom == room && recursoCargado == Recurso.ComidaReina)
         {
-            var auxComida = Instantiate(this.resource);
-            auxComida.transform.position = gameObject.transform.position;
+            queenRoom.Add(1);
             recursoCargado = Recurso.Nada;
             Initialize();
         }
@@ -133,43 +134,54 @@ public class AntWorker : Ant
 
     public void LookForResource()
     {
-        StartCoroutine(LookForResourceCor());
+        StartCoroutine(WaitForResourceCor());
     }
-
     IEnumerator LookForResourceCor()
     {
         //Para buscar el recurso lo hago en una corrutina para que no se queden tontas en la storageRoom sin saber que hacer
         //Comprueba cada segundo si ha aparecido un recurso nuevo en el mapa y si aparece se lo asigna
         //Se aceptan sugerencias para hacerlo mas limpio xd
+        //Por si quereis usarlo 
         while (assignedResource == null)
         {
             assignedResource = map.RequestResource(); // Solicitar un recurso para recoger (se eliminar  de la lista)
             if (assignedResource != null)
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
-
             }
+
+            yield return new WaitForSeconds(1f);
+        }
+    }
+    IEnumerator WaitForResourceCor()
+    {
+        //Mientras que no haya recursos en la storeageRoom van a quedarse pidiendo el recurso
+        //Comprueba cada segundo si ha aparecido un recurso nuevo en el mapa y si aparece se lo asigna
+        //Se aceptan sugerencias para hacerlo mas limpio xd
+        bool hasFood = false;
+        while (!hasFood)
+        {
+            if (storageRoom.count > 0)
+            {
+                hasFood = true;
+                storageRoom.Remove(1);
+                if (recursoCargado == Recurso.ComidaReina)
+                {
+                    MoveTo(queenRoom.transform.position);
+                }
+
+                if (recursoCargado == Recurso.IrComidaLarvas)
+                {
+                    recursoCargado = Recurso.LlevarComidaLarvas;
+                    MoveTo(raisingRoom.transform.position);
+                }
+            }
+
             yield return new WaitForSeconds(1f);
         }
     }
 
-    public void LookForLarva()
-    {
-        //Si hay larvas en el mundo coge una al azar de la lista y va a por ella
-        if (antManager.antLarvaList.Count > 0)
-        {
-            assignedLarva = antManager.antLarvaList[new Random().Next(0, antManager.antLarvaList.Count)]; // Solicitar un recurso para recoger (se eliminar  de la lista)
-            if (assignedLarva != null)
-            {
-                MoveTo(assignedLarva.transform.position); // Moverse hacia el recurso.
-            }
-        }
-    }
-
     #endregion
-
-
-
     public override void WhenCombatWon()
     {
         Flee();
@@ -177,7 +189,7 @@ public class AntWorker : Ant
 
     #region AccionesWorker
 
-    public void FeedTheQueen()//done
+    public void FeedTheQueen()
     {
         //Si no esta haciendo nada va a buscar comida a la reina
         if (recursoCargado == Recurso.Nada)
@@ -186,27 +198,15 @@ public class AntWorker : Ant
             MoveTo(storageRoom.transform.position);
         }
     }
-
-    public void GetLarvasToRaisingRoom()//falta ver como cojo y suelto las larvas
+    public void GetToBreedingRoom()
     {
         //Si no esta haciendo nada va a buscar una larva
         if (recursoCargado == Recurso.Nada)
         {
-            recursoCargado = Recurso.Larva;
-            LookForLarva();
-        }
-    }
-
-    public void FeedTheLarva()
-    {
-        //Si ha terminado de llevar a la larva a la raisingRoom le lleva comida
-        if (recursoCargado == Recurso.Nada)
-        {
-            recursoCargado = Recurso.ComidaLarvas;
-            MoveTo(storageRoom.transform.position);
+            recursoCargado = Recurso.IrLarva;
+            MoveTo(breedingRoom.transform.position); // Moverse hacia el recurso.
         }
     }
 
     #endregion
-
 }

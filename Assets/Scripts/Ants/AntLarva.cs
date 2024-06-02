@@ -6,12 +6,15 @@ public class AntLarva : Ant
 {
 
     //Variables
-    private float bornTime = 6000f;
-    private float hungry = 5500f;
+    private float bornTime = 2000f;
+    private float hungry = 1500f;
     public string type = "Gatherer";
+
+    public Room raisingRoom;
     [SerializeField] public Colony colony;
 
     GameObject assignedResource;
+    bool alimentada = false;
 
     private void FixedUpdate()
     {
@@ -61,13 +64,30 @@ public class AntLarva : Ant
 
     public override void ArrivedAtResource(GameObject resource)
     {
-        if (resource.CompareTag("Food"))
+    }
+
+    public override void ArrivedAtRoom(Room room)
+    {
+        if (raisingRoom == room)
         {
-            Debug.Log("hungry");
-            hungry += 10;
-            Destroy(resource.gameObject);
+            StartCoroutine(PollForFood());
         }
     }
-    public override void ArrivedAtRoom(Room room) { }
     public override void WhenCombatWon() { }
+
+    private IEnumerator PollForFood()
+    {
+        while (!alimentada) // Seguir en el bucle hasta que este alimentada
+        {
+            if (raisingRoom.count > 0)
+            {
+                raisingRoom.Remove(1);
+                hungry += 1500f;
+                alimentada = true;
+                break;
+            }
+            // Esperar un corto tiempo antes de volver a verificar
+            yield return new WaitForSeconds(1f);
+        }
+    }
 }
