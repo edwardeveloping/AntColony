@@ -9,12 +9,13 @@ using UnityEngine;
 public class Colony : MonoBehaviour
 {
     [SerializeField] AntManager antManager;
-    
-    
+    [SerializeField] PredatorManager predatorManager;
+
     int shells;
 
     //
     public Room storageRoom;
+    public Room securityRoom;
 
     //variables para controlar desde el menu de Unity compilando el programa
     public int population;
@@ -23,15 +24,22 @@ public class Colony : MonoBehaviour
     public int totalWorkers;
     public int totalLarvaGatherers;
     public int totalLarvaWorkers;
+    public int totalPredators;
+    public int initial_Gatherers;
+    public int initial_Workers;
 
 
     public void Initialize(string s)
     {
         if (s == "Init") //INICIALIZACION
         {
-            for (int i = 0; i < 2; i++)
+            for (int i = 0; i < initial_Gatherers; i++)
             {
                 GenerateGatherer();
+            }
+
+            for (int i = 0; i < initial_Workers; i++)
+            {
                 GenerateWorker();
             }
 
@@ -89,18 +97,39 @@ public class Colony : MonoBehaviour
         //Control de hormigas
         //Si no tenemos ninguna gatherer, una worker se tiene que convertir en gatherer
 
-        if (gathererNumber == 0 && workerNumber >= 1)
+        if (gathererNumber == 0 && workerNumber > 0)
         {
-            foreach (var worker in antManager.antWorkerObjectList)
+            //Si solo tenemos el caso extremo de un worker
+            if (workerNumber == 1)
             {
-                //Creamos la gatherer
-                antManager.GenerateAnt(worker.transform.position.x, worker.transform.position.y, AntManager.Role.Gatherer);
+                if (resources <= 2)
+                {
+                    foreach (var worker in antManager.antWorkerObjectList)
+                    {
+                        //Creamos la gatherer
+                        antManager.GenerateAnt(worker.transform.position.x, worker.transform.position.y, AntManager.Role.Gatherer);
 
-                //Eliminamos la worker
-                worker.GetComponent<Ant>().Die();
+                        //Eliminamos la worker
+                        worker.GetComponent<Ant>().Die();
 
-                break;
+                        break;
+                    }
+                }
             }
+            else
+            {
+                foreach (var worker in antManager.antWorkerObjectList)
+                {
+                    //Creamos la gatherer
+                    antManager.GenerateAnt(worker.transform.position.x, worker.transform.position.y, AntManager.Role.Gatherer);
+
+                    //Eliminamos la worker
+                    worker.GetComponent<Ant>().Die();
+
+                    break;
+                }
+            }
+            
         }
 
         //Control de larvas
@@ -116,12 +145,70 @@ public class Colony : MonoBehaviour
             }
         }
 
+        //Si tenemos muchos recursos, pero pocas obreras, una recolectora pasara a ser obrera
+
+        if (resources >= 4)
+        {
+            if (totalWorkers < totalGatherers && totalGatherers > 1)
+            {
+                foreach (var gatherer in antManager.antWorkerObjectList)
+                {
+                    //Creamos la gatherer
+                    antManager.GenerateAnt(gatherer.transform.position.x, gatherer.transform.position.y, AntManager.Role.Gatherer);
+
+                    //Eliminamos la worker
+                    gatherer.GetComponent<Ant>().Die();
+
+                    break;
+                }
+            }
+        }
+
+        //comparacion gatherers con workers
+        if (workerNumber * 2 > gathererNumber)
+        {
+            foreach (var worker in antManager.antWorkerObjectList)
+            {
+                //Creamos la gatherer
+                antManager.GenerateAnt(worker.transform.position.x, worker.transform.position.y, AntManager.Role.Gatherer);
+
+                //Eliminamos la worker
+                worker.GetComponent<Ant>().Die();
+
+                break;
+            }
+        }
+
+
+        //Enemigos
+        //Si hay muchos enemigos, las gatherer iran a la SecurityRoom a esperar hasta que estos mueran
+        //Hay que tener en cuenta que, si inicializamos con dos predadores, cuando mueran se generaran dos nuevos
+        //Es esperar en caso de que haya mas de estos predadores base, si hubiesen 5 al regenerarse se regenerarian unicamente 2
+        //Pueden producirse bucles infinitos si no
+
+        if (predatorManager.initialNumPredators < totalPredators)
+        {
+            foreach(var gatherer in antManager.antGathererObjectList)
+            {
+                gatherer.GetComponent<AntGatherer>().inDanger = true;
+            }
+        }
+
+        else if (predatorManager.initialNumPredators == totalPredators)
+        {
+            foreach (var gatherer in antManager.antGathererObjectList)
+            {
+                gatherer.GetComponent<AntGatherer>().inDanger = false;
+            }
+        }
+
     }
     private void ManageColony()
     {
         int gathererNumber = antManager.antGathererObjectList.Count;
         int workerNumber = antManager.antWorkerObjectList.Count;
         int resources = storageRoom.GetComponent<Room>().count;
+        int predatorNumber = predatorManager.predators.Count;
 
         //Comprobar continuamente las listas de las hormigas para asignarle el tag correcto de cada larva
         //Jerarquia => Gatherer > worker
@@ -134,7 +221,7 @@ public class Colony : MonoBehaviour
 
 
         //AUXILIAR PARA EL CONTROL DESDE EL MENU DEL JUEGO
-        AuxiliarControl(gathererNumber, workerNumber, gathererLarvaCount, workerLarvaCount, resources);
+        AuxiliarControl(gathererNumber, workerNumber, gathererLarvaCount, workerLarvaCount, resources, predatorNumber);
 
         //Llamamos a nuestro metodo
         string type = DecideAntType(gathererNumber, workerNumber, gathererLarvaCount, workerLarvaCount);
@@ -147,13 +234,14 @@ public class Colony : MonoBehaviour
 
     }
 
-    private void AuxiliarControl(int gathererNumber, int workerNumber, int gathererLarvaCount, int workerLarvaCount, int resources)
+    private void AuxiliarControl(int gathererNumber, int workerNumber, int gathererLarvaCount, int workerLarvaCount, int resources, int predatorCount)
     {
         storageResources = resources;
         totalGatherers = gathererNumber;
         totalWorkers = workerNumber;
         totalLarvaGatherers = gathererLarvaCount;
         totalLarvaWorkers = workerLarvaCount;
+        totalPredators = predatorCount;
         population = totalGatherers + totalWorkers + totalLarvaGatherers + totalLarvaWorkers;
     }
 

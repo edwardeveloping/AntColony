@@ -62,6 +62,7 @@ public class AntManager : MonoBehaviour
                 antObj = Instantiate(antGathererPrefab, new Vector2(x, y), Quaternion.identity);
                 antObj.GetComponent<AntGatherer>().map = map;
                 antObj.GetComponent<AntGatherer>().storageRoom = map.storageRoom;
+                antObj.GetComponent <AntGatherer>().securityRoom = map.securityRoom;
 
                 antGathererObjectList.Add(antObj); // Add ant to antGathererList.
                 break;
@@ -112,11 +113,20 @@ public class AntManager : MonoBehaviour
             }
         }
 
+        if (antToKill is AntWorker) // If the ant to kill is a gatherer.
+        {
+            if (!antWorkerObjectList.Remove(antToKill.gameObject)) // Try to remove antGatherer object from antGathererObject list.
+            {
+                Debug.Log("Tried to kill an ant, but it was not found in antWorkerObjectList");
+                return false;
+            }
+        }
+
         if (antToKill is AntLarva) // If the ant to kill is a gatherer.
         {
             if (!antLarvaList.Remove(antToKill.gameObject)) // Try to remove antGatherer object from antGathererObject list.
             {
-                Debug.Log("Tried to kill an ant, but it was not found in antGathererObjectList");
+                Debug.Log("Tried to kill an ant, but it was not found in antLarvaList");
                 return false;
             }
         }

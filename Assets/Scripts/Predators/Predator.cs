@@ -85,6 +85,8 @@ public class Predator : MovableObject
                 GetStunned(); // Gets stunned.
             }*/
 
+            //eliminar recurso
+            antTarget.GetComponent<AntGatherer>().isDead = false; //la matamos para que libere el recurso asignado en caso de tenerlo
             antTarget.GetComponent<Ant>().Die(); // Kill ant.
             predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
             antTarget = null;

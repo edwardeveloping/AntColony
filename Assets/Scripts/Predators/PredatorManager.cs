@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 
 public class PredatorManager : MonoBehaviour
 {
-    [SerializeField] int initialNumPredators;
+    public int initialNumPredators;
 
     [SerializeField] AntManager antManager;
     [SerializeField] GameObject predatorPrefab;
