@@ -6,9 +6,9 @@ public class AntLarva : Ant
 {
 
     //Variables
-    private float bornTime = 2000f;
+    private float bornTime = 1600f;
     private float hungry = 1500f;
-    public string type = "Gatherer";
+    public string type;
 
     public Room raisingRoom;
     [SerializeField] public Colony colony;
@@ -47,10 +47,9 @@ public class AntLarva : Ant
         {
             // colony.Initialize("Worker");
             antManager.GenerateAnt(transform.position.x, transform.position.y, AntManager.Role.Worker);
-            antManager.antLarvaList.Remove(gameObject);
         }
-
-        Destroy(this.gameObject);
+        base.Die();
+        //Destroy(this.gameObject);
     }
 
     public void FollowTo(Vector3 pos)

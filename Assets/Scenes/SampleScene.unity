@@ -811,7 +811,7 @@ MonoBehaviour:
   antSoldierPrefab: {fileID: 3903535058118962514, guid: cabfc3e13e75aaa47b46b965be7d6e53, type: 3}
   antLarvaPrefab: {fileID: 3903535058118962514, guid: 3dd6f7759d79b2044b6a82fd1a3de647, type: 3}
   antQueenPrefab: {fileID: 3903535058118962514, guid: 0d68343353e8a6c4286e79bf0a841167, type: 3}
-  colony: {fileID: 0}
+  colony: {fileID: 1346901900}
   antGathererObjectList: []
   antWorkerObjectList: []
   antLarvaList: []
@@ -1361,6 +1361,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   antManager: {fileID: 974215176}
+  storageRoom: {fileID: 1376754041}
+  population: 0
+  storageResources: 0
+  totalGatherers: 0
+  totalWorkers: 0
+  totalLarvaGatherers: 0
+  totalLarvaWorkers: 0
 --- !u!4 &1346901901
 Transform:
   m_ObjectHideFlags: 0
@@ -1386,6 +1393,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
   m_PrefabInstance: {fileID: 1093588181}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1376754041 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4303050557328730601, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
+  m_PrefabInstance: {fileID: 1093588181}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1376754036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32432d92b13dd86449db4003df97e38a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1379450856
 GameObject:
   m_ObjectHideFlags: 0
@@ -1659,7 +1677,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c716eb608ee1e9f46aa5d7620608b42c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialNumPredators: 1
+  initialNumPredators: 2
   antManager: {fileID: 974215176}
   predatorPrefab: {fileID: 3903535058118962514, guid: 37fbd535028c2b8448045d6fe0b14f2c, type: 3}
   map: {fileID: 1256182793}

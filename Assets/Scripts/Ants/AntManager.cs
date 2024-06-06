@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class AntManager : MonoBehaviour
 {
+    //public string larvaType;
     public enum Role
     {
         Worker,
@@ -68,7 +69,7 @@ public class AntManager : MonoBehaviour
                 antObj = Instantiate(antLarvaPrefab, new Vector2(x, y), Quaternion.identity);
                 antObj.GetComponent<AntLarva>().colony = colony;
                 antObj.GetComponent<AntLarva>().raisingRoom = map.raisingRoom.GetComponent<Room>();
-
+                //antObj.GetComponent<AntLarva>().type = larvaType;
                 antLarvaList.Add(antObj);
                 break;
 
