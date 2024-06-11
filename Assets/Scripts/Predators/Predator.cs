@@ -72,25 +72,22 @@ public class Predator : MovableObject
     {
         if(collision.gameObject.CompareTag("Ant"))
         {
-            /*if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
+            if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
             {
                 Debug.Log("Predator won.");
+                antTarget.GetComponent<AntGatherer>().isDead = false; //la matamos para que libere el recurso asignado en caso de tenerlo
                 antTarget.GetComponent<Ant>().Die(); // Kill ant.
                 predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
-                // Spawn another predator.
+                antTarget = null;
+                hungry = 100;
             } 
             else // If predator looses (false)
             {
                 Debug.Log("Ant won");
-                GetStunned(); // Gets stunned.
-            }*/
+                predatorManager.KillPredator(this);
+            }
 
-            //eliminar recurso
-            antTarget.GetComponent<AntGatherer>().isDead = false; //la matamos para que libere el recurso asignado en caso de tenerlo
-            antTarget.GetComponent<Ant>().Die(); // Kill ant.
-            predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
-            antTarget = null;
-            hungry = 100;
+            
 
         }
 

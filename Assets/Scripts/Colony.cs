@@ -15,7 +15,6 @@ public class Colony : MonoBehaviour
 
     //
     public Room storageRoom;
-    public Room securityRoom;
 
     //variables para controlar desde el menu de Unity compilando el programa
     public int population;
@@ -186,7 +185,7 @@ public class Colony : MonoBehaviour
         //Es esperar en caso de que haya mas de estos predadores base, si hubiesen 5 al regenerarse se regenerarian unicamente 2
         //Pueden producirse bucles infinitos si no
 
-        if (predatorManager.initialNumPredators < totalPredators)
+        /*if (predatorManager.initialNumPredators < totalPredators)
         {
             foreach(var gatherer in antManager.antGathererObjectList)
             {
@@ -200,7 +199,7 @@ public class Colony : MonoBehaviour
             {
                 gatherer.GetComponent<AntGatherer>().inDanger = false;
             }
-        }
+        }*/
 
     }
     private void ManageColony()

@@ -62,7 +62,6 @@ public class AntManager : MonoBehaviour
                 antObj = Instantiate(antGathererPrefab, new Vector2(x, y), Quaternion.identity);
                 antObj.GetComponent<AntGatherer>().map = map;
                 antObj.GetComponent<AntGatherer>().storageRoom = map.storageRoom;
-                antObj.GetComponent <AntGatherer>().securityRoom = map.securityRoom;
 
                 antGathererObjectList.Add(antObj); // Add ant to antGathererList.
                 break;

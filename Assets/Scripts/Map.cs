@@ -17,7 +17,6 @@ public class Map : MonoBehaviour
     [SerializeField] GameObject exterior; // Where resources spawn and enemies patrol.
 
     public GameObject storageRoom;
-    public GameObject securityRoom;
     public GameObject queenRoom; // Where the queen lay eggs.
     public GameObject breedingRoom; // Where shells are stored and filled with eggs.
     public GameObject raisingRoom; // Where baby ants are taken, after being born, then fed, and where they wait until they grow.
