@@ -28,6 +28,20 @@ public class AntWorker : Ant
     GameObject assignedLarva;
     public Map map;
 
+    //Sprite
+    private float flipTime;
+    private float flipTimeActual;
+
+    // Referencia al componente SpriteRenderer
+    private SpriteRenderer spriteRenderer;
+
+    private void Start()
+    {
+        // Obtener el componente SpriteRenderer del GameObject
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        flipTime = 0.1f;
+        flipTimeActual = flipTime;
+    }
     public override void Initialize()
     {
         //Si hay una larva en el mapa la lleva a la raisingRoom si no alimenta a la Queen
@@ -185,6 +199,22 @@ public class AntWorker : Ant
     public override void WhenCombatWon()
     {
         Flee();
+    }
+
+    private void SpriteMove()
+    {
+        // Manejar el flip del sprite
+        flipTimeActual -= Time.deltaTime;
+        if (flipTimeActual <= 0)
+        {
+            spriteRenderer.flipX = !spriteRenderer.flipX;
+            flipTimeActual = flipTime;
+        }
+    }
+
+    private void Update()
+    {
+        SpriteMove();
     }
 
     #region AccionesWorker

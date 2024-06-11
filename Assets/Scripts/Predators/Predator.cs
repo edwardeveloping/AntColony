@@ -19,8 +19,27 @@ public class Predator : MovableObject
 
     public Vector2 randomPos;
 
+    //Sprite
+    private float flipTime;
+    private float flipTimeActual;
+
+    // Referencia al componente SpriteRenderer
+    private SpriteRenderer spriteRenderer;
+
+    //
+    // Velocidad de movimiento
+    public float velocidad = 5f;
+
+    // Punto destino para moverse
+    public Vector3 destino;
+
     private void Start()
     {
+        // Obtener el componente SpriteRenderer del GameObject
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        flipTime = 0.1f;
+        flipTimeActual = flipTime;
+
         inVisionRange = false;
         randomPos = map.RandomPositionInsideBounds();
         hungry = 100;
@@ -35,6 +54,7 @@ public class Predator : MovableObject
         if (inVisionRange)
         { 
             MoveTo(antTarget.transform.position);
+            destino = antTarget.transform.position;
         }
         
         else
@@ -42,9 +62,22 @@ public class Predator : MovableObject
             antTarget = null;
             CheckPosition(); //comprobamos que haya llegado a la posicion para actualizarla
             MoveTo(randomPos);
+            destino = randomPos;
         }
 
+        // Mover hacia el destino
+        if (destino != null)
+        {
+            Vector3 direccion = (destino - transform.position).normalized;
+            
 
+            // Rotar el sprite hacia la dirección de movimiento
+            float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, angulo));
+
+        }
+
+        SpriteMove();
     }
 
 
@@ -97,5 +130,16 @@ public class Predator : MovableObject
             randomPos = map.RandomPositionInsideBounds(); //nueva posicion random
         }
     }
-    
+
+
+    private void SpriteMove()
+    {
+        // Manejar el flip del sprite
+        flipTimeActual -= Time.deltaTime;
+        if (flipTimeActual <= 0)
+        {
+            spriteRenderer.flipX = !spriteRenderer.flipX;
+            flipTimeActual = flipTime;
+        }
+    }
 }

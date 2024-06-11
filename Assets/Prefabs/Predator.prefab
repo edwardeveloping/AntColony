@@ -78,8 +78,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 2
-  m_Sprite: {fileID: 7482667652216324306, guid: 75f5f34dc1b5347e0b8351032682f224, type: 3}
-  m_Color: {r: 0.43786177, g: 0.23137254, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: 72e4759c0972d5f449db218e88b7739e, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -188,8 +188,12 @@ MonoBehaviour:
   predatorManager: {fileID: 0}
   antTarget: {fileID: 0}
   inVisionRange: 0
+  hungry: 0
   map: {fileID: 0}
+  exterior: {fileID: 0}
   randomPos: {x: 0, y: 0}
+  velocidad: 5
+  destino: {x: 0, y: 0, z: 0}
 --- !u!1 &4914069504277037080
 GameObject:
   m_ObjectHideFlags: 0

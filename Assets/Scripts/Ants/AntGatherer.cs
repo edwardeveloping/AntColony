@@ -15,6 +15,32 @@ public class AntGatherer : Ant
     private static List<GameObject> resourcesInUse = new List<GameObject>(); // Recursos que están siendo recogidos por recolectoras
     private Vector3? currentExplorationTarget = null;
 
+    // Referencia al nuevo sprite
+    public Sprite spriteObj;
+    public Sprite spriteOriginal;
+    private float flipTime;
+    private float flipTimeActual;
+
+    // Referencia al componente SpriteRenderer
+    private SpriteRenderer spriteRenderer;
+
+
+    
+
+    private void Start()
+    {
+        // Obtener el componente SpriteRenderer del GameObject
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        flipTime = 0.1f;
+        flipTimeActual = flipTime;
+
+        // Guardar el sprite original
+        if (spriteRenderer != null)
+        {
+            spriteOriginal = spriteRenderer.sprite;
+        }
+    }
+
     public override void Initialize()
     {
         LookForResource();
@@ -88,6 +114,8 @@ public class AntGatherer : Ant
         if (assignedResource == resource && !comidaCargada) // Si la hormiga colisiona con su recurso asignado y no tiene comida cargada
         {
             Destroy(resource); // Destruir el recurso
+            //Cambiamos sprite
+            ChangeSprite(spriteObj);
             resourcesInUse.Remove(resource); // Marcar el recurso como no en uso
             comidaCargada = true; // Marcar que tiene comida cargada
             MoveTo(storageRoom.transform.position); // Moverse hacia la sala de almacenamiento
@@ -101,6 +129,8 @@ public class AntGatherer : Ant
         {
             storageRoom.GetComponent<Room>().Add(1); // Agregar comida a la sala de almacenamiento
             comidaCargada = false; // Marcar que ya no tiene comida cargada
+            //Cambiamos sprite
+            ChangeSprite(spriteOriginal);
             LookForResource(); // Buscar otro recurso
         }
     }
@@ -143,5 +173,33 @@ public class AntGatherer : Ant
         {
             Explore(); // Explorar si no hay un recurso asignado y el clima es favorable
         }
+
+        SpriteMove();
     }
+
+
+    //Cambiar Sprite cuando tenga un recurso
+
+    private void ChangeSprite(Sprite sprite)
+    {
+        // Cambiar el sprite del SpriteRenderer
+        if (spriteRenderer != null && sprite != null)
+        {
+            spriteRenderer.sprite = sprite;
+        }
+        
+    }
+
+    private void SpriteMove()
+    {
+        // Manejar el flip del sprite
+        flipTimeActual -= Time.deltaTime;
+        if (flipTimeActual <= 0)
+        {
+            spriteRenderer.flipX = !spriteRenderer.flipX;
+            flipTimeActual = flipTime;
+        }
+    }
+
+    
 }

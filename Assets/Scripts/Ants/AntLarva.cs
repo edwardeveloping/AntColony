@@ -16,6 +16,20 @@ public class AntLarva : Ant
     GameObject assignedResource;
     bool alimentada = false;
 
+    //Sprite
+    private float flipTime;
+    private float flipTimeActual;
+
+    // Referencia al componente SpriteRenderer
+    private SpriteRenderer spriteRenderer;
+
+    private void Start()
+    {
+        // Obtener el componente SpriteRenderer del GameObject
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        flipTime = 0.5f;
+        flipTimeActual = flipTime;
+    }
     private void FixedUpdate()
     {
         bornTime -= 1;
@@ -31,6 +45,8 @@ public class AntLarva : Ant
             Debug.Log(hungry);
             base.Die();
         }
+
+        SpriteMove();
     }
 
 
@@ -87,6 +103,17 @@ public class AntLarva : Ant
             }
             // Esperar un corto tiempo antes de volver a verificar
             yield return new WaitForSeconds(1f);
+        }
+    }
+
+    private void SpriteMove()
+    {
+        // Manejar el flip del sprite
+        flipTimeActual -= Time.deltaTime;
+        if (flipTimeActual <= 0)
+        {
+            spriteRenderer.flipX = !spriteRenderer.flipX;
+            flipTimeActual = flipTime;
         }
     }
 }

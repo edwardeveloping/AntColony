@@ -94,7 +94,7 @@ public class Colony : MonoBehaviour
     private void ControlColony(int gathererNumber, int workerNumber, int gathererLarvaCount, int workerLarvaCount, int resources)
     {
         //Control de hormigas
-        //Si no tenemos ninguna gatherer, una worker se tiene que convertir en gatherer
+        //Si no tenemos ninguna gatherer y no tenemos 2 recursos MINIMO, una worker se tiene que convertir en gatherer
 
         if (gathererNumber == 0 && workerNumber > 0)
         {

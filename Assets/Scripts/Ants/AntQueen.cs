@@ -22,6 +22,21 @@ public class AntQueen : Ant
     bool incubado = false;
     bool jalea = false;
 
+    //Sprite
+    private float flipTime;
+    private float flipTimeActual;
+
+    // Referencia al componente SpriteRenderer
+    private SpriteRenderer spriteRenderer;
+
+    private void Start()
+    {
+        // Obtener el componente SpriteRenderer del GameObject
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        flipTime = 0.5f;
+        flipTimeActual = flipTime;
+    }
+
     public override void Initialize()
     {
         StartWaitForFood();
@@ -91,6 +106,23 @@ public class AntQueen : Ant
     public override void ArrivedAtResource(GameObject resource) { }
     public override void ArrivedAtRoom(Room room) { }
     public override void WhenCombatWon() { }
+
+    private void SpriteMove()
+    {
+        // Manejar el flip del sprite
+        flipTimeActual -= Time.deltaTime;
+        if (flipTimeActual <= 0)
+        {
+            spriteRenderer.flipX = !spriteRenderer.flipX;
+            flipTimeActual = flipTime;
+        }
+    }
+
+    private void Update()
+    {
+        SpriteMove();
+    }
+
 }
 
 

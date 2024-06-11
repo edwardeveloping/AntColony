@@ -27,6 +27,7 @@ public class AntManager : MonoBehaviour
 
     [SerializeField] public Colony colony;
 
+    public Sprite spriteGathererObj;
 
     private List<GameObject> antObjectList = new List<GameObject>();
     public List<GameObject> antGathererObjectList = new List<GameObject>();
@@ -62,7 +63,7 @@ public class AntManager : MonoBehaviour
                 antObj = Instantiate(antGathererPrefab, new Vector2(x, y), Quaternion.identity);
                 antObj.GetComponent<AntGatherer>().map = map;
                 antObj.GetComponent<AntGatherer>().storageRoom = map.storageRoom;
-
+                antObj.GetComponent<AntGatherer>().spriteObj = spriteGathererObj;
                 antGathererObjectList.Add(antObj); // Add ant to antGathererList.
                 break;
             case Role.Larva:
