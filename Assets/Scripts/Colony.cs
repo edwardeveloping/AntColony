@@ -34,57 +34,19 @@ public class Colony : MonoBehaviour
         {
             for (int i = 0; i < initial_Gatherers; i++)
             {
-                GenerateGatherer();
+                antManager.GenerateAnt(0, -5, AntManager.Role.Gatherer);
             }
 
             for (int i = 0; i < initial_Workers; i++)
             {
-                GenerateWorker();
+                antManager.GenerateAnt(-17, -6, AntManager.Role.Worker);
             }
 
-
-            GenerateQueen();
+            antManager.GenerateAnt(13, -5, AntManager.Role.Queen);
 
         }
-
-        /*if (s == "Gatherer")
-        {
-            GenerateGatherer();
-        }
-
-        if (s == "Worker")
-        {
-            GenerateWorker();
-        }
-
-        if (s == "Larva")
-        {
-            GenerateLarva();
-        }*/
-
     }
 
-    public void GenerateGatherer()
-    {
-        antManager.GenerateAnt(0, 0, AntManager.Role.Gatherer);
-    }
-
-    public void GenerateLarva()
-    {
-        antManager.GenerateAnt(0, 0, AntManager.Role.Larva);
-    }
-
-    public void GenerateWorker()
-    {
-        antManager.GenerateAnt(0, -5, AntManager.Role.Worker);
-    }
-
-    public void GenerateQueen()
-    {
-        GameObject queenObj = antManager.GenerateAnt(13, -5, AntManager.Role.Queen);
-        //queenObj.transform.localScale = new Vector3(2.0f, 2.0f, 2.0f);
-
-    }
 
     private void Update()
     {
@@ -96,6 +58,8 @@ public class Colony : MonoBehaviour
         //Control de hormigas
         //Si no tenemos ninguna gatherer y no tenemos 2 recursos MINIMO, una worker se tiene que convertir en gatherer
 
+
+
         if (gathererNumber == 0 && workerNumber > 0)
         {
             //Si solo tenemos el caso extremo de un worker
@@ -105,11 +69,8 @@ public class Colony : MonoBehaviour
                 {
                     foreach (var worker in antManager.antWorkerObjectList)
                     {
-                        //Creamos la gatherer
-                        antManager.GenerateAnt(worker.transform.position.x, worker.transform.position.y, AntManager.Role.Gatherer);
-
-                        //Eliminamos la worker
-                        worker.GetComponent<Ant>().Die();
+                        //Cambiamos de rol
+                        worker.GetComponent<Ant>().ChangeRole(AntManager.Role.Gatherer);
 
                         break;
                     }
@@ -119,11 +80,8 @@ public class Colony : MonoBehaviour
             {
                 foreach (var worker in antManager.antWorkerObjectList)
                 {
-                    //Creamos la gatherer
-                    antManager.GenerateAnt(worker.transform.position.x, worker.transform.position.y, AntManager.Role.Gatherer);
-
-                    //Eliminamos la worker
-                    worker.GetComponent<Ant>().Die();
+                    //Cambiamos de rol
+                    worker.GetComponent<Ant>().ChangeRole(AntManager.Role.Gatherer);
 
                     break;
                 }
@@ -146,18 +104,14 @@ public class Colony : MonoBehaviour
 
         //Si tenemos muchos recursos, pero pocas obreras, una recolectora pasara a ser obrera
 
-        if (resources >= 4)
+        if (resources >= 2)
         {
             if (totalWorkers < totalGatherers && totalGatherers > 1)
             {
-                foreach (var gatherer in antManager.antWorkerObjectList)
+                foreach (var gatherer in antManager.antGathererObjectList)
                 {
-                    //Creamos la gatherer
-                    antManager.GenerateAnt(gatherer.transform.position.x, gatherer.transform.position.y, AntManager.Role.Gatherer);
-
-                    //Eliminamos la worker
-                    gatherer.GetComponent<Ant>().Die();
-
+                    //Cambiamos de rol
+                    gatherer.GetComponent<Ant>().ChangeRole(AntManager.Role.Worker);
                     break;
                 }
             }
@@ -168,12 +122,18 @@ public class Colony : MonoBehaviour
         {
             foreach (var worker in antManager.antWorkerObjectList)
             {
-                //Creamos la gatherer
-                antManager.GenerateAnt(worker.transform.position.x, worker.transform.position.y, AntManager.Role.Gatherer);
+                //Cambiamos de rol
+                worker.GetComponent <Ant>().ChangeRole(AntManager.Role.Gatherer);
+                break;
+            }
+        }
 
-                //Eliminamos la worker
-                worker.GetComponent<Ant>().Die();
-
+        if (gathererNumber > ((workerNumber * 2) + 2))
+        {
+            foreach (var gatherer in antManager.antGathererObjectList)
+            {
+                //Cambiamos de rol
+                gatherer.GetComponent<Ant>().ChangeRole(AntManager.Role.Worker);
                 break;
             }
         }

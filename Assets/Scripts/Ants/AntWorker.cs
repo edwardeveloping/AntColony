@@ -35,12 +35,19 @@ public class AntWorker : Ant
     // Referencia al componente SpriteRenderer
     private SpriteRenderer spriteRenderer;
 
+    // Punto destino para moverse
+    public Vector3 destino;
+
+    // Ángulo de corrección para alinear correctamente el sprite
+    private float anguloCorreccion;
+
     private void Start()
     {
         // Obtener el componente SpriteRenderer del GameObject
         spriteRenderer = GetComponent<SpriteRenderer>();
         flipTime = 0.1f;
         flipTimeActual = flipTime;
+        anguloCorreccion = -90f;
     }
     public override void Initialize()
     {
@@ -68,6 +75,7 @@ public class AntWorker : Ant
             {
                 Destroy(resource); // Destruir el recurso
                 MoveTo(queenRoom.transform.position);
+                destino = queenRoom.transform.position;
             }
 
             if (recursoCargado == Recurso.IrComidaLarvas)
@@ -75,6 +83,7 @@ public class AntWorker : Ant
                 Destroy(resource); // Destruir el recurso
                 recursoCargado = Recurso.LlevarComidaLarvas;
                 MoveTo(raisingRoom.transform.position);
+                destino = raisingRoom.transform.position;
             }
         }
     }
@@ -91,12 +100,14 @@ public class AntWorker : Ant
                 if (recursoCargado == Recurso.ComidaReina)
                 {
                     MoveTo(queenRoom.transform.position);
+                    destino = queenRoom.transform.position;
                 }
 
                 if (recursoCargado == Recurso.IrComidaLarvas)
                 {
                     recursoCargado = Recurso.LlevarComidaLarvas;
                     MoveTo(raisingRoom.transform.position);
+                    destino = raisingRoom.transform.position;
                 }
             }
             else
@@ -110,6 +121,7 @@ public class AntWorker : Ant
         {
             recursoCargado = Recurso.IrComidaLarvas;
             MoveTo(storageRoom.transform.position);
+            destino = storageRoom.transform.position;
         }
 
         if (raisingRoom == room && recursoCargado == Recurso.LlevarComidaLarvas)
@@ -131,6 +143,7 @@ public class AntWorker : Ant
 
             recursoCargado = Recurso.LlevarLarva;
             MoveTo(raisingRoom.transform.position);
+            destino = raisingRoom.transform.position;
         }
 
         //Si llega a la sala de la reina deja la comida si esa es la tarea
@@ -162,6 +175,7 @@ public class AntWorker : Ant
             if (assignedResource != null)
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
+                destino = assignedResource.transform.position;
             }
 
             yield return new WaitForSeconds(1f);
@@ -182,12 +196,14 @@ public class AntWorker : Ant
                 if (recursoCargado == Recurso.ComidaReina)
                 {
                     MoveTo(queenRoom.transform.position);
+                    destino = queenRoom.transform.position;
                 }
 
                 if (recursoCargado == Recurso.IrComidaLarvas)
                 {
                     recursoCargado = Recurso.LlevarComidaLarvas;
                     MoveTo(raisingRoom.transform.position);
+                    destino = raisingRoom.transform.position;
                 }
             }
 
@@ -203,6 +219,25 @@ public class AntWorker : Ant
 
     private void SpriteMove()
     {
+        // Mover hacia el destino
+        if (destino != null)
+        {
+            Vector3 direccion = (destino - transform.position).normalized;
+            if (direccion != Vector3.zero)
+            {
+                // Rotar el sprite hacia la dirección de movimiento
+                float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
+
+                // Añadir el ángulo de corrección
+                angulo += anguloCorreccion;
+
+                // Ajustar la rotación del sprite para que solo cambie en el plano 2D
+                transform.rotation = Quaternion.Euler(0, 0, angulo);
+
+            }
+
+        }
+
         // Manejar el flip del sprite
         flipTimeActual -= Time.deltaTime;
         if (flipTimeActual <= 0)
@@ -226,6 +261,7 @@ public class AntWorker : Ant
         {
             recursoCargado = Recurso.ComidaReina;
             MoveTo(storageRoom.transform.position);
+            destino = storageRoom.transform.position;
         }
     }
     public void GetToBreedingRoom()
@@ -235,6 +271,7 @@ public class AntWorker : Ant
         {
             recursoCargado = Recurso.IrLarva;
             MoveTo(breedingRoom.transform.position); // Moverse hacia el recurso.
+            destino = breedingRoom.transform.position;
         }
     }
 

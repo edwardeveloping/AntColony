@@ -24,8 +24,16 @@ public class AntGatherer : Ant
     // Referencia al componente SpriteRenderer
     private SpriteRenderer spriteRenderer;
 
+    // Punto destino para moverse
+    public Vector3 destino;
 
-    
+    // Ángulo de corrección para alinear correctamente el sprite
+    private float anguloCorreccion;
+
+    //
+    private Vector3 lastPosition;
+    private float timeStanding;
+
 
     private void Start()
     {
@@ -39,6 +47,12 @@ public class AntGatherer : Ant
         {
             spriteOriginal = spriteRenderer.sprite;
         }
+
+        anguloCorreccion = -90f;
+
+        //
+        lastPosition = transform.position;
+        timeStanding = 0f;
     }
 
     public override void Initialize()
@@ -55,6 +69,7 @@ public class AntGatherer : Ant
             if (assignedResource != null)
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
+                destino = assignedResource.transform.position;
             }
             else
             {
@@ -73,6 +88,7 @@ public class AntGatherer : Ant
             {
                 CancelInvoke("TryFindResource"); // Detener la invocación periódica si se encuentra un recurso
                 MoveTo(assignedResource.transform.position);
+                destino = assignedResource.transform.position;
             }
         }
     }
@@ -106,6 +122,7 @@ public class AntGatherer : Ant
         }
 
         MoveTo((Vector3)currentExplorationTarget);
+        destino = (Vector3)currentExplorationTarget;
     }
 
     // Cuando llega al recurso
@@ -119,6 +136,7 @@ public class AntGatherer : Ant
             resourcesInUse.Remove(resource); // Marcar el recurso como no en uso
             comidaCargada = true; // Marcar que tiene comida cargada
             MoveTo(storageRoom.transform.position); // Moverse hacia la sala de almacenamiento
+            destino = storageRoom.transform.position;
         }
     }
 
@@ -175,6 +193,7 @@ public class AntGatherer : Ant
         }
 
         SpriteMove();
+        
     }
 
 
@@ -192,6 +211,25 @@ public class AntGatherer : Ant
 
     private void SpriteMove()
     {
+        // Mover hacia el destino
+        if (destino != null)
+        {
+            Vector3 direccion = (destino - transform.position).normalized;
+            if (direccion != Vector3.zero)
+            {
+                // Rotar el sprite hacia la dirección de movimiento
+                float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
+
+                // Añadir el ángulo de corrección
+                angulo += anguloCorreccion;
+
+                // Ajustar la rotación del sprite para que solo cambie en el plano 2D
+                transform.rotation = Quaternion.Euler(0, 0, angulo);
+
+            }
+
+        }
+
         // Manejar el flip del sprite
         flipTimeActual -= Time.deltaTime;
         if (flipTimeActual <= 0)
@@ -201,5 +239,35 @@ public class AntGatherer : Ant
         }
     }
 
-    
+    //Funcion Auxiliar para solucionar problema que a veces se produce y otras veces no
+    private void FixRandomPositionError()
+    {
+        //A veces las recolectoras se rayan, yendo al mismo punto y quedandose bloqueadas
+        //Este error no se produce siempre, solo a veces, y en cada compilacion puede darse en mas casos o en ninguno
+        //Para ello, continuamente se comprobara si la hormiga permanece en la misma posicion durante cierto tiempo, de ser asi, se reiniciara la hormiga
+
+        // Si la posición no ha cambiado
+        if (Vector3.Distance(transform.position, lastPosition) < 0.001f)
+        {
+            timeStanding += Time.deltaTime;
+            if (timeStanding >= 5f)
+            {
+                // Se cumple la condición de estar parada durante 5 segundos, reiniciaremos la hormiga
+                isDead = true;
+                antManager.GenerateAnt(transform.position.x, transform.position.y, AntManager.Role.Gatherer);
+                base.Die();
+
+                // reiniciar contador
+                timeStanding = 0f;
+                lastPosition = transform.position;
+            }
+        }
+        else
+        {
+            // Si la posición ha cambiado, reiniciar el contador
+            timeStanding = 0f;
+            lastPosition = transform.position;
+        }
+
+    }
 }

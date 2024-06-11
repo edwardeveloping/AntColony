@@ -46,7 +46,6 @@ public class PredatorManager : MonoBehaviour
     }
     private void Update()
     {
-        Starvation();
         NoPredators();
     }
 
@@ -61,27 +60,18 @@ public class PredatorManager : MonoBehaviour
         }
     }
 
-    public void Starvation()
+    public bool KillPredator(Predator predatorToKill)
     {
-        foreach (Predator predator in predators)
+        // Remove ant from list.
+        if (!predators.Remove(predatorToKill)) // Try to remove ant object from antObject list.
         {
-            if (predator.hungry <= 0)
-            {
-                predators.Remove(predator); //Eliminamos de la lista
-                Destroy(predator.gameObject); //Destruimos el depredador
-            }
+            Debug.Log("Tried to kill an ant, but it was not found in antObjectList");
+            return false;
         }
-    }
 
-    public void KillPredator(Predator predatorToKill)
-    {
-        foreach (Predator predator in predators)
-        {
-            if (predatorToKill == predator)
-            {
-                predators.Remove(predator); //Eliminamos de la lista
-                Destroy(predator.gameObject); //Destruimos el depredador
-            }
-        }
+        Destroy(predatorToKill.gameObject); // Destroy game object.
+
+        //Debug.Log("AntGathererList size: " + antGathererObjectList.Count + ", AntList size: " + antObjectList.Count);
+        return true;
     }
 }
