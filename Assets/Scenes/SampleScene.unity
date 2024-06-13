@@ -335,27 +335,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
   m_PrefabInstance: {fileID: 992031342}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &460617191 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1304992097626467713, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-  m_PrefabInstance: {fileID: 1810924791}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &460617192 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
   m_PrefabInstance: {fileID: 1810924791}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &460617193 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4303050557328730601, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-  m_PrefabInstance: {fileID: 1810924791}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 460617191}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32432d92b13dd86449db4003df97e38a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -833,6 +817,7 @@ MonoBehaviour:
   antLarvaPrefab: {fileID: 3903535058118962514, guid: 3dd6f7759d79b2044b6a82fd1a3de647, type: 3}
   antQueenPrefab: {fileID: 3903535058118962514, guid: 0d68343353e8a6c4286e79bf0a841167, type: 3}
   colony: {fileID: 1346901900}
+  spriteGathererObj: {fileID: 21300000, guid: fb3591d913bc67b41a854afa78d624a5, type: 3}
   antGathererObjectList: []
   antWorkerObjectList: []
   antLarvaList: []
@@ -1246,7 +1231,6 @@ MonoBehaviour:
   walkableArea: {fileID: 1161352035}
   exterior: {fileID: 2111714629}
   storageRoom: {fileID: 1376754036}
-  securityRoom: {fileID: 460617191}
   queenRoom: {fileID: 342245547}
   breedingRoom: {fileID: 2125996759}
   raisingRoom: {fileID: 609991096}
@@ -1386,7 +1370,6 @@ MonoBehaviour:
   antManager: {fileID: 974215176}
   predatorManager: {fileID: 2031029342}
   storageRoom: {fileID: 1376754041}
-  securityRoom: {fileID: 460617193}
   population: 0
   storageResources: 0
   totalGatherers: 0
@@ -1394,8 +1377,8 @@ MonoBehaviour:
   totalLarvaGatherers: 0
   totalLarvaWorkers: 0
   totalPredators: 0
-  initial_Gatherers: 1
-  initial_Workers: 5
+  initial_Gatherers: 8
+  initial_Workers: 1
 --- !u!4 &1346901901
 Transform:
   m_ObjectHideFlags: 0
