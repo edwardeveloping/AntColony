@@ -6,13 +6,11 @@ public class AntGatherer : Ant
 {
     public Map map;
     public GameObject storageRoom;
-    public GameObject securityRoom;
 
     public GameObject assignedResource;
 
     public bool comidaCargada = false;
     public bool climaFavorable = true; // Variable para representar si el clima es favorable
-    public bool inDanger = false;
     public bool isDead = false;
 
     private static List<GameObject> resourcesInUse = new List<GameObject>(); // Recursos que están siendo recogidos por recolectoras
@@ -68,7 +66,7 @@ public class AntGatherer : Ant
 
     IEnumerator LookForResourceCor()
     {
-        while (assignedResource == null && climaFavorable && !comidaCargada && !inDanger && !isDead)
+        while (assignedResource == null && climaFavorable && !comidaCargada && !isDead)
         {
             assignedResource = map.RequestResource(); // Solicitar un recurso para recoger (se elimina de la lista de disponibles)
             if (assignedResource != null)
@@ -83,7 +81,7 @@ public class AntGatherer : Ant
         }
 
         // Si no se encontró ningún recurso, se puede seguir buscando o explorar
-        if (assignedResource == null && climaFavorable && !comidaCargada && !inDanger && !isDead)
+        if (assignedResource == null && climaFavorable && !comidaCargada && !isDead)
         {
             StartCoroutine(LookForResourceCor()); // Volver a intentar buscar un recurso
         }
@@ -154,35 +152,34 @@ public class AntGatherer : Ant
             if (assignedResource != null)
             {
                 resourcesInUse.Remove(assignedResource); // Marcar el recurso como no en uso si la recolectora muere
+                map.GetComponent<Map>().unasignedResources.Add(assignedResource); //Volver a meterlo en el map
                 assignedResource = null;
+                base.Die();
             }
             return; // No hacer nada más si la hormiga está muerta
         }
 
-        if (!climaFavorable || inDanger) // Si el clima no es favorable o está en peligro, esperar
+        if (!climaFavorable) // Si el clima no es favorable o está en peligro, esperar
         {
             return; // Salir de la actualización si está esperando
         }
 
-        if (inDanger && assignedResource == null) // Si está en peligro y sin un recurso
-        {
-            MoveTo(securityRoom.transform.position);
-        }
-        else if (assignedResource == null && climaFavorable && !comidaCargada && !inDanger)
+        
+        else if (assignedResource == null && climaFavorable && !comidaCargada)
         {
             StartCoroutine(LookForResourceCor()); // Buscar un recurso si no tiene ninguno asignado y el clima es favorable
         }
-        else if (assignedResource != null && climaFavorable && !comidaCargada && !inDanger)
+        else if (assignedResource != null && climaFavorable && !comidaCargada)
         {
             // Moverse hacia el recurso asignado si lo tiene
             MoveTo(assignedResource.transform.position);
         }
-        else if (assignedResource == null && climaFavorable && comidaCargada && !inDanger)
+        else if (assignedResource == null && climaFavorable && comidaCargada)
         {
             // Si tiene comida cargada y no tiene asignado un recurso, ir a la sala de almacenamiento
             MoveTo(storageRoom.transform.position);
         }
-        else if (assignedResource == null && climaFavorable && !comidaCargada && !inDanger)
+        else if (assignedResource == null && climaFavorable && !comidaCargada)
         {
             // Explorar si no hay recursos asignados, el clima es favorable y no está en peligro
             Explore();
