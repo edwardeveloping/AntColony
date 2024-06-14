@@ -8,6 +8,7 @@ TagManager:
   - Predator
   - PredatorArea
   - Food
+  - Exterior
   layers:
   - Default
   - TransparentFX

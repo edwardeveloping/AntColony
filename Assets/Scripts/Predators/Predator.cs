@@ -33,7 +33,7 @@ public class Predator : MovableObject
     // Punto destino para moverse
     public Vector3 destino;
 
-    // Ángulo de corrección para alinear correctamente el sprite
+    // ?ngulo de correcci?n para alinear correctamente el sprite
     private float anguloCorreccion;
 
     private void Start()
@@ -58,11 +58,11 @@ public class Predator : MovableObject
 
 
         if (inVisionRange)
-        { 
+        {
             MoveTo(antTarget.transform.position);
             destino = antTarget.transform.position;
         }
-        
+
         else
         {
             antTarget = null;
@@ -81,7 +81,7 @@ public class Predator : MovableObject
 
 
     // COMBAT.
-    
+
     public void GetStunned()
     {
         Stop();
@@ -102,9 +102,9 @@ public class Predator : MovableObject
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.CompareTag("Ant"))
+        if (collision.gameObject.CompareTag("Ant"))
         {
-            if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
+            /*if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
             {
                 Debug.Log("Predator won.");
                 
@@ -118,9 +118,13 @@ public class Predator : MovableObject
             {
                 Debug.Log("Ant won");
                 predatorManager.KillPredator(this);
-            }
+            }*/
 
-            
+            antTarget.GetComponent<AntGatherer>().isDead = true; //la matamos para que libere el recurso asignado en caso de tenerlo
+            predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
+
+            hungry = 100;
+            antTarget = null;
 
         }
 
@@ -131,7 +135,6 @@ public class Predator : MovableObject
         }
     }
 
-
     private void SpriteMove()
     {
         // Mover hacia el destino
@@ -140,13 +143,13 @@ public class Predator : MovableObject
             Vector3 direccion = (destino - transform.position).normalized;
             if (direccion != Vector3.zero)
             {
-                // Rotar el sprite hacia la dirección de movimiento
+                // Rotar el sprite hacia la direcci?n de movimiento
                 float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
 
-                // Añadir el ángulo de corrección
+                // A?adir el ?ngulo de correcci?n
                 angulo += anguloCorreccion;
 
-                // Ajustar la rotación del sprite para que solo cambie en el plano 2D
+                // Ajustar la rotaci?n del sprite para que solo cambie en el plano 2D
                 transform.rotation = Quaternion.Euler(0, 0, angulo);
 
             }

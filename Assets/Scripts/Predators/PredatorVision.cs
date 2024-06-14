@@ -5,7 +5,7 @@ using UnityEngine;
 public class PredatorVision : MonoBehaviour
 {
 
-    Predator predator;
+    public Predator predator;
 
     // Start is called before the first frame update
     void Start()
@@ -23,8 +23,8 @@ public class PredatorVision : MonoBehaviour
     {
         if (collision.transform.CompareTag("Ant"))
         {
-            predator.antTarget = collision.gameObject;
-            predator.inVisionRange = true;
+            this.transform.parent.GetComponent<Predator>().antTarget = collision.gameObject;
+            this.transform.parent.GetComponent<Predator>().inVisionRange = true;
             
         }
     }
@@ -33,8 +33,8 @@ public class PredatorVision : MonoBehaviour
     {
         if (collision.transform.CompareTag("Ant"))
         {
-            predator.antTarget = null;
-            predator.inVisionRange = false;
+            this.transform.parent.GetComponent<Predator>().antTarget = null;
+            this.transform.parent.GetComponent<Predator>().inVisionRange = false;
             
         }
     }
