@@ -154,8 +154,10 @@ public class AntGatherer : Ant
                 resourcesInUse.Remove(assignedResource); // Marcar el recurso como no en uso si la recolectora muere
                 map.GetComponent<Map>().unasignedResources.Add(assignedResource); //Volver a meterlo en el map
                 assignedResource = null;
-                base.Die();
+
             }
+            base.Die();
+
             return; // No hacer nada más si la hormiga está muerta
         }
 

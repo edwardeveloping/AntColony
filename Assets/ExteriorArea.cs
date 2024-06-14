@@ -23,7 +23,8 @@ public class ExteriorArea : MonoBehaviour
         //Comprobar si la hormiga que persiguen se sale del mapa para dejar de perseguirla
         if (collision.transform.CompareTag("Predator"))
         {
-            collision.gameObject.GetComponent<Predator>().inVisionRange = false;
+            //collision.gameObject.GetComponent<Predator>().inVisionRange = false;
+            //collision.gameObject.GetComponent<Predator>().antTarget = null;
         }
     }
 }
