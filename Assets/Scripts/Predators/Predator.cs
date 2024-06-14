@@ -34,6 +34,8 @@ public class Predator : MovableObject
     // Ángulo de corrección para alinear correctamente el sprite
     private float anguloCorreccion;
 
+    //
+    public bool outSideBounds = false;
 
     private void Start()
     {
@@ -68,11 +70,21 @@ public class Predator : MovableObject
         //Hambre
         hungry -= Time.deltaTime * 8; //Se muere desde predators manager
 
-
-        if (antTarget != null)
+        if (!outSideBounds)
         {
-            MoveTo(antTarget.transform.position);
-            destino = antTarget.transform.position;
+            if (antTarget != null)
+            {
+                MoveTo(antTarget.transform.position);
+                destino = antTarget.transform.position;
+            }
+
+            else
+            {
+                antTarget = null;
+                CheckPosition(); //comprobamos que haya llegado a la posicion para actualizarla
+                MoveTo(randomPos);
+                destino = randomPos;
+            }
         }
 
         else
@@ -82,6 +94,7 @@ public class Predator : MovableObject
             MoveTo(randomPos);
             destino = randomPos;
         }
+        
 
         if (hungry < 0)
         {

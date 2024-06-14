@@ -1716,6 +1716,7 @@ GameObject:
   - component: {fileID: 2111714630}
   - component: {fileID: 2111714632}
   - component: {fileID: 2111714633}
+  - component: {fileID: 2111714634}
   m_Layer: 0
   m_Name: Exterior
   m_TagString: Exterior
@@ -1802,6 +1803,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfe6b4740fd489946bc3aaed970cb500, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  predatorManager: {fileID: 0}
+  thisPredatorList: []
 --- !u!61 &2111714633
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1847,6 +1850,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &2111714634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2111714629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfe6b4740fd489946bc3aaed970cb500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  predatorManager: {fileID: 2031029342}
+  thisPredatorList: []
 --- !u!1 &2125996759 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1304992097626467713, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
