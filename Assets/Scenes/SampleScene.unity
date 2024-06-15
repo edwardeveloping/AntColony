@@ -335,27 +335,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
   m_PrefabInstance: {fileID: 992031342}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &460617191 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1304992097626467713, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-  m_PrefabInstance: {fileID: 1810924791}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &460617192 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-  m_PrefabInstance: {fileID: 1810924791}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &460617193 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4303050557328730601, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-  m_PrefabInstance: {fileID: 1810924791}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 460617191}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 32432d92b13dd86449db4003df97e38a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -833,6 +812,7 @@ MonoBehaviour:
   antLarvaPrefab: {fileID: 3903535058118962514, guid: 3dd6f7759d79b2044b6a82fd1a3de647, type: 3}
   antQueenPrefab: {fileID: 3903535058118962514, guid: 0d68343353e8a6c4286e79bf0a841167, type: 3}
   colony: {fileID: 1346901900}
+  spriteGathererObj: {fileID: 21300000, guid: fb3591d913bc67b41a854afa78d624a5, type: 3}
   antGathererObjectList: []
   antWorkerObjectList: []
   antLarvaList: []
@@ -1221,7 +1201,6 @@ Transform:
   - {fileID: 342245551}
   - {fileID: 609991100}
   - {fileID: 2125996763}
-  - {fileID: 460617192}
   - {fileID: 935233752}
   m_Father: {fileID: 0}
   m_RootOrder: 6
@@ -1246,13 +1225,13 @@ MonoBehaviour:
   walkableArea: {fileID: 1161352035}
   exterior: {fileID: 2111714629}
   storageRoom: {fileID: 1376754036}
-  securityRoom: {fileID: 460617191}
   queenRoom: {fileID: 342245547}
   breedingRoom: {fileID: 2125996759}
   raisingRoom: {fileID: 609991096}
   refugeZone: {fileID: 931347420}
   resourcePrefab: {fileID: 6093698719814198693, guid: 7a4125477a09cb94f8f78f1dfd8fd045, type: 3}
-  unasignedResources: []
+  unasignedResources:
+  - {fileID: 0}
 --- !u!1 &1340872604
 GameObject:
   m_ObjectHideFlags: 0
@@ -1386,7 +1365,6 @@ MonoBehaviour:
   antManager: {fileID: 974215176}
   predatorManager: {fileID: 2031029342}
   storageRoom: {fileID: 1376754041}
-  securityRoom: {fileID: 460617193}
   population: 0
   storageResources: 0
   totalGatherers: 0
@@ -1394,8 +1372,8 @@ MonoBehaviour:
   totalLarvaGatherers: 0
   totalLarvaWorkers: 0
   totalPredators: 0
-  initial_Gatherers: 1
-  initial_Workers: 5
+  initial_Gatherers: 8
+  initial_Workers: 1
 --- !u!4 &1346901901
 Transform:
   m_ObjectHideFlags: 0
@@ -1640,71 +1618,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1810924791
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1256182792}
-    m_Modifications:
-    - target: {fileID: 1304992097626467713, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_Name
-      value: SecurityRoom
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_RootOrder
-      value: -1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.53
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1.79
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1517349404799261504, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4303050557328730601, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
-      propertyPath: roomName
-      value: SecurityRoom
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
 --- !u!1 &1822783215
 GameObject:
   m_ObjectHideFlags: 0
@@ -1770,7 +1683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c716eb608ee1e9f46aa5d7620608b42c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initialNumPredators: 2
+  initialNumPredators: 6
   antManager: {fileID: 974215176}
   predatorPrefab: {fileID: 3903535058118962514, guid: 37fbd535028c2b8448045d6fe0b14f2c, type: 3}
   map: {fileID: 1256182793}
@@ -1803,9 +1716,10 @@ GameObject:
   - component: {fileID: 2111714630}
   - component: {fileID: 2111714632}
   - component: {fileID: 2111714633}
+  - component: {fileID: 2111714634}
   m_Layer: 0
   m_Name: Exterior
-  m_TagString: Untagged
+  m_TagString: Exterior
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1889,6 +1803,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfe6b4740fd489946bc3aaed970cb500, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  predatorManager: {fileID: 0}
+  thisPredatorList: []
 --- !u!61 &2111714633
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1934,6 +1850,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &2111714634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2111714629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfe6b4740fd489946bc3aaed970cb500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  predatorManager: {fileID: 2031029342}
+  thisPredatorList: []
 --- !u!1 &2125996759 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1304992097626467713, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}

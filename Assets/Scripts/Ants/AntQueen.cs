@@ -28,9 +28,6 @@ public class AntQueen : Ant
 
     // Referencia al componente SpriteRenderer
     private SpriteRenderer spriteRenderer;
-    
-    public SpriteRenderer barkPanel;
-    public Sprite[] barkList;
 
     private void Start()
     {
@@ -51,7 +48,6 @@ public class AntQueen : Ant
     public void StartWaitForFood()
     {
         Debug.Log("Esperando a ser alimentada...");
-        StartCoroutine(Bark("Quiero comer"));
         StartCoroutine(PollForFood());
     }
 
@@ -71,25 +67,6 @@ public class AntQueen : Ant
             yield return new WaitForSeconds(1f);
         }
     }
-    
-    IEnumerator Bark(string text)
-    {
-        barkPanel.gameObject.SetActive(true);
-        switch (text)
-        {
-            case "Quiero comer":
-                barkPanel.sprite = barkList[0];
-                break;
-            case "Engendrando larva":
-                barkPanel.sprite = barkList[1];
-                break;
-            
-        }
-        
-        yield return new WaitForSeconds(2f);
-
-        barkPanel.gameObject.SetActive(false);
-    }
 
     // M?todo para poner un huevo
     public void StartLayEgg()
@@ -98,7 +75,6 @@ public class AntQueen : Ant
         Debug.Log("Poniendo huevo...");
 
         // Iniciar el proceso de incubaci?n
-        StartCoroutine(Bark("Engendrando larva"));
         StartCoroutine(IncubateEgg());
     }
     private IEnumerator IncubateEgg()
@@ -175,7 +151,7 @@ public class AntQueen : Ant
 
         //    UpdateWaitForFood = () =>
         //    {
-        //        // Verificar si la reina estï¿½ alimentada
+        //        // Verificar si la reina está alimentada
         //        if (alimentada)
         //        {
         //            // Verificar si el tiempo de vida es menor que x
@@ -210,7 +186,7 @@ public class AntQueen : Ant
         //            tiempoTranscurridoIncubacion += Time.deltaTime;
 
 
-        //            //AQUï¿½ SE GENERARï¿½ UNA LARVA
+        //            //AQUÍ SE GENERARÁ UNA LARVA
         //        };
 
         //        UpdateLayEgg = () =>
@@ -241,7 +217,7 @@ public class AntQueen : Ant
         //            // Actualizar el tiempo transcurrido
         //            tiempoTranscurridoGenerarJalea += Time.deltaTime;
 
-        //            //AQUï¿½ SE GENERARï¿½ la Jalea
+        //            //AQUÍ SE GENERARÁ la Jalea
         //        };
 
         //        UpdateGenerateRoyalJelly = () =>
@@ -268,46 +244,46 @@ public class AntQueen : Ant
         //    };
         //}
         //public System.Action StartWaitForFood = () => {
-        //    // Implementa la lï¿½gica para que la reina espere a ser alimentada
-        //    // Esto podrï¿½a incluir animaciones, sonidos, etc.
+        //    // Implementa la lógica para que la reina espere a ser alimentada
+        //    // Esto podría incluir animaciones, sonidos, etc.
         //    Debug.Log("Generando Jalea Real...");
         //};
         //public Func<Status> UpdateWaitForFood = () => {
-        //    // Implementa la lï¿½gica para actualizar el estado de la reina mientras pone un huevo
-        //    // Puede incluir la verificaciï¿½n de ciertas condiciones y devolver el estado apropiado
+        //    // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
+        //    // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
         //    Debug.Log("Actualizando estado mientras la reina pone un huevo...");
         //    return Status.Running; // Ejemplo: devolver un estado ficticio
         //};
 
         //public System.Action StartLayEgg = () =>
         //{
-        //    // Implementa la lï¿½gica para que la reina espere a ser alimentada
-        //    // Esto podrï¿½a incluir animaciones, sonidos, etc.
+        //    // Implementa la lógica para que la reina espere a ser alimentada
+        //    // Esto podría incluir animaciones, sonidos, etc.
         //    Debug.Log("Generando Jalea Real...");
         //};
 
         //public Func<Status> UpdateLayEgg = () => {
-        //    // Implementa la lï¿½gica para actualizar el estado de la reina mientras pone un huevo
-        //    // Puede incluir la verificaciï¿½n de ciertas condiciones y devolver el estado apropiado
+        //    // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
+        //    // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
         //    Debug.Log("Actualizando estado mientras la reina pone un huevo...");
         //    return Status.Running; // Ejemplo: devolver un estado ficticio
         //};
 
         //public System.Action StartGenerateRoyalJelly = () => {
-        //    // Implementa la lï¿½gica para que la reina espere a ser alimentada
-        //    // Esto podrï¿½a incluir animaciones, sonidos, etc.
+        //    // Implementa la lógica para que la reina espere a ser alimentada
+        //    // Esto podría incluir animaciones, sonidos, etc.
         //    Debug.Log("Generando Jalea Real...");
         //};
         //public Func<Status> UpdateGenerateRoyalJelly = () => {
-        //    // Implementa la lï¿½gica para actualizar el estado de la reina mientras pone un huevo
-        //    // Puede incluir la verificaciï¿½n de ciertas condiciones y devolver el estado apropiado
+        //    // Implementa la lógica para actualizar el estado de la reina mientras pone un huevo
+        //    // Puede incluir la verificación de ciertas condiciones y devolver el estado apropiado
         //    Debug.Log("Actualizando estado mientras la reina genera Jalea Real...");
         //    return Status.Running; // Ejemplo: devolver un estado ficticio
         //};
 
         //public System.Action StartDie = () => {
-        //    // Implementa la lï¿½gica para que la reina espere a ser alimentada
-        //    // Esto podrï¿½a incluir animaciones, sonidos, etc.
+        //    // Implementa la lógica para que la reina espere a ser alimentada
+        //    // Esto podría incluir animaciones, sonidos, etc.
         //    Debug.Log("Muriendo...");
         //};
 

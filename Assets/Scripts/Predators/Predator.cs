@@ -7,10 +7,8 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Predator : MovableObject
 {
-
     public PredatorManager predatorManager;
     public GameObject antTarget;
-    public bool inVisionRange;
 
     public float hungry;
 
@@ -36,55 +34,21 @@ public class Predator : MovableObject
     // Ángulo de corrección para alinear correctamente el sprite
     private float anguloCorreccion;
 
+    //
+    public bool outSideBounds = false;
+
     private void Start()
     {
         // Obtener el componente SpriteRenderer del GameObject
         spriteRenderer = GetComponent<SpriteRenderer>();
         flipTime = 0.1f;
         flipTimeActual = flipTime;
-
-        inVisionRange = false;
+        antTarget = null;
         randomPos = map.RandomPositionInsideBounds();
         hungry = 100;
 
         //cambiar desde start
         anguloCorreccion = -90f;
-    }
-
-    private void Update()
-    {
-        //Hambre
-        hungry -= Time.deltaTime * 8; //Se muere desde predators manager
-
-
-        if (inVisionRange)
-        { 
-            MoveTo(antTarget.transform.position);
-            destino = antTarget.transform.position;
-        }
-        
-        else
-        {
-            antTarget = null;
-            CheckPosition(); //comprobamos que haya llegado a la posicion para actualizarla
-            MoveTo(randomPos);
-            destino = randomPos;
-        }
-
-        if (hungry < 0)
-        {
-            predatorManager.KillPredator(this);
-        }
-
-        SpriteMove();
-    }
-
-
-    // COMBAT.
-    
-    public void GetStunned()
-    {
-        Stop();
     }
 
     private void CheckPosition()
@@ -100,34 +64,44 @@ public class Predator : MovableObject
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+
+    private void Update()
     {
-        if(collision.gameObject.CompareTag("Ant"))
+        //Hambre
+        hungry -= Time.deltaTime * 8; //Se muere desde predators manager
+
+        if (!outSideBounds)
         {
-            if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
+            if (antTarget != null)
             {
-                Debug.Log("Predator won.");
-                antTarget.GetComponent<AntGatherer>().isDead = true; //la matamos para que libere el recurso asignado en caso de tenerlo
-                antTarget.GetComponent<Ant>().Die(); // Kill ant.
-                predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
-                antTarget = null;
-                hungry = 100;
-            } 
-            else // If predator looses (false)
-            {
-                Debug.Log("Ant won");
-                predatorManager.KillPredator(this);
+                MoveTo(antTarget.transform.position);
+                destino = antTarget.transform.position;
             }
 
-            
-
+            else
+            {
+                antTarget = null;
+                CheckPosition(); //comprobamos que haya llegado a la posicion para actualizarla
+                MoveTo(randomPos);
+                destino = randomPos;
+            }
         }
 
-        //BUG => A veces se atascan dos depredadores cuando tienen direcciones opuestas, en caso de que ninguno este persiguiendo a una hormiga, solucionaremos
-        if (collision.gameObject.CompareTag("Predator") && inVisionRange == false) //comparamos solo con el actual, porque el otro se comparara en su propio script
+        else
         {
-            randomPos = map.RandomPositionInsideBounds(); //nueva posicion random
+            antTarget = null;
+            CheckPosition(); //comprobamos que haya llegado a la posicion para actualizarla
+            MoveTo(randomPos);
+            destino = randomPos;
         }
+        
+
+        if (hungry < 0)
+        {
+            predatorManager.KillPredator(this);
+        }
+
+        SpriteMove();
     }
 
 
@@ -160,4 +134,37 @@ public class Predator : MovableObject
             flipTimeActual = flipTime;
         }
     }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject == antTarget)
+        {
+            if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
+            {
+                Debug.Log("Predator won.");
+                
+                antTarget.GetComponent<AntGatherer>().isDead = true; //la matamos para que libere el recurso asignado en caso de tenerlo
+                predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
+
+                hungry = 100;
+                antTarget = null;
+            } 
+            else // If predator looses (false)
+            {
+                Debug.Log("Ant won");
+                predatorManager.KillPredator(this);
+            }
+
+            
+
+        }
+
+        //BUG => A veces se atascan dos depredadores cuando tienen direcciones opuestas, en caso de que ninguno este persiguiendo a una hormiga, solucionaremos
+        if (collision.gameObject.CompareTag("Predator") && antTarget == null) //comparamos solo con el actual, porque el otro se comparara en su propio script
+        {
+            randomPos = map.RandomPositionInsideBounds(); //nueva posicion random
+        }
+    }
+
+
 }
