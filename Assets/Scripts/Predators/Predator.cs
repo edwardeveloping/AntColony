@@ -104,7 +104,7 @@ public class Predator : MovableObject
     {
         if(collision.gameObject.CompareTag("Ant"))
         {
-            if (antTarget != null && antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
+            if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
             {
                 Debug.Log("Predator won.");
                 antTarget.GetComponent<AntGatherer>().isDead = true; //la matamos para que libere el recurso asignado en caso de tenerlo
