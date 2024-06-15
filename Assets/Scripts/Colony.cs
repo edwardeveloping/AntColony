@@ -51,53 +51,115 @@ public class Colony : MonoBehaviour
     private void Update()
     {
         ManageColony();
-        //Controlamos
-        ControlColony();
     }
 
-    private void ControlColony()
+    private void ControlColony(int gathererNumber, int workerNumber, int gathererLarvaCount, int workerLarvaCount, int resources)
     {
         //Control de hormigas
         //Si no tenemos ninguna gatherer y no tenemos 2 recursos MINIMO, una worker se tiene que convertir en gatherer
-        int gathererNumber = antManager.antGathererObjectList.Count;
-        int workerNumber = antManager.antWorkerObjectList.Count;
-        int resources = storageRoom.GetComponent<Room>().count;
-        int gathererLarvaCount = CountPendingLarvas("Gatherer");
-        int workerLarvaCount = CountPendingLarvas("Worker");
 
 
-        /*if (gathererNumber != workerNumber * 2)
+
+        if (gathererNumber == 0 && workerNumber > 0)
         {
-            if (gathererNumber < workerNumber * 2)
+            //Si solo tenemos el caso extremo de un worker
+            if (workerNumber == 1)
+            {
+                if (resources <= 2)
+                {
+                    foreach (var worker in antManager.antWorkerObjectList)
+                    {
+                        //Cambiamos de rol
+                        worker.GetComponent<Ant>().ChangeRole(AntManager.Role.Gatherer);
+
+                        break;
+                    }
+                }
+            }
+            else
             {
                 foreach (var worker in antManager.antWorkerObjectList)
                 {
+                    //Cambiamos de rol
                     worker.GetComponent<Ant>().ChangeRole(AntManager.Role.Gatherer);
+
                     break;
                 }
             }
             
-            else if (gathererNumber > workerNumber * 2)
+        }
+
+        //Control de larvas
+        if (gathererNumber <= 1 && workerNumber >= 1 && gathererLarvaCount == 0 && workerLarvaCount >= 1) 
+        {
+            //transformamos todas las larvas workers en gatherers, ya que tenemos al menos 1 worker
+            foreach (var larva in antManager.antLarvaList)
+            {
+                if (larva.GetComponent<AntLarva>().type == "Worker" || string.IsNullOrEmpty(larva.GetComponent<AntLarva>().type))//no tiene tag o es worker
+                {
+                    larva.GetComponent<AntLarva>().type = "Gatherer";
+                } 
+            }
+        }
+
+        //Si tenemos muchos recursos, pero pocas obreras, una recolectora pasara a ser obrera
+
+        if (resources >= 2)
+        {
+            if (totalWorkers < totalGatherers && totalGatherers > 1)
             {
                 foreach (var gatherer in antManager.antGathererObjectList)
                 {
+                    //Cambiamos de rol
                     gatherer.GetComponent<Ant>().ChangeRole(AntManager.Role.Worker);
                     break;
                 }
             }
-        }*/
+        }
 
-
-
-
-        // CASO EXTREMO
-        if (gathererNumber == 0 && workerNumber == 1 && resources < 3)
+        //comparacion gatherers con workers
+        if (workerNumber * 2 > gathererNumber)
         {
             foreach (var worker in antManager.antWorkerObjectList)
             {
-                worker.GetComponent<Ant>().ChangeRole(AntManager.Role.Gatherer);
+                //Cambiamos de rol
+                worker.GetComponent <Ant>().ChangeRole(AntManager.Role.Gatherer);
+                break;
             }
         }
+
+        if (gathererNumber > ((workerNumber * 2) + 2))
+        {
+            foreach (var gatherer in antManager.antGathererObjectList)
+            {
+                //Cambiamos de rol
+                gatherer.GetComponent<Ant>().ChangeRole(AntManager.Role.Worker);
+                break;
+            }
+        }
+
+
+        //Enemigos
+        //Si hay muchos enemigos, las gatherer iran a la SecurityRoom a esperar hasta que estos mueran
+        //Hay que tener en cuenta que, si inicializamos con dos predadores, cuando mueran se generaran dos nuevos
+        //Es esperar en caso de que haya mas de estos predadores base, si hubiesen 5 al regenerarse se regenerarian unicamente 2
+        //Pueden producirse bucles infinitos si no
+
+        /*if (predatorManager.initialNumPredators < totalPredators)
+        {
+            foreach(var gatherer in antManager.antGathererObjectList)
+            {
+                gatherer.GetComponent<AntGatherer>().inDanger = true;
+            }
+        }
+
+        else if (predatorManager.initialNumPredators == totalPredators)
+        {
+            foreach (var gatherer in antManager.antGathererObjectList)
+            {
+                gatherer.GetComponent<AntGatherer>().inDanger = false;
+            }
+        }*/
 
     }
     private void ManageColony()
@@ -126,7 +188,8 @@ public class Colony : MonoBehaviour
         //Llamamos a nuestra funcion
         AssignLarvaType(type);
 
-        
+        //Controlamos
+        ControlColony(gathererNumber, workerNumber, gathererLarvaCount, workerLarvaCount, resources);
 
     }
 

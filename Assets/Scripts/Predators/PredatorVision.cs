@@ -1,45 +1,39 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class PredatorVision : MonoBehaviour
 {
-    public bool insideVision;
-    public GameObject ant;
 
-    private void Start()
+    Predator predator;
+
+    // Start is called before the first frame update
+    void Start()
     {
-        insideVision = false;
+        predator = transform.parent.GetComponent<Predator>();
     }
-    private void OnTriggerStay2D(Collider2D collision)
+
+    // Update is called once per frame
+    void Update()
     {
-        if (collision.transform.tag == "Ant")
+        
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.transform.CompareTag("Ant"))
         {
-            insideVision = true;
-            ant = collision.gameObject;
+            predator.inVisionRange = true;
+            predator.antTarget = collision.gameObject;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject == ant)
+        if (collision.transform.CompareTag("Ant"))
         {
-            insideVision = false;
+            predator.inVisionRange = false;
+            predator.antTarget = null;
         }
-    }
-
-    private void Update()
-    {
-        if (insideVision)
-        {
-            transform.parent.GetComponent<Predator>().antTarget = ant;
-        }
-
-        else
-        {
-            transform.parent.GetComponent<Predator>().antTarget = null;
-        }
-        
     }
 }

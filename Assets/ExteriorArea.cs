@@ -4,49 +4,26 @@ using UnityEngine;
 
 public class ExteriorArea : MonoBehaviour
 {
-    /*
-    [SerializeField] public PredatorManager predatorManager;
-    public List<Predator> thisPredatorList = new List<Predator> ();
 
     // Start is called before the first frame update
     void Start()
     {
-        thisPredatorList = predatorManager.predators;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        thisPredatorList = predatorManager.predators;
+        
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         // DEPREDADORES
-        //Comprobar ai el depredador esta fuera del mapa
-
-        foreach (Predator predator in thisPredatorList)
+        //Comprobar si la hormiga que persiguen se sale del mapa para dejar de perseguirla
+        if (collision.transform.CompareTag("Predator"))
         {
-            if (collision == predator)
-            {
-                predator.GetComponent<Predator>().outSideBounds = true;
-            }
+            collision.gameObject.GetComponent<Predator>().inVisionRange = false;
         }
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // DEPREDADORES
-        //Comprobar ai el depredador esta dentro del mapa
-
-        foreach (Predator predator in thisPredatorList)
-        {
-            if (collision == predator)
-            {
-                predator.GetComponent<Predator>().outSideBounds = false;
-            }
-        }
-    }
-
-    */
 }

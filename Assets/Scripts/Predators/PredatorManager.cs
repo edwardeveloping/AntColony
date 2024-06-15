@@ -74,16 +74,4 @@ public class PredatorManager : MonoBehaviour
         //Debug.Log("AntGathererList size: " + antGathererObjectList.Count + ", AntList size: " + antObjectList.Count);
         return true;
     }
-
-    //Funcion auxiliar para eliminar los targets del resto de depredadores y evitar errores
-    public void CleanPredatorTarget(GameObject antTarget)
-    {
-        foreach (Predator predator in predators)
-        {
-            if (predator.antTarget != null && predator.antTarget == antTarget)
-            {
-                predator.antTarget = null;
-            }
-        }
-    }
 }
