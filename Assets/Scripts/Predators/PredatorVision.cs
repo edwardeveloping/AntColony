@@ -23,9 +23,8 @@ public class PredatorVision : MonoBehaviour
     {
         if (collision.transform.CompareTag("Ant"))
         {
-            predator.antTarget = collision.gameObject;
             predator.inVisionRange = true;
-            
+            predator.antTarget = collision.gameObject;
         }
     }
 
@@ -33,9 +32,8 @@ public class PredatorVision : MonoBehaviour
     {
         if (collision.transform.CompareTag("Ant"))
         {
-            predator.antTarget = null;
             predator.inVisionRange = false;
-            
+            predator.antTarget = null;
         }
     }
 }
