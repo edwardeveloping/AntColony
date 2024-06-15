@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ExteriorArea : MonoBehaviour
 {
+    /*
     [SerializeField] public PredatorManager predatorManager;
     public List<Predator> thisPredatorList = new List<Predator> ();
 
@@ -47,5 +48,5 @@ public class ExteriorArea : MonoBehaviour
         }
     }
 
-    
+    */
 }
