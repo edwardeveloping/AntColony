@@ -42,7 +42,7 @@ public class Colony : MonoBehaviour
                 antManager.GenerateAnt(-17, -6, AntManager.Role.Worker);
             }
 
-            antManager.GenerateAnt(20, -7, AntManager.Role.Queen);
+            antManager.GenerateAnt(13, -5, AntManager.Role.Queen);
 
             antManager.GenerateAnt(-10,-10, AntManager.Role.Soldier);
         }
