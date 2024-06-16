@@ -1384,15 +1384,16 @@ MonoBehaviour:
   antManager: {fileID: 974215176}
   predatorManager: {fileID: 2031029342}
   storageRoom: {fileID: 1376754041}
+  initial_Gatherers: 8
+  initial_Workers: 1
+  initial_Soldiers: 0
   population: 0
-  storageResources: 0
   totalGatherers: 0
   totalWorkers: 0
   totalLarvaGatherers: 0
   totalLarvaWorkers: 0
   totalPredators: 0
-  initial_Gatherers: 8
-  initial_Workers: 1
+  storageResources: 0
 --- !u!4 &1346901901
 Transform:
   m_ObjectHideFlags: 0

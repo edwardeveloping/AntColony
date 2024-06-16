@@ -17,15 +17,17 @@ public class Colony : MonoBehaviour
     public Room storageRoom;
 
     //variables para controlar desde el menu de Unity compilando el programa
+    public int initial_Gatherers;
+    public int initial_Workers;
+    public int initial_Soldiers;
     public int population;
-    public int storageResources;
     public int totalGatherers;
     public int totalWorkers;
     public int totalLarvaGatherers;
     public int totalLarvaWorkers;
     public int totalPredators;
-    public int initial_Gatherers;
-    public int initial_Workers;
+    public int storageResources;
+
 
 
     public void Initialize(string s)
@@ -42,9 +44,13 @@ public class Colony : MonoBehaviour
                 antManager.GenerateAnt(-17, -6, AntManager.Role.Worker);
             }
 
+            for (int i = 0;i < initial_Soldiers; i++)
+            {
+                antManager.GenerateAnt(-10, -10, AntManager.Role.Soldier);
+            }
+
             antManager.GenerateAnt(20, -7, AntManager.Role.Queen);
 
-            antManager.GenerateAnt(-10,-10, AntManager.Role.Soldier);
         }
     }
 

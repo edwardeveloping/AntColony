@@ -163,6 +163,8 @@ public class Predator : MovableObject
         if (collision.gameObject.CompareTag("Predator") && antTarget == null) //comparamos solo con el actual, porque el otro se comparara en su propio script
         {
             randomPos = map.RandomPositionInsideBounds(); //nueva posicion random
+            MoveTo(randomPos);
+            destino = randomPos;
         }
     }
 
