@@ -22,6 +22,9 @@ public class AntLarva : Ant
 
     // Referencia al componente SpriteRenderer
     private SpriteRenderer spriteRenderer;
+    
+    public SpriteRenderer barkPanel;
+    public Sprite[] barkList;
 
     private void Start()
     {
@@ -55,12 +58,14 @@ public class AntLarva : Ant
     {
         if (type == "Gatherer")
         {
+            StartCoroutine(Bark("Transformacion Gatherer"));
             // colony.Initialize("Gatherer");
             antManager.GenerateAnt(transform.position.x, transform.position.y, AntManager.Role.Gatherer);
         }
 
         if (type == "Worker")
         {
+            StartCoroutine(Bark("Transformacion Worker"));
             // colony.Initialize("Worker");
             antManager.GenerateAnt(transform.position.x, transform.position.y, AntManager.Role.Worker);
         }
@@ -85,6 +90,7 @@ public class AntLarva : Ant
     {
         if (raisingRoom == room)
         {
+            StartCoroutine(Bark("Quiero comer"));
             StartCoroutine(PollForFood());
         }
     }
@@ -104,6 +110,28 @@ public class AntLarva : Ant
             // Esperar un corto tiempo antes de volver a verificar
             yield return new WaitForSeconds(1f);
         }
+    }
+    
+    IEnumerator Bark(string text)
+    {
+        barkPanel.gameObject.SetActive(true);
+        switch (text)
+        {
+            case "Quiero comer":
+                barkPanel.sprite = barkList[0];
+                break;
+            case "Transformacion Worker":
+                barkPanel.sprite = barkList[1];
+                break;
+            case "Transformacion Gatherer":
+                barkPanel.sprite = barkList[2];
+                break;
+            
+        }
+        
+        yield return new WaitForSeconds(2f);
+
+        barkPanel.gameObject.SetActive(false);
     }
 
     private void SpriteMove()

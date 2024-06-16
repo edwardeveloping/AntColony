@@ -13,7 +13,7 @@ public class AntGatherer : Ant
     public bool climaFavorable = true; // Variable para representar si el clima es favorable
     public bool isDead = false;
 
-    private static List<GameObject> resourcesInUse = new List<GameObject>(); // Recursos que est·n siendo recogidos por recolectoras
+    private static List<GameObject> resourcesInUse = new List<GameObject>(); // Recursos que est√°n siendo recogidos por recolectoras
     private Vector3? currentExplorationTarget = null;
 
     // Referencia al nuevo sprite
@@ -28,12 +28,15 @@ public class AntGatherer : Ant
     // Punto destino para moverse
     public Vector3 destino;
 
-    // ¡ngulo de correcciÛn para alinear correctamente el sprite
+    // √Ångulo de correcci√≥n para alinear correctamente el sprite
     private float anguloCorreccion;
 
-    //PosiciÛn
+    //Posici√≥n
     private Vector3 lastPosition;
     private float timeStanding;
+
+    public SpriteRenderer barkPanel;
+    public Sprite[] barkList;
 
     private void Start()
     {
@@ -54,13 +57,32 @@ public class AntGatherer : Ant
         lastPosition = transform.position;
         timeStanding = 0f;
 
-        // Iniciar la b˙squeda de recursos
+        // Iniciar la b√∫squeda de recursos
         StartCoroutine(LookForResourceCor());
+    }
+
+    IEnumerator Bark(string text)
+    {
+        barkPanel.gameObject.SetActive(true);
+        switch (text)
+        {
+            case "LLevando comida a storageRoom":
+                barkPanel.sprite = barkList[1];
+                break;
+            case "Buscando comida":
+                barkPanel.sprite = barkList[0];
+                break;
+
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        barkPanel.gameObject.SetActive(false);
     }
 
     public override void Initialize()
     {
-        // Iniciar la b˙squeda de recursos
+        // Iniciar la b√∫squeda de recursos
         StartCoroutine(LookForResourceCor());
     }
 
@@ -73,14 +95,15 @@ public class AntGatherer : Ant
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
                 destino = assignedResource.transform.position;
-                Debug.Log("Lo tengo"); // Mensaje de confirmaciÛn de que se ha encontrado un recurso
+                StartCoroutine(Bark("Buscando comida"));
+                Debug.Log("Lo tengo"); // Mensaje de confirmaci√≥n de que se ha encontrado un recurso
                 yield break; // Salir de la corrutina cuando se encuentra un recurso
             }
 
             yield return new WaitForSeconds(1f); // Esperar 1 segundo antes de volver a intentar
         }
 
-        // Si no se encontrÛ ning˙n recurso, se puede seguir buscando o explorar
+        // Si no se encontr√≥ ning√∫n recurso, se puede seguir buscando o explorar
         if (assignedResource == null && climaFavorable && !comidaCargada && !isDead)
         {
             StartCoroutine(LookForResourceCor()); // Volver a intentar buscar un recurso
@@ -118,6 +141,7 @@ public class AntGatherer : Ant
             comidaCargada = true; // Marcar que tiene comida cargada
             MoveTo(storageRoom.transform.position); // Moverse hacia la sala de almacenamiento
             destino = storageRoom.transform.position;
+            StartCoroutine(Bark("LLevando comida a storageRoom"));
             Debug.Log("Lo cargo");
         }
     }
@@ -158,15 +182,15 @@ public class AntGatherer : Ant
             }
             base.Die();
 
-            return; // No hacer nada m·s si la hormiga est· muerta
+            return; // No hacer nada m√°s si la hormiga est√° muerta
         }
 
-        if (!climaFavorable) // Si el clima no es favorable o est· en peligro, esperar
+        if (!climaFavorable) // Si el clima no es favorable o est√° en peligro, esperar
         {
-            return; // Salir de la actualizaciÛn si est· esperando
+            return; // Salir de la actualizaci√≥n si est√° esperando
         }
 
-        
+
         else if (assignedResource == null && climaFavorable && !comidaCargada)
         {
             StartCoroutine(LookForResourceCor()); // Buscar un recurso si no tiene ninguno asignado y el clima es favorable
@@ -183,7 +207,7 @@ public class AntGatherer : Ant
         }
         else if (assignedResource == null && climaFavorable && !comidaCargada)
         {
-            // Explorar si no hay recursos asignados, el clima es favorable y no est· en peligro
+            // Explorar si no hay recursos asignados, el clima es favorable y no est√° en peligro
             Explore();
         }
 
@@ -208,13 +232,13 @@ public class AntGatherer : Ant
             Vector3 direccion = (destino - transform.position).normalized;
             if (direccion != Vector3.zero)
             {
-                // Rotar el sprite hacia la direcciÛn de movimiento
+                // Rotar el sprite hacia la direcci√≥n de movimiento
                 float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
 
-                // AÒadir el ·ngulo de correcciÛn
+                // A√±adir el √°ngulo de correcci√≥n
                 angulo += anguloCorreccion;
 
-                // Ajustar la rotaciÛn del sprite para que solo cambie en el plano 2D
+                // Ajustar la rotaci√≥n del sprite para que solo cambie en el plano 2D
                 transform.rotation = Quaternion.Euler(0, 0, angulo);
             }
         }
