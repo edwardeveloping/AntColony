@@ -211,11 +211,7 @@ public class AntWorker : Ant
         StartCoroutine(WaitForResourceCor());
     }
     IEnumerator LookForResourceCor()
-    {
-        //Para buscar el recurso lo hago en una corrutina para que no se queden tontas en la storageRoom sin saber que hacer
-        //Comprueba cada segundo si ha aparecido un recurso nuevo en el mapa y si aparece se lo asigna
-        //Se aceptan sugerencias para hacerlo mas limpio xd
-        //Por si quereis usarlo 
+    { 
         while (assignedResource == null)
         {
             assignedResource = map.RequestResource(); // Solicitar un recurso para recoger (se eliminar  de la lista)
