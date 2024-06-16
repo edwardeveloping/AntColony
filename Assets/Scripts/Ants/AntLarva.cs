@@ -42,7 +42,7 @@ public class AntLarva : Ant
 
         if (hungry <= 0)
         {
-            Debug.Log(hungry);
+            //Debug.Log(hungry);
             base.Die();
         }
 

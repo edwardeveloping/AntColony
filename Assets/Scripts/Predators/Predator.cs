@@ -141,7 +141,7 @@ public class Predator : MovableObject
         {
             if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
             {
-                Debug.Log("Predator won.");
+                //Debug.Log("Predator won.");
                 
                 antTarget.GetComponent<AntGatherer>().isDead = true; //la matamos para que libere el recurso asignado en caso de tenerlo
                 predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
@@ -151,7 +151,7 @@ public class Predator : MovableObject
             } 
             else // If predator looses (false)
             {
-                Debug.Log("Ant won");
+                //Debug.Log("Ant won");
                 predatorManager.KillPredator(this);
             }
 

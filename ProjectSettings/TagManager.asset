@@ -9,6 +9,11 @@ TagManager:
   - PredatorArea
   - Food
   - Exterior
+  - Car
+  - Door
+  - Key
+  - Pizza
+  - SoldierAnt
   layers:
   - Default
   - TransparentFX

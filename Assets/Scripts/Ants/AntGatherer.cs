@@ -73,7 +73,7 @@ public class AntGatherer : Ant
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
                 destino = assignedResource.transform.position;
-                Debug.Log("Lo tengo"); // Mensaje de confirmación de que se ha encontrado un recurso
+                //Debug.Log("Lo tengo"); // Mensaje de confirmación de que se ha encontrado un recurso
                 yield break; // Salir de la corrutina cuando se encuentra un recurso
             }
 
