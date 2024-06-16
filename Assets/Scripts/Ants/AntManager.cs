@@ -17,6 +17,9 @@ public class AntManager : MonoBehaviour
     }
 
     [SerializeField] Map map;
+    [SerializeField] PredatorManager predatorManager;
+
+    [SerializeField] Transform soldiersWaittingZone;
 
     [SerializeField] GameObject antWorkerPrefab;
     [SerializeField] GameObject antGathererPrefab;
@@ -57,6 +60,9 @@ public class AntManager : MonoBehaviour
 
             case Role.Soldier:
                 antObj = Instantiate(antSoldierPrefab, new Vector2(x, y), Quaternion.identity);
+                antObj.GetComponent<AntSoldier>()._predatorManager = predatorManager;
+                antObj.GetComponent<AntSoldier>()._map = map;
+                antObj.GetComponent<AntSoldier>().waittingZone = soldiersWaittingZone;
                 break;
 
             case Role.Gatherer:

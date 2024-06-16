@@ -805,6 +805,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 1256182793}
+  predatorManager: {fileID: 2031029342}
+  soldiersWaittingZone: {fileID: 1831572213}
   antWorkerPrefab: {fileID: 3903535058118962514, guid: 11ade5c47582e944cb9a614edfb9d6eb, type: 3}
   antGathererPrefab: {fileID: 3903535058118962514, guid: 64a9a13604ed1264186ab1425ae09f3e, type: 3}
   antBuilderPrefab: {fileID: 3903535058118962514, guid: 8fb9e9ea795d9ea4f835106241939ab0, type: 3}
@@ -1197,6 +1199,7 @@ Transform:
   - {fileID: 1822783216}
   - {fileID: 2111714631}
   - {fileID: 931347420}
+  - {fileID: 1831572213}
   - {fileID: 1376754040}
   - {fileID: 342245551}
   - {fileID: 609991100}
@@ -1654,6 +1657,37 @@ Transform:
   m_Father: {fileID: 1256182792}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1831572212
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1831572213}
+  m_Layer: 0
+  m_Name: Soldiers Waitting Zone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1831572213
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1831572212}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -11.24, y: -6.87, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1256182792}
+  m_RootOrder: -1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2031029341
 GameObject:
   m_ObjectHideFlags: 0
@@ -1803,8 +1837,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfe6b4740fd489946bc3aaed970cb500, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  predatorManager: {fileID: 0}
-  thisPredatorList: []
 --- !u!61 &2111714633
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1862,8 +1894,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfe6b4740fd489946bc3aaed970cb500, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  predatorManager: {fileID: 2031029342}
-  thisPredatorList: []
 --- !u!1 &2125996759 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1304992097626467713, guid: 5b622b944fcdeab4680e6495b1f6fcf6, type: 3}
