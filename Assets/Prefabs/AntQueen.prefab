@@ -446,11 +446,9 @@ MonoBehaviour:
   tiempoIncubacion: 10
   salud: 100
   saludMaxima: 100
-  tasaDeterioroSalud: 0.1
+  tasaDeterioroSalud: 0.6
   umbralHambre: 20
-  imagenFinSimulacion: {fileID: 0}
   barraDeVida: {fileID: 1648222044292858145}
-  mensajeFinSimulacion: {fileID: 0}
   barkPanel: {fileID: 2996876030736721946}
   barkList:
   - {fileID: 21300000, guid: 49738eab1c48a0742a54b0f69ab7bd7b, type: 3}
