@@ -85,7 +85,7 @@ public class Colony : MonoBehaviour
     {
         ManageColony();
         //Controlamos
-        ControlColony();
+        //ControlColony();
     }
 
     private void ControlColony()
