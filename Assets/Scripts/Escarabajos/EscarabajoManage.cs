@@ -7,6 +7,7 @@ public class EscarabajoManage : MonoBehaviour
     [SerializeField] GameObject beetlePrefab;
     [SerializeField] public int initialNumBeetles;
     [SerializeField] Map map;
+    public Transform beetleSpawn;
 
     private List<Escarabajos> beetles = new List<Escarabajos>();
 
@@ -20,10 +21,21 @@ public class EscarabajoManage : MonoBehaviour
         //SE LLAMA DESDE COLONY
     }
 
-    public void GenerateBeetle()
+    public IEnumerator GenerateBeetleOverTime(int n)
     {
-        Escarabajos beetle = Instantiate(beetlePrefab, map.RandomPositionInsideBounds(), Quaternion.identity).GetComponent<Escarabajos>();
+        for (int i = 0; i < n; i++)
+        {
+            GenerateBeetle();
+            yield return new WaitForSeconds(2f);
+        }
+        
+    }
+
+    private void GenerateBeetle()
+    {
+        Escarabajos beetle = Instantiate(beetlePrefab, beetleSpawn.position, Quaternion.identity).GetComponent<Escarabajos>();
         beetle.map = map;
         beetles.Add(beetle);
     }
+
 }

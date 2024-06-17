@@ -12,6 +12,6 @@ public class GameManager : MonoBehaviour
     {
         map.Initilize();
         colony.Initialize("Init");
-        predatorManager.Initialize();
+        //predatorManager.Initialize();
     }
 }

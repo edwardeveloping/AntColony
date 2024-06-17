@@ -22,15 +22,7 @@ public class PredatorManager : MonoBehaviour
 
     public event Action OverPopulatedEvent { add { _overPopulated += value; } remove { _overPopulated -= value; } }
 
-    public void Initialize()
-    {
-        /*for(int i= 0; i < initialNumPredators; i++)
-        {
-            GeneratePredatorAtSpawn();
-        }*/
-
-        //SE LLAMA DESDE COLONY
-    }
+    
     public Predator GeneratePredatorAtSpawn()
     {
         return GeneratePredator(predatorSpawn.position.x, predatorSpawn.position.y);
@@ -62,10 +54,16 @@ public class PredatorManager : MonoBehaviour
     {
         if (predators.Count <= 0)
         {
-            for (int i = 0; i < initialNumPredators; i++)
-            {
-                GeneratePredatorAtSpawn();
-            }
+            StartCoroutine(GeneratePredatorsOverTime(initialNumPredators));
+        }
+    }
+
+    public IEnumerator GeneratePredatorsOverTime(int n)
+    {
+        for (int i = 0; i < n; i++)
+        {
+            GeneratePredatorAtSpawn();
+            yield return new WaitForSeconds(1f);
         }
     }
 

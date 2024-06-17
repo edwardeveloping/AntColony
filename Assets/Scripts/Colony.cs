@@ -64,19 +64,11 @@ public class Colony : MonoBehaviour
 
             //depredadores
             predatorManager.initialNumPredators = initial_Predators;
-            
-            for (int i = 0; i < initial_Predators; i++)
-            {
-                predatorManager.GeneratePredatorAtSpawn();
-            }
+            StartCoroutine(predatorManager.GeneratePredatorsOverTime(initial_Predators));
 
             //Escarabajos
             escarabajoManager.initialNumBeetles = initial_Escarabajos;
-
-            for (int i = 0; i < initial_Escarabajos; i++)
-            {
-                escarabajoManager.GenerateBeetle();
-            }
+            StartCoroutine(escarabajoManager.GenerateBeetleOverTime(initial_Escarabajos));
         }
     }
 
@@ -85,7 +77,7 @@ public class Colony : MonoBehaviour
     {
         ManageColony();
         //Controlamos
-        //ControlColony();
+        ControlColony();
     }
 
     private void ControlColony()
@@ -101,14 +93,7 @@ public class Colony : MonoBehaviour
 
         
 
-        // CASO EXTREMO
-        if (gathererNumber == 0 && workerNumber == 1 && resources < 3)
-        {
-            foreach (var worker in antManager.antWorkerObjectList)
-            {
-                worker.GetComponent<Ant>().ChangeRole(AntManager.Role.Gatherer);
-            }
-        }
+        
 
     }
     private void ManageColony()
