@@ -35,6 +35,7 @@ public class AntManager : MonoBehaviour
     private List<GameObject> antObjectList = new List<GameObject>();
     public List<GameObject> antGathererObjectList = new List<GameObject>();
     public List<GameObject> antWorkerObjectList = new List<GameObject>();
+    public List<GameObject> antSoldierObjectList = new List<GameObject>();
     public List<GameObject> antLarvaList = new List<GameObject>();
 
     public GameObject GenerateAnt(float x, float y, Role role)
@@ -63,6 +64,7 @@ public class AntManager : MonoBehaviour
                 antObj.GetComponent<AntSoldier>()._predatorManager = predatorManager;
                 antObj.GetComponent<AntSoldier>()._map = map;
                 antObj.GetComponent<AntSoldier>().waittingZone = soldiersWaittingZone;
+                antSoldierObjectList.Add(antObj);
                 break;
 
             case Role.Gatherer:

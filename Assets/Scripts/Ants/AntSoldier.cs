@@ -12,16 +12,35 @@ public class AntSoldier : Ant
     const int PREDATORS_KILLED_THRESHOLD_TO_DEACTIVATE = 2;
     const float ATTACK_RANGE_RADIOUS = 2.5f;
 
+    // Punto destino para moverse
+    public Vector3 destino;
+
+    // Referencia al componente SpriteRenderer
+    private SpriteRenderer spriteRenderer;
+
+    // Ángulo de corrección para alinear correctamente el sprite
+    private float anguloCorreccion;
+    private float flipTime;
+    private float flipTimeActual;
+
     GameObject _target;
     bool _active = false;
     int _predatorsKilled = 0;
 
-
+    private void Start()
+    {
+        // Obtener el componente SpriteRenderer del GameObject
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        flipTime = 0.1f;
+        flipTimeActual = flipTime;
+        anguloCorreccion = -90f;
+    }
     public override void Initialize()
     {
         _predatorManager.OverPopulatedEvent += Activate; // When prerdatorManagers invokes the event soldiers will activate.
 
         MoveTo(waittingZone.position);
+        destino = waittingZone.position;
     }
 
     public void Activate()
@@ -39,6 +58,7 @@ public class AntSoldier : Ant
         {
             CancelInvoke("Patrol");
             MoveTo(waittingZone.position);
+            destino = waittingZone.position;
             _predatorsKilled = 0;
             _active = false;
         }
@@ -73,7 +93,9 @@ public class AntSoldier : Ant
 
     private void Patrol()
     {
-        MoveTo(_map.RandomPositionInsideBounds());
+        Vector3 pos = _map.RandomPositionInsideBounds();
+        MoveTo(pos);
+        destino = pos;        
     }
 
     private void Update()
@@ -81,9 +103,40 @@ public class AntSoldier : Ant
         if(_active && _target != null) 
         {
             MoveTo(_target.transform.position);
+            destino = _target.transform.position;
         }
+
+        SpriteMove();
     }
     public override void ArrivedAtResource(GameObject resource){}
     public override void ArrivedAtRoom(Room room){}
     public override void WhenCombatWon(){}
+
+    private void SpriteMove()
+    {
+        // Mover hacia el destino
+        if (destino != null)
+        {
+            Vector3 direccion = (destino - transform.position).normalized;
+            if (direccion != Vector3.zero)
+            {
+                // Rotar el sprite hacia la dirección de movimiento
+                float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
+
+                // Añadir el ángulo de corrección
+                angulo += anguloCorreccion;
+
+                // Ajustar la rotación del sprite para que solo cambie en el plano 2D
+                transform.rotation = Quaternion.Euler(0, 0, angulo);
+            }
+        }
+
+        // Manejar el flip del sprite
+        flipTimeActual -= Time.deltaTime;
+        if (flipTimeActual <= 0)
+        {
+            spriteRenderer.flipX = !spriteRenderer.flipX;
+            flipTimeActual = flipTime;
+        }
+    }
 }

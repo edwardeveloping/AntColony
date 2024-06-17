@@ -18,6 +18,9 @@ public class Escarabajos : MovableObject
     // Referencia al componente SpriteRenderer
     private SpriteRenderer spriteRenderer;
 
+    // Punto destino para moverse
+    public Vector3 destino;
+
     // Ángulo de corrección para alinear correctamente el sprite
     private float anguloCorreccion;
 
@@ -38,11 +41,13 @@ public class Escarabajos : MovableObject
         if (readyToEat && assignedResource != null)
         {
             MoveTo(assignedResource.transform.position);
+            destino = assignedResource.transform.position;
         }
         else
         {
             CheckPosition();
             MoveTo(randomPos);
+            destino = randomPos;
         }
 
         // Actualizar la animación del sprite
@@ -92,6 +97,7 @@ public class Escarabajos : MovableObject
             if (assignedResource != null)
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
+                destino = assignedResource.transform.position;
                 isSearching = false;
                 yield break;
             }

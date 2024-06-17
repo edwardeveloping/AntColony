@@ -24,10 +24,12 @@ public class PredatorManager : MonoBehaviour
 
     public void Initialize()
     {
-        for(int i= 0; i < initialNumPredators; i++)
+        /*for(int i= 0; i < initialNumPredators; i++)
         {
             GeneratePredatorAtSpawn();
-        }
+        }*/
+
+        //SE LLAMA DESDE COLONY
     }
     public Predator GeneratePredatorAtSpawn()
     {

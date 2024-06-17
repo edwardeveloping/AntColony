@@ -10,6 +10,7 @@ public class Colony : MonoBehaviour
 {
     [SerializeField] AntManager antManager;
     [SerializeField] PredatorManager predatorManager;
+    [SerializeField] EscarabajoManage escarabajoManager;
 
     int shells;
 
@@ -20,16 +21,26 @@ public class Colony : MonoBehaviour
     public int initial_Gatherers;
     public int initial_Workers;
     public int initial_Soldiers;
+    public int initial_Predators;
+    public int initial_Escarabajos;
     public int population;
     public int totalGatherers;
     public int totalWorkers;
+    public int totalSoldiers;
     public int totalLarvaGatherers;
     public int totalLarvaWorkers;
+    public int totalLarvaSoldiers;
     public int totalPredators;
     public int storageResources;
 
 
+    //auxiliar
+    private int auxiliarSoldierCount;
 
+    private void Start()
+    {
+        auxiliarSoldierCount = 0;
+    }
     public void Initialize(string s)
     {
         if (s == "Init") //INICIALIZACION
@@ -51,6 +62,21 @@ public class Colony : MonoBehaviour
 
             antManager.GenerateAnt(20, -7, AntManager.Role.Queen);
 
+            //depredadores
+            predatorManager.initialNumPredators = initial_Predators;
+            
+            for (int i = 0; i < initial_Predators; i++)
+            {
+                predatorManager.GeneratePredatorAtSpawn();
+            }
+
+            //Escarabajos
+            escarabajoManager.initialNumBeetles = initial_Escarabajos;
+
+            for (int i = 0; i < initial_Escarabajos; i++)
+            {
+                escarabajoManager.GenerateBeetle();
+            }
         }
     }
 
@@ -68,34 +94,12 @@ public class Colony : MonoBehaviour
         //Si no tenemos ninguna gatherer y no tenemos 2 recursos MINIMO, una worker se tiene que convertir en gatherer
         int gathererNumber = antManager.antGathererObjectList.Count;
         int workerNumber = antManager.antWorkerObjectList.Count;
+        int predatorNumber = predatorManager.predators.Count;
         int resources = storageRoom.GetComponent<Room>().count;
         int gathererLarvaCount = CountPendingLarvas("Gatherer");
         int workerLarvaCount = CountPendingLarvas("Worker");
 
-
-        /*if (gathererNumber != workerNumber * 2)
-        {
-            if (gathererNumber < workerNumber * 2)
-            {
-                foreach (var worker in antManager.antWorkerObjectList)
-                {
-                    worker.GetComponent<Ant>().ChangeRole(AntManager.Role.Gatherer);
-                    break;
-                }
-            }
-            
-            else if (gathererNumber > workerNumber * 2)
-            {
-                foreach (var gatherer in antManager.antGathererObjectList)
-                {
-                    gatherer.GetComponent<Ant>().ChangeRole(AntManager.Role.Worker);
-                    break;
-                }
-            }
-        }*/
-
-
-
+        
 
         // CASO EXTREMO
         if (gathererNumber == 0 && workerNumber == 1 && resources < 3)
@@ -111,6 +115,7 @@ public class Colony : MonoBehaviour
     {
         int gathererNumber = antManager.antGathererObjectList.Count;
         int workerNumber = antManager.antWorkerObjectList.Count;
+        int soldierNumber = antManager.antSoldierObjectList.Count;
         int resources = storageRoom.GetComponent<Room>().count;
         int predatorNumber = predatorManager.predators.Count;
 
@@ -122,10 +127,11 @@ public class Colony : MonoBehaviour
 
         int gathererLarvaCount = CountPendingLarvas("Gatherer");
         int workerLarvaCount = CountPendingLarvas("Worker");
+        int soldierLarvaCount = CountPendingLarvas("Soldier");
 
 
         //AUXILIAR PARA EL CONTROL DESDE EL MENU DEL JUEGO
-        AuxiliarControl(gathererNumber, workerNumber, gathererLarvaCount, workerLarvaCount, resources, predatorNumber);
+        AuxiliarControl(gathererNumber, workerNumber, soldierNumber, gathererLarvaCount, workerLarvaCount, resources, predatorNumber, soldierLarvaCount);
 
         //Llamamos a nuestro metodo
         string type = DecideAntType(gathererNumber, workerNumber, gathererLarvaCount, workerLarvaCount);
@@ -137,13 +143,15 @@ public class Colony : MonoBehaviour
 
     }
 
-    private void AuxiliarControl(int gathererNumber, int workerNumber, int gathererLarvaCount, int workerLarvaCount, int resources, int predatorCount)
+    private void AuxiliarControl(int gathererNumber, int workerNumber, int soldierNumber, int gathererLarvaCount, int workerLarvaCount, int resources, int predatorCount, int soldierLarvaCount)
     {
         storageResources = resources;
         totalGatherers = gathererNumber;
         totalWorkers = workerNumber;
+        totalSoldiers = soldierNumber;
         totalLarvaGatherers = gathererLarvaCount;
         totalLarvaWorkers = workerLarvaCount;
+        totalLarvaSoldiers = soldierLarvaCount;
         totalPredators = predatorCount;
         population = totalGatherers + totalWorkers + totalLarvaGatherers + totalLarvaWorkers;
     }
@@ -160,6 +168,12 @@ public class Colony : MonoBehaviour
         else if (gathererNumber > workerNumber && workerLarvaCount == 0)
         {
             return "Worker";
+        }
+
+        //Si hay muchas gatherer y muchas workers, soldier
+        else if (gathererNumber >= 3 && workerNumber >= 3)
+        {
+            return "Soldier";
         }
 
         //Si ninguna de las anteriores se cumple, entonces iremos a descarte, dando prioridad a las gatherer

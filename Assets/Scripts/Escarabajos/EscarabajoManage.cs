@@ -5,17 +5,19 @@ using UnityEngine;
 public class EscarabajoManage : MonoBehaviour
 {
     [SerializeField] GameObject beetlePrefab;
-    [SerializeField] int initialNumBeetles;
+    [SerializeField] public int initialNumBeetles;
     [SerializeField] Map map;
 
     private List<Escarabajos> beetles = new List<Escarabajos>();
 
     void Start()
     {
-        for (int i = 0; i < initialNumBeetles; i++)
+        /*for (int i = 0; i < initialNumBeetles; i++)
         {
             GenerateBeetle();
-        }
+        }*/
+
+        //SE LLAMA DESDE COLONY
     }
 
     public void GenerateBeetle()

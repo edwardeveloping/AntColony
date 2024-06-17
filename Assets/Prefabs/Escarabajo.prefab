@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -5408449934340147070}
   m_Layer: 0
   m_Name: Escarabajo
-  m_TagString: Untagged
+  m_TagString: Beetle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -34,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4247031199584257592
 SpriteRenderer:
@@ -150,8 +150,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 0}
-  cooldownTime: 5
+  searchInterval: 10
   assignedResource: {fileID: 0}
+  destino: {x: 0, y: 0, z: 0}
 --- !u!61 &-5408449934340147070
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -188,7 +189,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.03, y: 1.34}
+    oldSize: {x: 3.4333334, y: 4.4666667}
     newSize: {x: 1.03, y: 1.34}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

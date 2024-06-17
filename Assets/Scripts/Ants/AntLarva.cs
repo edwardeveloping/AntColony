@@ -69,6 +69,14 @@ public class AntLarva : Ant
             // colony.Initialize("Worker");
             antManager.GenerateAnt(transform.position.x, transform.position.y, AntManager.Role.Worker);
         }
+
+        if (type == "Soldier")
+        {
+            StartCoroutine(Bark("Transformacion Soldier"));
+            // colony.Initialize("Soldier");
+            antManager.GenerateAnt(transform.position.x, transform.position.y, AntManager.Role.Soldier);
+        }
+
         base.Die();
         //Destroy(this.gameObject);
     }
