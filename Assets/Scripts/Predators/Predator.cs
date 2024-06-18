@@ -200,7 +200,7 @@ public class Predator : MovableObject
         }
 
         //BUG => A veces se atascan dos depredadores cuando tienen direcciones opuestas, en caso de que ninguno este persiguiendo a una hormiga, solucionaremos
-        if (collision.gameObject.CompareTag("Predator") && antTarget == null) //comparamos solo con el actual, porque el otro se comparara en su propio script
+        if (collision.gameObject.CompareTag("Predator") && antTarget == null && !confuse) //comparamos solo con el actual, porque el otro se comparara en su propio script
         {
             randomPos = map.RandomPositionInsideBounds(); //nueva posicion random
             MoveTo(randomPos);
@@ -208,7 +208,7 @@ public class Predator : MovableObject
         }
 
         //BUG => Escarabajo
-        if (collision.gameObject.CompareTag("Beetle") && antTarget == null) //comparamos solo con el actual, porque el otro se comparara en su propio script
+        if (collision.gameObject.CompareTag("Beetle") && antTarget == null && !confuse) //comparamos solo con el actual, porque el otro se comparara en su propio script
         {
             randomPos = map.RandomPositionInsideBounds(); //nueva posicion random
             MoveTo(randomPos);
