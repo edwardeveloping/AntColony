@@ -23,7 +23,6 @@ public class Predator : MovableObject
 
     // Referencia al componente SpriteRenderer
     private SpriteRenderer spriteRenderer;
-    private Color originalColor;
 
     //
     // Velocidad de movimiento
@@ -37,7 +36,6 @@ public class Predator : MovableObject
 
     //
     public bool outSideBounds = false;
-    public bool confuse = false;
 
     private void Start()
     {
@@ -51,7 +49,6 @@ public class Predator : MovableObject
 
         //cambiar desde start
         anguloCorreccion = -90f;
-        originalColor = spriteRenderer.color;
     }
 
     private void CheckPosition()
@@ -73,23 +70,12 @@ public class Predator : MovableObject
         //Hambre
         hungry -= Time.deltaTime * 8; //Se muere desde predators manager
 
-        if (!confuse)
+        if (!outSideBounds)
         {
-            if (!outSideBounds)
+            if (antTarget != null)
             {
-                if (antTarget != null)
-                {
-                    MoveTo(antTarget.transform.position);
-                    destino = antTarget.transform.position;
-                }
-
-                else
-                {
-                    antTarget = null;
-                    CheckPosition(); //comprobamos que haya llegado a la posicion para actualizarla
-                    MoveTo(randomPos);
-                    destino = randomPos;
-                }
+                MoveTo(antTarget.transform.position);
+                destino = antTarget.transform.position;
             }
 
             else
@@ -103,9 +89,11 @@ public class Predator : MovableObject
 
         else
         {
-            this.transform.position = this.transform.position;
+            antTarget = null;
+            CheckPosition(); //comprobamos que haya llegado a la posicion para actualizarla
+            MoveTo(randomPos);
+            destino = randomPos;
         }
-        
         
 
         if (hungry < 0)
@@ -114,35 +102,6 @@ public class Predator : MovableObject
         }
 
         SpriteMove();
-    }
-
-
-    private IEnumerator Confuse()
-    {
-        Color redColor = Color.red;
-        Color color = redColor; //Auxiliar
-
-
-        // 5 segundos de cooldown
-        for (int i = 0; i < 20; i++)
-        {
-            yield return new WaitForSeconds(0.2f);
-
-            if (color == redColor)
-            {
-                color = originalColor;
-            }
-            else
-            {
-                color = redColor;
-            }
-
-            spriteRenderer.color = color;
-        }
-
-        yield return new WaitForSeconds(0.5f);
-        confuse = false;
-        spriteRenderer.color = originalColor;
     }
 
 
@@ -178,11 +137,11 @@ public class Predator : MovableObject
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject == antTarget && !confuse)
+        if (collision.gameObject == antTarget)
         {
             if (antTarget.GetComponent<Ant>().EnterCombat()) // Enter combat. If predator wins (true)
             {
-                //Debug.Log("Predator won.");
+                Debug.Log("Predator won.");
                 
                 antTarget.GetComponent<AntGatherer>().isDead = true; //la matamos para que libere el recurso asignado en caso de tenerlo
                 predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
@@ -192,10 +151,11 @@ public class Predator : MovableObject
             } 
             else // If predator looses (false)
             {
-                //Debug.Log("Ant won");
-                confuse = true;
-                StartCoroutine(Confuse());
+                Debug.Log("Ant won");
+                predatorManager.KillPredator(this);
             }
+
+            
 
         }
 
@@ -203,16 +163,6 @@ public class Predator : MovableObject
         if (collision.gameObject.CompareTag("Predator") && antTarget == null) //comparamos solo con el actual, porque el otro se comparara en su propio script
         {
             randomPos = map.RandomPositionInsideBounds(); //nueva posicion random
-            MoveTo(randomPos);
-            destino = randomPos;
-        }
-
-        //BUG => Escarabajo
-        if (collision.gameObject.CompareTag("Beetle") && antTarget == null) //comparamos solo con el actual, porque el otro se comparara en su propio script
-        {
-            randomPos = map.RandomPositionInsideBounds(); //nueva posicion random
-            MoveTo(randomPos);
-            destino = randomPos;
         }
     }
 

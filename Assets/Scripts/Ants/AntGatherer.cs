@@ -35,9 +35,6 @@ public class AntGatherer : Ant
     private Vector3 lastPosition;
     private float timeStanding;
 
-    public SpriteRenderer barkPanel;
-    public Sprite[] barkList;
-
     private void Start()
     {
         // Obtener el componente SpriteRenderer del GameObject
@@ -61,25 +58,6 @@ public class AntGatherer : Ant
         StartCoroutine(LookForResourceCor());
     }
 
-    IEnumerator Bark(string text)
-    {
-        barkPanel.gameObject.SetActive(true);
-        switch (text)
-        {
-            case "LLevando comida a storageRoom":
-                barkPanel.sprite = barkList[1];
-                break;
-            case "Buscando comida":
-                barkPanel.sprite = barkList[0];
-                break;
-
-        }
-
-        yield return new WaitForSeconds(2f);
-
-        barkPanel.gameObject.SetActive(false);
-    }
-
     public override void Initialize()
     {
         // Iniciar la búsqueda de recursos
@@ -95,7 +73,6 @@ public class AntGatherer : Ant
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
                 destino = assignedResource.transform.position;
-                StartCoroutine(Bark("Buscando comida"));
                 Debug.Log("Lo tengo"); // Mensaje de confirmación de que se ha encontrado un recurso
                 yield break; // Salir de la corrutina cuando se encuentra un recurso
             }
@@ -141,7 +118,6 @@ public class AntGatherer : Ant
             comidaCargada = true; // Marcar que tiene comida cargada
             MoveTo(storageRoom.transform.position); // Moverse hacia la sala de almacenamiento
             destino = storageRoom.transform.position;
-            StartCoroutine(Bark("LLevando comida a storageRoom"));
             Debug.Log("Lo cargo");
         }
     }
@@ -190,7 +166,7 @@ public class AntGatherer : Ant
             return; // Salir de la actualización si está esperando
         }
 
-
+        
         else if (assignedResource == null && climaFavorable && !comidaCargada)
         {
             StartCoroutine(LookForResourceCor()); // Buscar un recurso si no tiene ninguno asignado y el clima es favorable

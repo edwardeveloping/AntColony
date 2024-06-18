@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,12 +16,14 @@ public class PredatorManager : MonoBehaviour
 
     public List<Predator> predators = new List<Predator>();
 
-    const int OVEROPULATED_THRESHOLD = 5;
-    event Action _overPopulated = null; // When it gets called the ant soldiers get activated.
 
-    public event Action OverPopulatedEvent { add { _overPopulated += value; } remove { _overPopulated -= value; } }
-
-    
+    public void Initialize()
+    {
+        for(int i= 0; i < initialNumPredators; i++)
+        {
+            GeneratePredatorAtSpawn();
+        }
+    }
     public Predator GeneratePredatorAtSpawn()
     {
         return GeneratePredator(predatorSpawn.position.x, predatorSpawn.position.y);
@@ -36,8 +37,6 @@ public class PredatorManager : MonoBehaviour
         //Añadimos a la lista
         predators.Add(predator);
 
-        //
-        if(predators.Count > OVEROPULATED_THRESHOLD) { _overPopulated?.Invoke(); }
         return predator;
     }
 
@@ -54,16 +53,10 @@ public class PredatorManager : MonoBehaviour
     {
         if (predators.Count <= 0)
         {
-            StartCoroutine(GeneratePredatorsOverTime(initialNumPredators));
-        }
-    }
-
-    public IEnumerator GeneratePredatorsOverTime(int n)
-    {
-        for (int i = 0; i < n; i++)
-        {
-            GeneratePredatorAtSpawn();
-            yield return new WaitForSeconds(1f);
+            for (int i = 0; i < initialNumPredators; i++)
+            {
+                GeneratePredatorAtSpawn();
+            }
         }
     }
 
@@ -72,12 +65,13 @@ public class PredatorManager : MonoBehaviour
         // Remove ant from list.
         if (!predators.Remove(predatorToKill)) // Try to remove ant object from antObject list.
         {
-            Debug.Log("Tried to kill a predator, but it was not found in predatorList");
+            Debug.Log("Tried to kill an ant, but it was not found in antObjectList");
             return false;
         }
 
         Destroy(predatorToKill.gameObject); // Destroy game object.
 
+        //Debug.Log("AntGathererList size: " + antGathererObjectList.Count + ", AntList size: " + antObjectList.Count);
         return true;
     }
 
