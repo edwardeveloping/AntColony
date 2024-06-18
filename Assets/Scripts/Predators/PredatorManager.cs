@@ -14,7 +14,7 @@ public class PredatorManager : MonoBehaviour
 
     [SerializeField] Map map;
 
-    [SerializeField] Transform predatorSpawn;
+    [SerializeField] public Transform predatorSpawn;
 
 
     public List<Predator> predators = new List<Predator>();

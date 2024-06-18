@@ -21,6 +21,20 @@ public class LarvaPredator : MonoBehaviour
         flipTimeActual = flipTime;
     }
 
+    private void Awake()
+    {
+        StartCoroutine(Born());
+    }
+
+    IEnumerator Born()
+    {
+        Debug.Log("Crecimiento de larva de avispa...");
+        yield return new WaitForSeconds(5f);
+        Debug.Log("Nacimiento de avispa");
+        predatorManager.GeneratePredatorAtSpawn();
+        //predatorManager.KillLarvaPredator(this);
+    }
+
     // Update is called once per frame
     void Update()
     {

@@ -40,6 +40,7 @@ public class Predator : MovableObject
     //
     public bool outSideBounds = false;
     public bool confuse = false;
+    public bool reproduce = false;
 
     private void Start()
     {
@@ -50,6 +51,7 @@ public class Predator : MovableObject
         antTarget = null;
         randomPos = map.RandomPositionInsideBounds();
         hungry = 100;
+        originalSprite = spriteRenderer.sprite;
 
         //cambiar desde start
         anguloCorreccion = -90f;
@@ -69,13 +71,27 @@ public class Predator : MovableObject
         }
     }
 
+    private bool CheckNestPosition()
+    {
+        //guardamos posicion del predator
+        float positionX = transform.position.x;
+        float positionY = transform.position.y;
+        Vector3 currentPos = new Vector3(positionX, positionY, 0);
+
+        if (currentPos == predatorManager.GetComponent<PredatorManager>().predatorSpawn.position) //comprobamos que haya llegado a la posicion para actualizarla
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     private void Update()
     {
         //Hambre
         hungry -= Time.deltaTime * 8; //Se muere desde predators manager
 
-        if (!confuse)
+        if (!confuse && !reproduce)
         {
             if (!outSideBounds)
             {
@@ -103,7 +119,20 @@ public class Predator : MovableObject
             }
         }
 
-        else
+        else if (!confuse && reproduce)
+        {
+            //comprobamos que llegue al nido
+            MoveTo(predatorManager.GetComponent<PredatorManager>().predatorSpawn.position);
+            destino = predatorManager.GetComponent<PredatorManager>().predatorSpawn.position;
+            if (CheckNestPosition())
+            {
+                predatorManager.GenerateLarvaPredator();
+                spriteRenderer.sprite = originalSprite;
+                reproduce = false;
+            }
+        }
+
+        else if (confuse && !reproduce)
         {
             this.transform.position = this.transform.position;
         }
@@ -187,8 +216,11 @@ public class Predator : MovableObject
                 //Debug.Log("Predator won.");
                 
                 antTarget.GetComponent<AntGatherer>().isDead = true; //la matamos para que libere el recurso asignado en caso de tenerlo
-                //predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
+                //cambiamos sprite
+
                 spriteRenderer.sprite = spriteWithAnt;
+                
+                reproduce = true;
                 hungry = 100;
                 antTarget = null;
             } 
