@@ -32,7 +32,7 @@ public class LarvaPredator : MonoBehaviour
         yield return new WaitForSeconds(5f);
         Debug.Log("Nacimiento de avispa");
         predatorManager.GeneratePredatorAtSpawn();
-        //predatorManager.KillLarvaPredator(this);
+        predatorManager.KillLarvaPredator(this);
     }
 
     // Update is called once per frame
