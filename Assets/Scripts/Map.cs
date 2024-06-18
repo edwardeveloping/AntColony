@@ -90,7 +90,7 @@ public class Map : MonoBehaviour
         {
             GameObject resource = unasignedResources[0];
             unasignedResources.RemoveAt(0);
-            Debug.Log($"Resource requested. UnasignedResources length: {unasignedResources.Count}");
+            //Debug.Log($"Resource requested. UnasignedResources length: {unasignedResources.Count}");
             return resource;
         }
         return null;

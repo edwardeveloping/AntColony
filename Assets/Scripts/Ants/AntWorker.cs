@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using Random = System.Random;
 
@@ -21,6 +22,9 @@ public class AntWorker : Ant
     public Room breedingRoom;
     public Room queenRoom;
 
+    public SpriteRenderer barkPanel;
+    public Sprite[] barkList;
+
     public Recurso recursoCargado = Recurso.Nada;
 
     //recurso objetivo y larva a la que alimentar
@@ -38,7 +42,7 @@ public class AntWorker : Ant
     // Punto destino para moverse
     public Vector3 destino;
 
-    // Ángulo de corrección para alinear correctamente el sprite
+    // ï¿½ngulo de correcciï¿½n para alinear correctamente el sprite
     private float anguloCorreccion;
 
     private void Start()
@@ -48,6 +52,8 @@ public class AntWorker : Ant
         flipTime = 0.1f;
         flipTimeActual = flipTime;
         anguloCorreccion = -90f;
+
+        barkPanel = gameObject.transform.Find("Bark").gameObject.GetComponent<SpriteRenderer>();
     }
     public override void Initialize()
     {
@@ -64,6 +70,36 @@ public class AntWorker : Ant
         }
     }
 
+    IEnumerator Bark(string text)
+    {
+        barkPanel.gameObject.SetActive(true);
+        switch (text)
+        {
+            case "Llevando comida a la reina":
+                barkPanel.sprite = barkList[3];
+                break;
+            case "Llevando comida a la larva":
+                barkPanel.sprite = barkList[2];
+                break;
+            case "Buscando comida en storageRoom":
+                barkPanel.sprite = barkList[4];
+                break;
+            case "Llevando larva a la raisingRoom":
+                barkPanel.sprite = barkList[5];
+                break;
+            case "Buscando comida":
+                barkPanel.sprite = barkList[0];
+                break;
+            case "Buscando larva":
+                barkPanel.sprite = barkList[1];
+                break;
+        }
+        
+        yield return new WaitForSeconds(2f);
+
+        barkPanel.gameObject.SetActive(false);
+    }
+
     #region OnCollision/Trigger
 
     public override void ArrivedAtResource(GameObject resource)
@@ -76,6 +112,7 @@ public class AntWorker : Ant
                 Destroy(resource); // Destruir el recurso
                 MoveTo(queenRoom.transform.position);
                 destino = queenRoom.transform.position;
+                StartCoroutine(Bark("Llevando comida a la reina"));
             }
 
             if (recursoCargado == Recurso.IrComidaLarvas)
@@ -84,6 +121,8 @@ public class AntWorker : Ant
                 recursoCargado = Recurso.LlevarComidaLarvas;
                 MoveTo(raisingRoom.transform.position);
                 destino = raisingRoom.transform.position;
+                StartCoroutine(Bark("Llevando comida a la larva"));
+
             }
         }
     }
@@ -101,6 +140,8 @@ public class AntWorker : Ant
                 {
                     MoveTo(queenRoom.transform.position);
                     destino = queenRoom.transform.position;
+                    StartCoroutine(Bark("Llevando comida a la reina"));
+
                 }
 
                 if (recursoCargado == Recurso.IrComidaLarvas)
@@ -108,6 +149,8 @@ public class AntWorker : Ant
                     recursoCargado = Recurso.LlevarComidaLarvas;
                     MoveTo(raisingRoom.transform.position);
                     destino = raisingRoom.transform.position;
+                    StartCoroutine(Bark("Llevando comida a la larva"));
+
                 }
             }
             else
@@ -122,6 +165,8 @@ public class AntWorker : Ant
             recursoCargado = Recurso.IrComidaLarvas;
             MoveTo(storageRoom.transform.position);
             destino = storageRoom.transform.position;
+            StartCoroutine(Bark("Buscando comida en storageRoom"));
+
         }
 
         if (raisingRoom == room && recursoCargado == Recurso.LlevarComidaLarvas)
@@ -144,6 +189,8 @@ public class AntWorker : Ant
             recursoCargado = Recurso.LlevarLarva;
             MoveTo(raisingRoom.transform.position);
             destino = raisingRoom.transform.position;
+            StartCoroutine(Bark("Llevando larva a la raisingRoom"));
+
         }
 
         //Si llega a la sala de la reina deja la comida si esa es la tarea
@@ -164,11 +211,7 @@ public class AntWorker : Ant
         StartCoroutine(WaitForResourceCor());
     }
     IEnumerator LookForResourceCor()
-    {
-        //Para buscar el recurso lo hago en una corrutina para que no se queden tontas en la storageRoom sin saber que hacer
-        //Comprueba cada segundo si ha aparecido un recurso nuevo en el mapa y si aparece se lo asigna
-        //Se aceptan sugerencias para hacerlo mas limpio xd
-        //Por si quereis usarlo 
+    { 
         while (assignedResource == null)
         {
             assignedResource = map.RequestResource(); // Solicitar un recurso para recoger (se eliminar  de la lista)
@@ -176,6 +219,8 @@ public class AntWorker : Ant
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
                 destino = assignedResource.transform.position;
+                StartCoroutine(Bark("Buscando comida"));
+
             }
 
             yield return new WaitForSeconds(1f);
@@ -197,6 +242,8 @@ public class AntWorker : Ant
                 {
                     MoveTo(queenRoom.transform.position);
                     destino = queenRoom.transform.position;
+                    StartCoroutine(Bark("Llevando comida a la reina"));
+
                 }
 
                 if (recursoCargado == Recurso.IrComidaLarvas)
@@ -204,6 +251,8 @@ public class AntWorker : Ant
                     recursoCargado = Recurso.LlevarComidaLarvas;
                     MoveTo(raisingRoom.transform.position);
                     destino = raisingRoom.transform.position;
+                    StartCoroutine(Bark("Llevando comida a la larva"));
+
                 }
             }
 
@@ -225,13 +274,13 @@ public class AntWorker : Ant
             Vector3 direccion = (destino - transform.position).normalized;
             if (direccion != Vector3.zero)
             {
-                // Rotar el sprite hacia la dirección de movimiento
+                // Rotar el sprite hacia la direcciï¿½n de movimiento
                 float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
 
-                // Añadir el ángulo de corrección
+                // Aï¿½adir el ï¿½ngulo de correcciï¿½n
                 angulo += anguloCorreccion;
 
-                // Ajustar la rotación del sprite para que solo cambie en el plano 2D
+                // Ajustar la rotaciï¿½n del sprite para que solo cambie en el plano 2D
                 transform.rotation = Quaternion.Euler(0, 0, angulo);
 
             }
@@ -262,6 +311,8 @@ public class AntWorker : Ant
             recursoCargado = Recurso.ComidaReina;
             MoveTo(storageRoom.transform.position);
             destino = storageRoom.transform.position;
+            StartCoroutine(Bark("Buscando comida para la reina"));
+
         }
     }
     public void GetToBreedingRoom()
@@ -272,6 +323,8 @@ public class AntWorker : Ant
             recursoCargado = Recurso.IrLarva;
             MoveTo(breedingRoom.transform.position); // Moverse hacia el recurso.
             destino = breedingRoom.transform.position;
+            StartCoroutine(Bark("Buscando larva"));
+
         }
     }
 

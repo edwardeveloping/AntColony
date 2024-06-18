@@ -90,6 +90,7 @@
     <Compile Include="Assets\Scripts\Room.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\SeatSmartObject.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + FSM - Radar\Scripts\Actions\LightAction.cs" />
+    <Compile Include="Assets\Scripts\Escarabajos\Escarabajos.cs" />
     <Compile Include="Assets\ExteriorArea.cs" />
     <Compile Include="Assets\Scripts\Ants\AntManager.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - House\Scripts\Door.cs" />
@@ -102,10 +103,12 @@
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT + FSM + US - Pizza\Scripts\BehaviourRunners\PizzaBoyEditorRunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - Fishing\Scripts\BehaviourRunners\FishingBoyBTVisualRunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\BathubSmartObject.cs" />
+    <Compile Include="Assets\Scripts\Reiniciar.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM - Chicken run\Scripts\CameraFollow.cs" />
     <Compile Include="Assets\Scripts\Ants\AntWorker.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\BathroomDrawerSmartObject.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT + FSM + US - Pizza\Scripts\BehaviourRunners\PizzaBoyRunner.cs" />
+    <Compile Include="Assets\Scripts\ConfigurarSimulacion.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\AppleSmartObject.cs" />
     <Compile Include="Assets\Scripts\Map.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - House\Scripts\KeyRotation.cs" />
@@ -139,6 +142,7 @@
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\Performance test\TestRunner.cs" />
     <Compile Include="Assets\Scripts\Ants\Ant.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\NPCPoseController.cs" />
+    <Compile Include="Assets\Scripts\Escarabajos\EscarabajoManage.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - Fishing\Scripts\FishingRod.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + FSM - Radar\Scripts\BehaviourRunners\CarFSMRunner.cs" />
   </ItemGroup>
