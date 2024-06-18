@@ -14,6 +14,7 @@ public class Colony : MonoBehaviour
     [SerializeField] AntManager antManager;
     [SerializeField] PredatorManager predatorManager;
     [SerializeField] EscarabajoManage escarabajoManager;
+    [SerializeField] Map map;
 
     int shells;
 
@@ -35,6 +36,7 @@ public class Colony : MonoBehaviour
     public int totalPredators;
     public int totalBeetles;
     public int storageResources;
+    public int mapResources;
 
     //auxiliar
     private int auxiliarSoldierCount;
@@ -162,6 +164,7 @@ public class Colony : MonoBehaviour
         int workerNumber = antManager.antWorkerObjectList.Count;
         int soldierNumber = antManager.antSoldierObjectList.Count;
         int resources = storageRoom.GetComponent<Room>().count;
+        int inMapResources = map.GetComponent<Map>().unasignedResources.Count;
         int predatorNumber = predatorManager.predators.Count;
         int beetleNumber = escarabajoManager.beetlesList.Count;
 
@@ -169,16 +172,17 @@ public class Colony : MonoBehaviour
         int workerLarvaCount = CountPendingLarvas("Worker");
         int soldierLarvaCount = CountPendingLarvas("Soldier");
 
-        AuxiliarControl(gathererNumber, workerNumber, soldierNumber, gathererLarvaCount, workerLarvaCount, resources, predatorNumber, soldierLarvaCount, beetleNumber);
+        AuxiliarControl(gathererNumber, workerNumber, soldierNumber, gathererLarvaCount, workerLarvaCount, resources, inMapResources, predatorNumber, soldierLarvaCount, beetleNumber);
 
         string type = DecideAntType(gathererNumber, workerNumber, gathererLarvaCount, workerLarvaCount);
 
         AssignLarvaType(type);
     }
 
-    private void AuxiliarControl(int gathererNumber, int workerNumber, int soldierNumber, int gathererLarvaCount, int workerLarvaCount, int resources, int predatorCount, int soldierLarvaCount, int beetleCount)
+    private void AuxiliarControl(int gathererNumber, int workerNumber, int soldierNumber, int gathererLarvaCount, int workerLarvaCount, int resources, int inMapResources, int predatorCount, int soldierLarvaCount, int beetleCount)
     {
         storageResources = resources;
+        mapResources = inMapResources;
         totalGatherers = gathererNumber;
         totalWorkers = workerNumber;
         totalSoldiers = soldierNumber;
@@ -283,6 +287,11 @@ public class Colony : MonoBehaviour
         predatorManager.GeneratePredatorAtSpawn();
     }
 
+    public void GenerateResource()
+    {
+        map.GenerateResource();
+    }
+
     public void DecreaseAnt(AntManager.Role role)
     {
         switch (role)
@@ -342,6 +351,18 @@ public class Colony : MonoBehaviour
         try
         {
             escarabajoManager.KillBeetle(escarabajoManager.beetlesList[0]); //isDead para liberar el recurso
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Debug.Log("No existen elementos que eliminar!");
+        }
+    }
+
+    public void DecreaseResource()
+    {
+        try
+        {
+            map.DeleteResource(); //isDead para liberar el recurso
         }
         catch (ArgumentOutOfRangeException ex)
         {

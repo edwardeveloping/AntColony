@@ -70,7 +70,7 @@ public class Map : MonoBehaviour
     /// Genereates a resource object (given by the resource prefab) within the exterior object's limits.
     /// </summary>
     /// <returns></returns>
-    private GameObject GenerateResource()
+    public GameObject GenerateResource()
     {
         if(unasignedResources.Count < maxNumResources)
         {
@@ -101,4 +101,17 @@ public class Map : MonoBehaviour
         unasignedResources.Add(resource);
     }
 
+    public bool DeleteResource()
+    {
+        // Remove ant from list.
+        if (!unasignedResources.Remove(unasignedResources[0])) // Try to remove ant object from antObject list.
+        {
+            Debug.Log("Tried to kill a predator, but it was not found in predatorList");
+            return false;
+        }
+
+        Destroy(unasignedResources[0].gameObject); // Destroy game object.
+
+        return true;
+    }
 }

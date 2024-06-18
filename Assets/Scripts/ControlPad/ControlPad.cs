@@ -6,6 +6,8 @@ using UnityEngine;
 public class ControlPad : MonoBehaviour
 {
     [SerializeField] public Colony colony;
+    [SerializeField] public Map map;
+
     public string typePad;
     TextMeshProUGUI numberElements;
     TextMeshProUGUI namePad;
@@ -41,6 +43,9 @@ public class ControlPad : MonoBehaviour
             case "Beetle":
                 numberElements.text = colony.totalBeetles.ToString();
                 break;
+            case "Resource":
+                numberElements.text = colony.mapResources.ToString();
+                break;
             default:
                 Debug.Log("Nombre del Pad erroneo");
                 break;
@@ -66,6 +71,9 @@ public class ControlPad : MonoBehaviour
             case "Beetle":
                 colony.GenerateBeetle();
                 break;
+            case "Resource":
+                colony.GenerateResource();
+                break;
             default:
                 Debug.Log("Nombre del Pad erroneo");
                 break;
@@ -90,6 +98,9 @@ public class ControlPad : MonoBehaviour
                 break;
             case "Beetle":
                 colony.DecreaseBeetle();
+                break;
+            case "Resource":
+                colony.DecreaseResource();
                 break;
             default:
                 Debug.Log("Nombre del Pad erroneo");
