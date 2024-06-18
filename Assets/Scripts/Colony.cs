@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
+using static AntManager;
 
 public class Colony : MonoBehaviour
 {
@@ -282,40 +283,49 @@ public class Colony : MonoBehaviour
         predatorManager.GeneratePredatorAtSpawn();
     }
 
-    public void DecreaseGatherer()
+    public void DecreaseAnt(AntManager.Role role)
     {
-        try
+        switch (role)
         {
-            antManager.antGathererObjectList[0].GetComponent<AntGatherer>().isDead = true; //isDead para liberar el recurso
-        } 
-        catch (ArgumentOutOfRangeException ex)
-        {
-            Debug.Log("No existen elementos que eliminar!");
+            case AntManager.Role.Gatherer:
+                try
+                {
+                    antManager.antGathererObjectList[0].GetComponent<AntGatherer>().isDead = true; //isDead para liberar el recurso
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Debug.Log("No existen elementos que eliminar!");
+                }
+                break;
+            case AntManager.Role.Worker:
+                try
+                {
+                    antManager.antWorkerObjectList[0].GetComponent<AntWorker>().Die(); //DIE
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Debug.Log("No existen elementos que eliminar!");
+                }
+                break;
+            case AntManager.Role.Soldier:
+                try
+                {
+                    antManager.antSoldierObjectList[0].GetComponent<AntSoldier>().Die(); //DIE
+                }
+                catch (ArgumentOutOfRangeException ex)
+                {
+                    Debug.Log("No existen elementos que eliminar!");
+                }
+                break;
+            case AntManager.Role.Queen:
+                antManager.GenerateAnt(20, -7, role);
+                break;
+            default:
+                Debug.LogWarning("Unknown ant role: " + role);
+                break;
         }
     }
 
-    public void DecreaseWorker()
-    {
-        try
-        {
-            antManager.antWorkerObjectList[0].GetComponent<AntWorker>().Die(); //DIE
-        }
-        catch (ArgumentOutOfRangeException ex)
-        {
-            Debug.Log("No existen elementos que eliminar!");
-        }
-    }
-    public void DecreaseSoldier()
-    {
-        try
-        {
-            antManager.antSoldierObjectList[0].GetComponent<AntSoldier>().Die(); //DIE
-        }
-        catch (ArgumentOutOfRangeException ex)
-        {
-            Debug.Log("No existen elementos que eliminar!");
-        }
-    }
     public void DecreasePredator()
     {
         try

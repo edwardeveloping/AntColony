@@ -104,6 +104,7 @@
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - Fishing\Scripts\BehaviourRunners\FishingBoyBTVisualRunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\BathubSmartObject.cs" />
     <Compile Include="Assets\Scripts\Reiniciar.cs" />
+    <Compile Include="Assets\ControlGeneratorPad.cs" />
     <Compile Include="Assets\LarvaPredator.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM - Chicken run\Scripts\CameraFollow.cs" />
     <Compile Include="Assets\Scripts\Ants\AntWorker.cs" />

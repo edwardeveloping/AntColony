@@ -19,8 +19,6 @@ public class ControlPad : MonoBehaviour
 
         //Nombre
         namePad.text = typePad.ToUpper();
-
-
     }
 
     // Update is called once per frame
@@ -79,13 +77,13 @@ public class ControlPad : MonoBehaviour
         switch (typePad)
         {
             case "Gatherer":
-                colony.DecreaseGatherer();
+                colony.DecreaseAnt(AntManager.Role.Gatherer);
                 break;
             case "Worker":
-                colony.DecreaseWorker();
+                colony.DecreaseAnt(AntManager.Role.Worker);
                 break;
             case "Soldier":
-                colony.DecreaseSoldier();
+                colony.DecreaseAnt(AntManager.Role.Soldier);
                 break;
             case "Predator":
                 colony.DecreasePredator();
