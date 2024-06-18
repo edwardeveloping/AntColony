@@ -24,6 +24,10 @@ public class Escarabajos : MovableObject
     // Ángulo de corrección para alinear correctamente el sprite
     private float anguloCorreccion;
 
+    //Barks
+    public SpriteRenderer barkPanel;
+    public Sprite[] barkList;
+
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -34,6 +38,21 @@ public class Escarabajos : MovableObject
 
         // Iniciar la rutina para buscar recursos cada cierto tiempo
         StartCoroutine(SearchForResourceRoutine());
+    }
+
+    IEnumerator Bark(string text)
+    {
+        barkPanel.gameObject.SetActive(true);
+        switch (text)
+        {
+            case "Buscando comida":
+                barkPanel.sprite = barkList[0];
+                break;
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        barkPanel.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -97,6 +116,7 @@ public class Escarabajos : MovableObject
             if (assignedResource != null)
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
+                StartCoroutine(Bark("Buscando comida"));
                 destino = assignedResource.transform.position;
                 isSearching = false;
                 yield break;
