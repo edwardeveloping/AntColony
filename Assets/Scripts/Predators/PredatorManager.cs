@@ -10,12 +10,17 @@ public class PredatorManager : MonoBehaviour
 
     [SerializeField] AntManager antManager;
     [SerializeField] GameObject predatorPrefab;
+    [SerializeField] GameObject predatorLarvaPrefab;
 
     [SerializeField] Map map;
 
     [SerializeField] Transform predatorSpawn;
 
+
     public List<Predator> predators = new List<Predator>();
+    public List<LarvaPredator> larvaPredatorsList = new List<LarvaPredator>();
+
+    public Sprite waspWithAnt;
 
     const int OVEROPULATED_THRESHOLD = 5;
     event Action _overPopulated = null; // When it gets called the ant soldiers get activated.
@@ -27,11 +32,27 @@ public class PredatorManager : MonoBehaviour
     {
         return GeneratePredator(predatorSpawn.position.x, predatorSpawn.position.y);
     }
+
+    public LarvaPredator GenerateLarvaPredator()
+    {
+        float x = predatorSpawn.position.x;
+        float y = predatorSpawn.position.y;
+        LarvaPredator larvaPredator = Instantiate(predatorLarvaPrefab, new Vector3(x, y, 0), Quaternion.identity).GetComponent<LarvaPredator>();
+        larvaPredator.predatorManager = this;
+
+        //Añadimos a la lista
+        larvaPredatorsList.Add(larvaPredator);
+
+        //returnamos 
+        return larvaPredator;
+    }
+
     public Predator GeneratePredator(float x, float y)
     {
         Predator predator = Instantiate(predatorPrefab, new Vector3(x, y, 0), Quaternion.identity).GetComponent<Predator>();
         predator.predatorManager = this;
         predator.map = map;
+        predator.spriteWithAnt = waspWithAnt;
 
         //Añadimos a la lista
         predators.Add(predator);
@@ -77,6 +98,20 @@ public class PredatorManager : MonoBehaviour
         }
 
         Destroy(predatorToKill.gameObject); // Destroy game object.
+
+        return true;
+    }
+
+    public bool KillLarvaPredator(LarvaPredator larvaPredatorToKill)
+    {
+        // Remove ant from list.
+        if (!larvaPredatorsList.Remove(larvaPredatorToKill)) // Try to remove ant object from antObject list.
+        {
+            Debug.Log("Tried to kill a larvaPredator, but it was not found in predatorList");
+            return false;
+        }
+
+        Destroy(larvaPredatorToKill.gameObject); // Destroy game object.
 
         return true;
     }

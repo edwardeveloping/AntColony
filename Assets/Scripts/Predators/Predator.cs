@@ -20,6 +20,8 @@ public class Predator : MovableObject
     //Sprite
     private float flipTime;
     private float flipTimeActual;
+    private Sprite originalSprite;
+    public Sprite spriteWithAnt;
 
     // Referencia al componente SpriteRenderer
     private SpriteRenderer spriteRenderer;
@@ -185,8 +187,8 @@ public class Predator : MovableObject
                 //Debug.Log("Predator won.");
                 
                 antTarget.GetComponent<AntGatherer>().isDead = true; //la matamos para que libere el recurso asignado en caso de tenerlo
-                predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
-
+                //predatorManager.GeneratePredatorAtSpawn(); // Spawn predator.
+                spriteRenderer.sprite = spriteWithAnt;
                 hungry = 100;
                 antTarget = null;
             } 

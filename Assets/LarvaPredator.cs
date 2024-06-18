@@ -7,7 +7,7 @@ public class LarvaPredator : MonoBehaviour
 
     // Referencia al componente SpriteRenderer
     private SpriteRenderer spriteRenderer;
-
+    [SerializeField] public PredatorManager predatorManager;
     //
     private float flipTime;
     private float flipTimeActual;

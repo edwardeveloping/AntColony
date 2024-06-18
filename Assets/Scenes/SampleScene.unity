@@ -5798,9 +5798,12 @@ MonoBehaviour:
   initialNumPredators: 4
   antManager: {fileID: 974215176}
   predatorPrefab: {fileID: 3903535058118962514, guid: 37fbd535028c2b8448045d6fe0b14f2c, type: 3}
+  predatorLarvaPrefab: {fileID: 5649581309396619064, guid: a1355c8c2f99cd646bc2477a76f1061e, type: 3}
   map: {fileID: 1256182793}
   predatorSpawn: {fileID: 1816498824}
   predators: []
+  larvaPredatorsList: []
+  waspWithAnt: {fileID: 21300000, guid: dde6518ab361011428190dbb1b12be1a, type: 3}
 --- !u!4 &2031029343
 Transform:
   m_ObjectHideFlags: 0
