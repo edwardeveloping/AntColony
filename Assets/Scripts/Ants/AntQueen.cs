@@ -137,6 +137,7 @@ public class AntQueen : Ant
     {
         float tiempoTranscurridoIncubacion = 0f;
         // Esperar el tiempo de incubacion
+        StartCoroutine(Bark("Engendrando larva"));
         while (tiempoTranscurridoIncubacion < tiempoIncubacion)
         {
             // Actualizar el tiempo transcurrido
