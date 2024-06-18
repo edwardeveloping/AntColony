@@ -9,7 +9,7 @@ public class EscarabajoManage : MonoBehaviour
     [SerializeField] Map map;
     public Transform beetleSpawn;
 
-    private List<Escarabajos> beetles = new List<Escarabajos>();
+    public List<Escarabajos> beetlesList = new List<Escarabajos>();
 
     void Start()
     {
@@ -31,11 +31,25 @@ public class EscarabajoManage : MonoBehaviour
         
     }
 
-    private void GenerateBeetle()
+    public void GenerateBeetle()
     {
         Escarabajos beetle = Instantiate(beetlePrefab, beetleSpawn.position, Quaternion.identity).GetComponent<Escarabajos>();
         beetle.map = map;
-        beetles.Add(beetle);
+        beetlesList.Add(beetle);
+    }
+
+    public bool KillBeetle(Escarabajos beetleToKill)
+    {
+        // Remove ant from list.
+        if (!beetlesList.Remove(beetleToKill)) // Try to remove ant object from antObject list.
+        {
+            Debug.Log("Tried to kill a predator, but it was not found in predatorList");
+            return false;
+        }
+
+        Destroy(beetleToKill.gameObject); // Destroy game object.
+
+        return true;
     }
 
 }

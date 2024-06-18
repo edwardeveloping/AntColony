@@ -23,7 +23,7 @@ public class Colony : MonoBehaviour
     private int initial_Workers;
     private int initial_Soldiers;
     private int initial_Predators;
-    private int initial_Escarabajos;
+    private int initial_Beetles;
     public int population;
     public int totalGatherers;
     public int totalWorkers;
@@ -32,6 +32,7 @@ public class Colony : MonoBehaviour
     public int totalLarvaWorkers;
     public int totalLarvaSoldiers;
     public int totalPredators;
+    public int totalBeetles;
     public int storageResources;
 
     //auxiliar
@@ -87,33 +88,33 @@ public class Colony : MonoBehaviour
         initial_Workers = (int)sliderWorkers.value;
         initial_Soldiers = (int)sliderSoldiers.value;
         initial_Predators = (int)sliderPredators.value;
-        initial_Escarabajos = (int)sliderEscarabajos.value;
+        initial_Beetles = (int)sliderEscarabajos.value;
 
         // Inicialización de la simulación
         for (int i = 0; i < initial_Gatherers; i++)
         {
-            antManager.GenerateAnt(0, -5, AntManager.Role.Gatherer);
+            GenerateAnt(AntManager.Role.Gatherer);
         }
 
         for (int i = 0; i < initial_Workers; i++)
         {
-            antManager.GenerateAnt(-17, -6, AntManager.Role.Worker);
+            GenerateAnt(AntManager.Role.Worker);
         }
 
         for (int i = 0; i < initial_Soldiers; i++)
         {
-            antManager.GenerateAnt(-10, -10, AntManager.Role.Soldier);
+            GenerateAnt(AntManager.Role.Soldier);
         }
 
-        antManager.GenerateAnt(20, -7, AntManager.Role.Queen);
+        GenerateAnt(AntManager.Role.Queen);
 
         //depredadores
         predatorManager.initialNumPredators = initial_Predators;
         StartCoroutine(predatorManager.GeneratePredatorsOverTime(initial_Predators));
 
         //Escarabajos
-        escarabajoManager.initialNumBeetles = initial_Escarabajos;
-        StartCoroutine(escarabajoManager.GenerateBeetleOverTime(initial_Escarabajos));
+        escarabajoManager.initialNumBeetles = initial_Beetles;
+        StartCoroutine(escarabajoManager.GenerateBeetleOverTime(initial_Beetles));
 
         // Ocultar el canvas de configuración
         GameObject configCanvas = GameObject.Find("ConfigCanvas");
@@ -161,19 +162,20 @@ public class Colony : MonoBehaviour
         int soldierNumber = antManager.antSoldierObjectList.Count;
         int resources = storageRoom.GetComponent<Room>().count;
         int predatorNumber = predatorManager.predators.Count;
+        int beetleNumber = escarabajoManager.beetlesList.Count;
 
         int gathererLarvaCount = CountPendingLarvas("Gatherer");
         int workerLarvaCount = CountPendingLarvas("Worker");
         int soldierLarvaCount = CountPendingLarvas("Soldier");
 
-        AuxiliarControl(gathererNumber, workerNumber, soldierNumber, gathererLarvaCount, workerLarvaCount, resources, predatorNumber, soldierLarvaCount);
+        AuxiliarControl(gathererNumber, workerNumber, soldierNumber, gathererLarvaCount, workerLarvaCount, resources, predatorNumber, soldierLarvaCount, beetleNumber);
 
         string type = DecideAntType(gathererNumber, workerNumber, gathererLarvaCount, workerLarvaCount);
 
         AssignLarvaType(type);
     }
 
-    private void AuxiliarControl(int gathererNumber, int workerNumber, int soldierNumber, int gathererLarvaCount, int workerLarvaCount, int resources, int predatorCount, int soldierLarvaCount)
+    private void AuxiliarControl(int gathererNumber, int workerNumber, int soldierNumber, int gathererLarvaCount, int workerLarvaCount, int resources, int predatorCount, int soldierLarvaCount, int beetleCount)
     {
         storageResources = resources;
         totalGatherers = gathererNumber;
@@ -183,6 +185,7 @@ public class Colony : MonoBehaviour
         totalLarvaWorkers = workerLarvaCount;
         totalLarvaSoldiers = soldierLarvaCount;
         totalPredators = predatorCount;
+        totalBeetles = beetleCount;
         population = totalGatherers + totalWorkers + totalLarvaGatherers + totalLarvaWorkers;
     }
 
@@ -244,4 +247,96 @@ public class Colony : MonoBehaviour
     {
         text.text = slider.value.ToString();
     }
+
+    //Funciones Auxiliares para el control desde los botones
+
+    public void GenerateAnt(AntManager.Role role)
+    {
+        switch (role)
+        {
+            case AntManager.Role.Gatherer:
+                antManager.GenerateAnt(0, -5, role);
+                break;
+            case AntManager.Role.Worker:
+                antManager.GenerateAnt(-17, -6, role);
+                break;
+            case AntManager.Role.Soldier:
+                antManager.GenerateAnt(-10, -10, role);
+                break;
+            case AntManager.Role.Queen:
+                antManager.GenerateAnt(20, -7, role);
+                break;
+            default:
+                Debug.LogWarning("Unknown ant role: " + role);
+                break;
+        }
+    }
+
+    public void GenerateBeetle()
+    {
+        escarabajoManager.GenerateBeetle();
+    }
+
+    public void GeneratePredator()
+    {
+        predatorManager.GeneratePredatorAtSpawn();
+    }
+
+    public void DecreaseGatherer()
+    {
+        try
+        {
+            antManager.antGathererObjectList[0].GetComponent<AntGatherer>().isDead = true; //isDead para liberar el recurso
+        } 
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Debug.Log("No existen elementos que eliminar!");
+        }
+    }
+
+    public void DecreaseWorker()
+    {
+        try
+        {
+            antManager.antWorkerObjectList[0].GetComponent<AntWorker>().Die(); //DIE
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Debug.Log("No existen elementos que eliminar!");
+        }
+    }
+    public void DecreaseSoldier()
+    {
+        try
+        {
+            antManager.antSoldierObjectList[0].GetComponent<AntSoldier>().Die(); //DIE
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Debug.Log("No existen elementos que eliminar!");
+        }
+    }
+    public void DecreasePredator()
+    {
+        try
+        {
+            predatorManager.KillPredator(predatorManager.predators[0].GetComponent<Predator>()); //isDead para liberar el recurso
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Debug.Log("No existen elementos que eliminar!");
+        }
+    }
+    public void DecreaseBeetle()
+    {
+        try
+        {
+            escarabajoManager.KillBeetle(escarabajoManager.beetlesList[0]); //isDead para liberar el recurso
+        }
+        catch (ArgumentOutOfRangeException ex)
+        {
+            Debug.Log("No existen elementos que eliminar!");
+        }
+    }
+
 }

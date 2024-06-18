@@ -135,6 +135,7 @@
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\SeatRequestData.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + FSM - Radar\Scripts\Actions\BlinkAction.cs" />
+    <Compile Include="Assets\Scripts\ControlPad\ControlPad.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM - Chicken run\Scripts\BehaviourRunners\ChickenFSMEditorRunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\BehaviourRunners\DemoSORunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\DemoSmartAgent.cs" />

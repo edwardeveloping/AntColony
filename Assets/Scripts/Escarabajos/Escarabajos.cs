@@ -116,6 +116,7 @@ public class Escarabajos : MovableObject
             if (assignedResource != null)
             {
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
+                destino = assignedResource.transform.position;
                 StartCoroutine(Bark("Buscando comida"));
                 destino = assignedResource.transform.position;
                 isSearching = false;
