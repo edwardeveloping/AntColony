@@ -10,9 +10,6 @@ public class ColonyActions : MonoBehaviour
     {
         switch (action)
         {
-            case Colony.Action.AsignarConstructoras:
-                colony.AssignMoreBuilders();
-                break;
             case Colony.Action.AsignarRecolectoras:
                 colony.AssignMoreGatherers();
                 break;

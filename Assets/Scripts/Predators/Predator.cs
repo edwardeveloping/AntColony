@@ -54,12 +54,15 @@ public class Predator : MovableObject
         flipTimeActual = flipTime;
         antTarget = null;
         randomPos = map.RandomPositionInsideBounds();
-        hungry = 100;
+        hungry = 500f;
         originalSprite = spriteRenderer.sprite;
 
         //cambiar desde start
         anguloCorreccion = -90f;
         originalColor = spriteRenderer.color;
+
+        NavMeshAgent navMeshAgent = this.GetComponent<NavMeshAgent>();
+        navMeshAgent.speed = 8f;
     }
 
     private void CheckPosition()

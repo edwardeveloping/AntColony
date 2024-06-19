@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using BehaviourAPI.Core.Perceptions;
 using JetBrains.Annotations;
 using TMPro;
 using Unity.VisualScripting;
@@ -80,11 +82,11 @@ public class Colony : MonoBehaviour
     //Acciones y percepciones
     public ColonyPerceptions perceptions;
     public ColonyActions actions;
+    List<PerceptionWithPriority> perceptionWPList = new List<PerceptionWithPriority>();
 
     //COOLDOWNS => Para que la colonia no se sature, meteremos cooldowns y asi se podra evaluar las cosas pasado cierto tiempo
     private float initCooldown;
     public float cooldown; // Cooldown de 3 minutos
-    private bool canIsFoodInsuficientValorate;
 
     //------------------------------------------------------------------------------------------------------------------------------- FUNCIONES PRINCIPALES DE LA COLONIA
 
@@ -105,11 +107,11 @@ public class Colony : MonoBehaviour
     //Nombramos en forma de Action el numero de acciones segun nuestra tabla de acciones
     public enum Action
     {
-        AsignarConstructoras,
+        //AsignarConstructoras => Lo decidimos quitar
         AsignarRecolectoras,
         AsignarSoldados,
         AsignarOtroRolARecolectorasOciosas,
-        AsignarObreras
+        AsignarObreras 
     }
 
     private void Start()
@@ -141,7 +143,6 @@ public class Colony : MonoBehaviour
         activeDanger = false;
         cooldown = 10f;
         initCooldown = 10f;
-        canIsFoodInsuficientValorate = false;
         minimumFoodThreshold = 2;
         larvaFoodRequirement = 1; // Cantidad de comida que requiere cada larva
         minimumQueenHealth = 90;
@@ -176,34 +177,42 @@ public class Colony : MonoBehaviour
     //Funcion en la que vamos a controlar nuestras percepciones, y dependiendo de estas, haremos una accion u otra
     void ControlColony()
     {
+        if (cooldown == 0) //AQUI EJECUTAREMOS AQUELLAS PERCEPCIONES CON PRIORIDAD PARA LA COLONIA, NO AQUELLAS EXTREMAS
+        {
+            CheckForPerceptions(); //Añadimos las percepciones que se cumplan
+
+            if (perceptionWPList.Count > 0)
+            {
+                // Ordenar la lista de percepciones por prioridad (mayor prioridad primero)
+                perceptionWPList.Sort((p1, p2) => p2.priority.CompareTo(p1.priority));
+
+                // Ejecutar la percepción de mayor prioridad
+                PerceptionWithPriority perceptionWithPriority = perceptionWPList[0];
+                perceptionWPList.RemoveAt(0);
+
+                //Ejecutamos la percepcion
+                ExecutePerception(perceptionWithPriority.perception);
+
+                //Reiniciamos el cooldown
+                cooldown = initCooldown;
+            }
+        }
+
         if (perceptions.CheckPerception(Perception.AtaqueALaColonia))
         {
             actions.ExecuteAction(Action.AsignarSoldados);
         }
-        if (perceptions.CheckPerception(Perception.FaltaDeComida))
-        {
-            actions.ExecuteAction(Action.AsignarRecolectoras);
-        }
-        if (perceptions.CheckPerception(Perception.IncapacidadParaRecolectarComida))
-        {
-            actions.ExecuteAction(Action.AsignarOtroRolARecolectorasOciosas);
-        }
-        if (perceptions.CheckPerception(Perception.ExcesoDeHuevosAlmacenados))
-        {
-            actions.ExecuteAction(Action.AsignarConstructoras);
-        }
-        if (perceptions.CheckPerception(Perception.FaltaDeHuevos))
-        {
-            actions.ExecuteAction(Action.AsignarRecolectoras);
-        }
+
         if (perceptions.CheckPerception(Perception.DisminucionDePoblacionDeSoldados))
         {
             actions.ExecuteAction(Action.AsignarSoldados);
         }
+
         if (perceptions.CheckPerception(Perception.ClimaAdverso))
         {
             actions.ExecuteAction(Action.AsignarOtroRolARecolectorasOciosas);
         }
+
         if (perceptions.CheckPerception(Perception.RecolectorasOciosas))
         {
             actions.ExecuteAction(Action.AsignarOtroRolARecolectorasOciosas);
@@ -214,13 +223,68 @@ public class Colony : MonoBehaviour
         }
     }
 
+    //PERCEPCIONES CON PRIORIDAD
 
-    // Métodos de percepción
+    void CheckForPerceptions()
+    {
+        //Añadimos todas las percepciones con prioridad, solo se añadiran aquellas que sean true
+        // PRIORITY => CUANTO MAS ALTO, ANTES SE INCLUIRA EN LA LISTA
+
+        AddPerception(Perception.FaltaDeComida, 5, IsFoodInsufficient());
+        AddPerception(Perception.IncapacidadParaRecolectarComida, 20, AreGatherersUnableToCollectFood());
+        AddPerception(Perception.ExcesoDeHuevosAlmacenados, 15, AreThereTooManyStoredEggs());
+        AddPerception(Perception.FaltaDeHuevos, 15, IsThereALackOfEggs());
+        AddPerception(Perception.ExcesoDeComidaYLarvasHambrientas, 15, IsThereExcessFoodAndHungryLarvas());
+
+    }
+
+    void ExecutePerception(Perception perception)
+    {
+        //Ejecutamos la prioridad
+        switch (perception)
+        {
+            case Perception.FaltaDeComida:
+                WriteColony("POCA COMIDA, REORGANIZANDO GATHERERS");
+                actions.ExecuteAction(Action.AsignarRecolectoras);
+                break;
+
+            case Perception.IncapacidadParaRecolectarComida:
+                WriteColony("INCAPACIDAD PARA RECOLECTAR COMIDA, REORGANIZANDO GATHERERS");
+                actions.ExecuteAction(Action.AsignarOtroRolARecolectorasOciosas);
+                break;
+
+            case Perception.ExcesoDeHuevosAlmacenados:
+                WriteColony("EXCESO DE HUEVOS, REORGANIZANDO WORKERS");
+                actions.ExecuteAction(Action.AsignarObreras);
+                break;
+
+            case Perception.FaltaDeHuevos:
+                WriteColony("FALTA DE HUEVOS, REORGANIZANDO GATHERERS");
+                actions.ExecuteAction(Action.AsignarRecolectoras);
+                break;
+
+            case Perception.ExcesoDeComidaYLarvasHambrientas:
+                WriteColony("EXCESO DE COMIDA Y LARVAS HAMBRIENTAS, REORGANIZANDO WORKERS");
+                actions.ExecuteAction(Action.AsignarObreras);
+                break;
+
+        }
+    }
+    void AddPerception(Colony.Perception perception, int priority, bool condition)
+    {
+        //Si se cumple la condicion, es decir, que la percepcion a de ser realizada, entonces la colonia la añadira a la lista
+        if (condition && !perceptionWPList.Exists(p => p.perception == perception))
+        {
+            perceptionWPList.Add(new PerceptionWithPriority(perception, priority));
+        }
+    }
+
+    // PERCEPCIONES
     public bool IsUnderAttack() { return inDanger; }
     public bool IsFoodInsufficient()
     {
         // Verificar si ha pasado el cooldown
-        if (!canIsFoodInsuficientValorate)
+        if (!weatherFavorable)
         {
             return false;
         }
@@ -238,13 +302,6 @@ public class Colony : MonoBehaviour
         // Considerar la falta de comida si cualquiera de las condiciones es verdadera
         bool isFoodInsufficient = storageResourcesLow && foodLowForLarvasAndQueen;
 
-        if (isFoodInsufficient)
-        {
-            WriteColony("POCA COMIDA, REORGANIZANDO GATHERERS");
-            cooldown = initCooldown; // Actualizar el tiempo de la última verificación
-            canIsFoodInsuficientValorate = false;
-        }
-
         // Considerar la falta de comida si cualquiera de las condiciones es verdadera
         return isFoodInsufficient;
 
@@ -254,7 +311,7 @@ public class Colony : MonoBehaviour
     public bool AreThereTooManyStoredEggs() { /* Implementación */ return false; }
     public bool IsThereALackOfEggs() { /* Implementación */ return false; }
     public bool IsSoldierPopulationDecreasing() { /* Implementación */ return false; }
-    public bool IsAdverseWeather() { /* Implementación */ return false; }
+    public bool IsAdverseWeather() { return !weatherFavorable; }
     public bool AreGatherersIdle() 
     {
         int contador = 0;
@@ -267,21 +324,52 @@ public class Colony : MonoBehaviour
         //return manteniendo una hormiga idle por lo menos por si acaso
         return contador > 1;
     }
-    public bool IsThereExcessFoodAndHungryLarvae() { /* Implementación */ return false; }
+    public bool IsThereExcessFoodAndHungryLarvas() { /* Implementación */ return false; }
 
-    // Métodos de acción
-    public void AssignMoreBuilders() { /* Implementación */ }
+
+
+    // ACCIONES
     public void AssignMoreGatherers() 
     {
-        // Convertir todos los soldados en recolectoras, excepto uno
         List<GameObject> soldiersToTransform = new List<GameObject>();
-        if (antManager.antSoldierObjectList.Count > 1)
+        List<GameObject> workersToTransform = new List<GameObject>();
+
+        int soldierCount = antManager.antSoldierObjectList.Count;
+        int workerCount = antManager.antWorkerObjectList.Count;
+
+        //QUEREMOS TRANSFORMAR DOS HORMIGAS SOLO, SI SE NECESITAN MAS LA COLONIA SE ENCARGARA DE VOLVER A LLAMAR AL METODO, SI TENEMOS 2 SOLDADOS 2 SOLDADOS
+        //SI NO 2 WORKERS Y SI NO 1 DE CADA, Y SI NO NINGUNA
+        if (soldierCount > 1)
         {
-            for (int i = 1; i < antManager.antSoldierObjectList.Count; i++)
+            // Transformar 2 soldados en recolectoras
+            for (int i = 1; i <= 2 && i < soldierCount; i++)
             {
                 soldiersToTransform.Add(antManager.antSoldierObjectList[i]);
             }
         }
+        else if (soldierCount == 1)
+        {
+            // Transformar 1 soldado y 1 trabajador en recolectoras (si hay trabajadores)
+            soldiersToTransform.Add(antManager.antSoldierObjectList[0]);
+            if (workerCount > 0)
+            {
+                workersToTransform.Add(antManager.antWorkerObjectList[0]);
+            }
+        }
+        else if (workerCount > 0)
+        {
+            // Transformar 2 trabajadores en recolectoras si hay más de 1, sino transformar solo 1
+            for (int i = 0; i < 2 && i < workerCount; i++)
+            {
+                workersToTransform.Add(antManager.antWorkerObjectList[i]);
+            }
+        }
+        else if(soldierCount == 0 && workerCount == 0)
+        {
+            WriteColony("NO PUEDO TRANSFORMAR HORMIGAS EN GATHERERS PORQUE NO HAY");
+        }
+
+        // Transformar los soldados seleccionados en recolectoras
         foreach (GameObject soldierObj in soldiersToTransform)
         {
             AntSoldier soldier = soldierObj.GetComponent<AntSoldier>();
@@ -292,16 +380,7 @@ public class Colony : MonoBehaviour
             }
         }
 
-        // Convertir al menos 2 trabajadores en recolectoras, si hay suficientes; si no, convertir solo uno
-        int workersToConvert = Mathf.Min(antManager.antWorkerObjectList.Count, 2);
-        List<GameObject> workersToTransform = new List<GameObject>();
-        if (workersToConvert > 0)
-        {
-            for (int i = 0; i < workersToConvert; i++)
-            {
-                workersToTransform.Add(antManager.antWorkerObjectList[i]);
-            }
-        }
+        // Transformar los trabajadores seleccionados en recolectoras
         foreach (GameObject workerObj in workersToTransform)
         {
             AntWorker worker = workerObj.GetComponent<AntWorker>();
@@ -353,7 +432,6 @@ public class Colony : MonoBehaviour
         else
         {
             cooldown = 0;
-            canIsFoodInsuficientValorate = true;
         }
     }
     void WriteColony(string s)
@@ -676,4 +754,17 @@ public class Colony : MonoBehaviour
         }
     }
 
+}
+
+
+public class PerceptionWithPriority
+{
+    public Colony.Perception perception;
+    public int priority;
+
+    public PerceptionWithPriority(Colony.Perception _perception, int _priority)
+    {
+        perception = _perception;
+        priority = _priority;
+    }
 }

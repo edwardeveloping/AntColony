@@ -75,6 +75,7 @@ public class PredatorManager : MonoBehaviour
     {
         if (predators.Count <= 0)
         {
+            Debug.Log("PREDATOR NEST: NO PREDATORS, GENERANDO NUEVA OLEADA");
             StartCoroutine(GeneratePredatorsOverTime(initialNumPredators));
         }
     }

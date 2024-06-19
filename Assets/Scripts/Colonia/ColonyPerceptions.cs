@@ -27,7 +27,7 @@ public class ColonyPerceptions : MonoBehaviour
             case Colony.Perception.RecolectorasOciosas:
                 return colony.AreGatherersIdle();
             case Colony.Perception.ExcesoDeComidaYLarvasHambrientas:
-                return colony.IsThereExcessFoodAndHungryLarvae();
+                return colony.IsThereExcessFoodAndHungryLarvas();
             default:
                 return false;
         }
