@@ -29,7 +29,7 @@ public class Predator : MovableObject
 
     //
     // Velocidad de movimiento
-    public float velocidad = 5f;
+    public float velocidad = 10f;
 
     // Punto destino para moverse
     public Vector3 destino;

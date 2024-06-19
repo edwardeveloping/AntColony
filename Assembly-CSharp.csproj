@@ -83,6 +83,7 @@
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT + FSM + US - Pizza\Scripts\RecipePaper.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\CameraController.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\DrinkSmartObject.cs" />
+    <Compile Include="Assets\Scripts\Colonia\Colony.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + BT - House and Enemy\Scripts\BehaviourRunners\PlayerBTInFSMRunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\TVSmartObject.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - House\Scripts\BehaviourRunners\BoyBTEditorRunner.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + FSM - Radar\Scripts\Actions\LightAction.cs" />
     <Compile Include="Assets\Scripts\Escarabajos\Escarabajos.cs" />
     <Compile Include="Assets\ExteriorArea.cs" />
+    <Compile Include="Assets\Scripts\Colonia\ColonyActions.cs" />
     <Compile Include="Assets\Scripts\Ants\AntManager.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - House\Scripts\Door.cs" />
     <Compile Include="Assets\Scripts\MovableObject.cs" />
@@ -114,7 +116,6 @@
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\SmartObjects\Scripts\SmartObjects\AppleSmartObject.cs" />
     <Compile Include="Assets\Scripts\Map.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - House\Scripts\KeyRotation.cs" />
-    <Compile Include="Assets\Scripts\Colony.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - House\Scripts\RestartButton.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + BT - House and Enemy\Scripts\BehaviourRunners\BadBoyEditorRunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - Fishing\Scripts\BehaviourRunners\FishingBoyBTRunner.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="Assets\Scripts\Escarabajos\EscarabajoManage.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - Fishing\Scripts\FishingRod.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + FSM - Radar\Scripts\BehaviourRunners\CarFSMRunner.cs" />
+    <Compile Include="Assets\Scripts\Colonia\ColonyPerceptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
