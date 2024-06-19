@@ -40,6 +40,7 @@ public class Colony : MonoBehaviour
 
     //auxiliar
     private int auxiliarSoldierCount;
+    public bool weatherFavorable;
 
     // UI Elements
     public Slider sliderGatherers;
@@ -63,6 +64,7 @@ public class Colony : MonoBehaviour
 
     private void Start()
     {
+        weatherFavorable = true;
         auxiliarSoldierCount = 0;
         buttonStartSimulation.onClick.AddListener(IniciarSimulacion);
         this.enabled = false; // Desactivar el script al inicio
@@ -144,6 +146,10 @@ public class Colony : MonoBehaviour
         ManageColony();
         //Controlamos
         ControlColony();
+
+
+        //auxiliar a antManager
+        antManager.weatherFavorable = weatherFavorable;
     }
 
     private void ControlColony()
@@ -266,10 +272,10 @@ public class Colony : MonoBehaviour
                 antManager.GenerateAnt(-17, -6, role);
                 break;
             case AntManager.Role.Soldier:
-                antManager.GenerateAnt(-10, -10, role);
+                antManager.GenerateAnt(-24, -18, role);
                 break;
             case AntManager.Role.Queen:
-                antManager.GenerateAnt(20, -7, role);
+                antManager.GenerateAnt(50, -13, role);
                 break;
             default:
                 Debug.LogWarning("Unknown ant role: " + role);
