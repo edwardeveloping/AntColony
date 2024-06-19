@@ -229,11 +229,13 @@ public class AntGatherer : Ant
         {
             // Moverse hacia el recurso asignado si lo tiene
             MoveTo(assignedResource.transform.position);
+            destino = assignedResource.transform.position;
         }
         else if (assignedResource == null && climaFavorable && comidaCargada)
         {
             // Si tiene comida cargada y no tiene asignado un recurso, ir a la sala de almacenamiento
             MoveTo(storageRoom.transform.position);
+            destino = storageRoom.transform.position;
         }
         else if (assignedResource == null && climaFavorable && !comidaCargada)
         {

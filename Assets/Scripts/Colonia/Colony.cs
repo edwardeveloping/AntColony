@@ -11,6 +11,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 using static AntManager;
+using static AntWorker;
 
 public class Colony : MonoBehaviour
 {
@@ -53,6 +54,7 @@ public class Colony : MonoBehaviour
     public int minimumFoodThreshold;
     public int larvaFoodRequirement; // Cantidad de comida que requiere cada larva
     public float minimumQueenHealth;
+    public float minimumLarvaEggsPerIndividual;
 
     //auxiliar
     private int auxiliarSoldierCount;
@@ -145,7 +147,8 @@ public class Colony : MonoBehaviour
         initCooldown = 10f;
         minimumFoodThreshold = 2;
         larvaFoodRequirement = 1; // Cantidad de comida que requiere cada larva
-        minimumQueenHealth = 90;
+        minimumQueenHealth = 90f;
+        minimumLarvaEggsPerIndividual = 5f; //Quiere decir que, por cada 5 individuos de la colonia (independientemente del tipo de hormigas que sean) nos hara falta 1 larva
 }
 
     private void Update()
@@ -198,6 +201,8 @@ public class Colony : MonoBehaviour
             }
         }
 
+        //PERCEPCIONES EXTREMAS => SIEMPRE QUE SE PRODUZCAN SE EJECUTAN, INDEPENDIENTEMENTE UNAS ENTRE OTRAS Y SIN PRIORIDAD NI COOLDOWN
+
         if (perceptions.CheckPerception(Perception.AtaqueALaColonia))
         {
             actions.ExecuteAction(Action.AsignarSoldados);
@@ -228,14 +233,13 @@ public class Colony : MonoBehaviour
     void CheckForPerceptions()
     {
         //Añadimos todas las percepciones con prioridad, solo se añadiran aquellas que sean true
-        // PRIORITY => CUANTO MAS ALTO, ANTES SE INCLUIRA EN LA LISTA
+        // PRIORITY => CUANTO MAS ALTO, ANTES SE INCLUIRA EN LA LISTA => 5, 4, 3, 2, 1
 
         AddPerception(Perception.FaltaDeComida, 5, IsFoodInsufficient());
-        AddPerception(Perception.IncapacidadParaRecolectarComida, 20, AreGatherersUnableToCollectFood());
-        AddPerception(Perception.ExcesoDeHuevosAlmacenados, 15, AreThereTooManyStoredEggs());
-        AddPerception(Perception.FaltaDeHuevos, 15, IsThereALackOfEggs());
-        AddPerception(Perception.ExcesoDeComidaYLarvasHambrientas, 15, IsThereExcessFoodAndHungryLarvas());
-
+        AddPerception(Perception.ExcesoDeComidaYLarvasHambrientas, 4, IsThereExcessFoodAndHungryLarvas());
+        AddPerception(Perception.FaltaDeHuevos, 3, IsThereALackOfEggs());
+        AddPerception(Perception.ExcesoDeHuevosAlmacenados, 2, AreThereTooManyStoredEggs());
+        AddPerception(Perception.IncapacidadParaRecolectarComida, 1, AreGatherersUnableToCollectFood());
     }
 
     void ExecutePerception(Perception perception)
@@ -259,8 +263,19 @@ public class Colony : MonoBehaviour
                 break;
 
             case Perception.FaltaDeHuevos:
-                WriteColony("FALTA DE HUEVOS, REORGANIZANDO GATHERERS");
-                actions.ExecuteAction(Action.AsignarRecolectoras);
+                WriteColony("FALTA DE HUEVOS, ¿TENEMOS RECURSOS?");
+                
+                //Comprobar si tenemos recursos
+                if (storageResources > 2) 
+                {
+                    WriteColony("Tenemos recursos, es necesario asignar mas WORKERS");
+                    actions.ExecuteAction(Action.AsignarObreras);
+                }
+                else 
+                {
+                    WriteColony("No tenemos recursos, es necesario asignar mas GATHERERS");
+                    actions.ExecuteAction(Action.AsignarObreras);
+                }
                 break;
 
             case Perception.ExcesoDeComidaYLarvasHambrientas:
@@ -309,7 +324,19 @@ public class Colony : MonoBehaviour
     }
     public bool AreGatherersUnableToCollectFood() { /* Implementación */ return false; }
     public bool AreThereTooManyStoredEggs() { /* Implementación */ return false; }
-    public bool IsThereALackOfEggs() { /* Implementación */ return false; }
+    public bool IsThereALackOfEggs() 
+    {
+        int totalPopulation = population + totalLarvas;
+
+        if (totalPopulation == 0)
+        {
+            return false; // No hay población para comparar
+        }
+
+        float requiredLarvas = population / minimumLarvaEggsPerIndividual;
+
+        return totalLarvas < requiredLarvas;
+    }
     public bool IsSoldierPopulationDecreasing() { /* Implementación */ return false; }
     public bool IsAdverseWeather() { return !weatherFavorable; }
     public bool AreGatherersIdle() 
@@ -337,8 +364,8 @@ public class Colony : MonoBehaviour
         int soldierCount = antManager.antSoldierObjectList.Count;
         int workerCount = antManager.antWorkerObjectList.Count;
 
-        //QUEREMOS TRANSFORMAR DOS HORMIGAS SOLO, SI SE NECESITAN MAS LA COLONIA SE ENCARGARA DE VOLVER A LLAMAR AL METODO, SI TENEMOS 2 SOLDADOS 2 SOLDADOS
-        //SI NO 2 WORKERS Y SI NO 1 DE CADA, Y SI NO NINGUNA
+        // QUEREMOS TRANSFORMAR DOS HORMIGAS SOLO, SI SE NECESITAN MAS LA COLONIA SE ENCARGARA DE VOLVER A LLAMAR AL METODO, SI TENEMOS 2 SOLDADOS 2 SOLDADOS
+        // SI NO 2 WORKERS Y SI NO 1 DE CADA, Y SI NO NINGUNA
         if (soldierCount > 1)
         {
             // Transformar 2 soldados en recolectoras
@@ -353,20 +380,40 @@ public class Colony : MonoBehaviour
             soldiersToTransform.Add(antManager.antSoldierObjectList[0]);
             if (workerCount > 0)
             {
-                workersToTransform.Add(antManager.antWorkerObjectList[0]);
+                // Filtrar trabajadores con recursoCargado == Recurso.Nada
+                foreach (var worker in antManager.antWorkerObjectList)
+                {
+                    AntWorker workerComponent = worker.GetComponent<AntWorker>();
+                    if (workerComponent != null && workerComponent.recursoCargado == Recurso.Nada)
+                    {
+                        workersToTransform.Add(worker);
+                        break;
+                    }
+                }
             }
         }
         else if (workerCount > 0)
         {
             // Transformar 2 trabajadores en recolectoras si hay más de 1, sino transformar solo 1
-            for (int i = 0; i < 2 && i < workerCount; i++)
+            int count = 0;
+            foreach (var worker in antManager.antWorkerObjectList)
             {
-                workersToTransform.Add(antManager.antWorkerObjectList[i]);
+                AntWorker workerComponent = worker.GetComponent<AntWorker>();
+                //AQUELLAS QUE NO TENGAN RECURSOS CARGADOS
+                if (workerComponent != null && workerComponent.recursoCargado == Recurso.Nada)
+                {
+                    workersToTransform.Add(worker);
+                    count++;
+                    if (count >= 2)
+                    {
+                        break;
+                    }
+                }
             }
         }
-        else if(soldierCount == 0 && workerCount == 0)
+        else if (soldierCount == 0 && workerCount == 0)
         {
-            WriteColony("NO PUEDO TRANSFORMAR HORMIGAS EN GATHERERS PORQUE NO HAY");
+            Debug.Log("NO PUEDO TRANSFORMAR HORMIGAS EN GATHERERS PORQUE NO HAY");
         }
 
         // Transformar los soldados seleccionados en recolectoras
@@ -418,7 +465,88 @@ public class Colony : MonoBehaviour
             gatherer.GetComponent<AntGatherer>().ChangeRole(AntManager.Role.Worker);
         }
     }
-    public void AssignMoreWorkers() { /* Implementación */ }
+    public void AssignMoreWorkers() 
+    {
+        List<GameObject> soldiersToTransform = new List<GameObject>();
+        List<GameObject> gathererToTransform = new List<GameObject>();
+
+        int soldierCount = antManager.antSoldierObjectList.Count;
+        int gathererCount = antManager.antGathererObjectList.Count;
+
+        // QUEREMOS TRANSFORMAR DOS HORMIGAS SOLO, SI SE NECESITAN MAS LA COLONIA SE ENCARGARA DE VOLVER A LLAMAR AL METODO, SI TENEMOS 2 SOLDADOS 2 SOLDADOS
+        // SI NO 2 GATHERERS Y SI NO 1 DE CADA, Y SI NO NINGUNA
+        if (soldierCount > 1)
+        {
+            // Transformar 2 soldados en workers
+            for (int i = 1; i <= 2 && i < soldierCount; i++)
+            {
+                soldiersToTransform.Add(antManager.antSoldierObjectList[i]);
+            }
+        }
+        else if (soldierCount == 1)
+        {
+            // Transformar 1 soldado y 1 gatherer en worker (si hay gatherer)
+            soldiersToTransform.Add(antManager.antSoldierObjectList[0]);
+            if (gathererCount > 0)
+            {
+                // Filtrar gatherer con comidaCargada
+                foreach (var gatherer in antManager.antGathererObjectList)
+                {
+                    AntGatherer gathererComponent = gatherer.GetComponent<AntGatherer>();
+                    if (gathererComponent != null && !gathererComponent.comidaCargada) //Si no lleva comida, la transformamos
+                    {
+                        gathererToTransform.Add(gatherer);
+                        break;
+                    }
+                }
+            }
+        }
+        else if (gathererCount > 0)
+        {
+            // Transformar 2 gatherers en workers si hay más de 1, sino transformar solo 1
+            int count = 0;
+            foreach (var gatherer in antManager.antGathererObjectList)
+            {
+                AntGatherer gathererComponent = gatherer.GetComponent<AntGatherer>();
+                //AQUELLAS QUE NO TENGAN RECURSOS CARGADOS
+                if (gathererComponent != null && !gathererComponent.comidaCargada)
+                {
+                    gathererToTransform.Add(gatherer);
+                    count++;
+                    if (count >= 2)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else if (soldierCount == 0 && gathererCount == 0)
+        {
+            Debug.Log("NO PUEDO TRANSFORMAR HORMIGAS EN GATHERERS PORQUE NO HAY");
+        }
+
+        // Transformar los soldados seleccionados en workers
+        foreach (GameObject soldierObj in soldiersToTransform)
+        {
+            AntSoldier soldier = soldierObj.GetComponent<AntSoldier>();
+            if (soldier != null)
+            {
+                soldier.ChangeRole(AntManager.Role.Worker);
+                antManager.antSoldierObjectList.Remove(soldierObj); // Actualizar la lista de soldados
+            }
+        }
+
+        // Transformar las gatherer seleccionados en workers
+        foreach (GameObject gathererObj in gathererToTransform)
+        {
+            AntGatherer gatherer = gathererObj.GetComponent<AntGatherer>();
+            if (gatherer != null)
+            {
+                gatherer.ChangeRole(AntManager.Role.Worker);
+                antManager.antWorkerObjectList.Remove(gathererObj); // Actualizar la lista de trabajadores
+            }
+        }
+    }
 
 
     //----------------------------------------------------------------------------------------------------------------------------- FUNCIONES SECUNDARIAS DE LA COLONIA
