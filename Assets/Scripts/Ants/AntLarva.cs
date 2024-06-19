@@ -14,7 +14,7 @@ public class AntLarva : Ant
     [SerializeField] public Colony colony;
 
     GameObject assignedResource;
-    bool alimentada = false;
+    public bool alimentada = false;
 
     //Sprite
     private float flipTime;

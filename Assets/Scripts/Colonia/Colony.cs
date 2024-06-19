@@ -51,10 +51,12 @@ public class Colony : MonoBehaviour
     
 
     // Atributos de la colonia
-    public int minimumFoodThreshold;
+    public int minimumFoodUmbral;
     public int larvaFoodRequirement; // Cantidad de comida que requiere cada larva
     public float minimumQueenHealth;
     public float minimumLarvaEggsPerIndividual;
+    public float maximoLarvas;
+    private int totalGatherersToSoldiers;
 
     //auxiliar
     private int auxiliarSoldierCount;
@@ -145,11 +147,14 @@ public class Colony : MonoBehaviour
         activeDanger = false;
         cooldown = 10f;
         initCooldown = 10f;
-        minimumFoodThreshold = 2;
+        minimumFoodUmbral = 2;
         larvaFoodRequirement = 1; // Cantidad de comida que requiere cada larva
         minimumQueenHealth = 90f;
         minimumLarvaEggsPerIndividual = 5f; //Quiere decir que, por cada 5 individuos de la colonia (independientemente del tipo de hormigas que sean) nos hara falta 1 larva
-}
+        maximoLarvas = 5f;
+        totalGatherersToSoldiers = 0;
+    }
+
 
     private void Update()
     {
@@ -222,6 +227,7 @@ public class Colony : MonoBehaviour
         {
             actions.ExecuteAction(Action.AsignarOtroRolARecolectorasOciosas);
         }
+
         if (perceptions.CheckPerception(Perception.ExcesoDeComidaYLarvasHambrientas))
         {
             actions.ExecuteAction(Action.AsignarObreras);
@@ -258,12 +264,12 @@ public class Colony : MonoBehaviour
                 break;
 
             case Perception.ExcesoDeHuevosAlmacenados:
-                WriteColony("EXCESO DE HUEVOS, REORGANIZANDO WORKERS");
+                WriteColony("EXCESO DE LARVAS, REORGANIZANDO WORKERS");
                 actions.ExecuteAction(Action.AsignarObreras);
                 break;
 
             case Perception.FaltaDeHuevos:
-                WriteColony("FALTA DE HUEVOS, ¿TENEMOS RECURSOS?");
+                WriteColony("FALTA DE LARVAS, ¿TENEMOS RECURSOS?");
                 
                 //Comprobar si tenemos recursos
                 if (storageResources > 2) 
@@ -274,7 +280,7 @@ public class Colony : MonoBehaviour
                 else 
                 {
                     WriteColony("No tenemos recursos, es necesario asignar mas GATHERERS");
-                    actions.ExecuteAction(Action.AsignarObreras);
+                    actions.ExecuteAction(Action.AsignarRecolectoras);
                 }
                 break;
 
@@ -305,13 +311,13 @@ public class Colony : MonoBehaviour
         }
 
         // Verificar si los recursos de almacenamiento son insuficientes
-        bool storageResourcesLow = storageResources < minimumFoodThreshold;
+        bool storageResourcesLow = storageResources < minimumFoodUmbral;
 
         // Calcular la cantidad total de comida requerida por las larvas
-        //int totalLarvaFoodRequirement = totalLarvas * larvaFoodRequirement;
+        int totalLarvaFoodRequirement = totalLarvas * larvaFoodRequirement;
 
         // Verificar si la comida es insuficiente considerando las larvas y la vida de la reina
-        bool foodLowForLarvasAndQueen = storageResources < minimumFoodThreshold//(totalLarvaFoodRequirement + minimumFoodThreshold)
+        bool foodLowForLarvasAndQueen = storageResources < (totalLarvaFoodRequirement + minimumFoodUmbral)
                                         && myQueen.GetComponent<AntQueen>().salud < minimumQueenHealth;
 
         // Considerar la falta de comida si cualquiera de las condiciones es verdadera
@@ -322,9 +328,9 @@ public class Colony : MonoBehaviour
 
 
     }
-    public bool AreGatherersUnableToCollectFood() { /* Implementación */ return false; }
-    public bool AreThereTooManyStoredEggs() { /* Implementación */ return false; }
-    public bool IsThereALackOfEggs() 
+    public bool AreGatherersUnableToCollectFood() { return mapResources > 8; } //Hay muchos recursos en el mapa
+    public bool AreThereTooManyStoredEggs() { return totalLarvas > maximoLarvas; } //Muchos huevos almacenados
+    public bool IsThereALackOfEggs()  //Falta de larvas
     {
         int totalPopulation = population + totalLarvas;
 
@@ -337,9 +343,13 @@ public class Colony : MonoBehaviour
 
         return totalLarvas < requiredLarvas;
     }
-    public bool IsSoldierPopulationDecreasing() { /* Implementación */ return false; }
-    public bool IsAdverseWeather() { return !weatherFavorable; }
-    public bool AreGatherersIdle() 
+
+    //Si, de todos los gatherers transformados a soldados, quedan menos de la mitad, tenemos un decremento importante
+    //Habra que transformar ahora los workers por caso EXTREMO
+    public bool IsSoldierPopulationDecreasing() { return inDanger && totalSoldiers < totalGatherersToSoldiers / 2; } 
+
+    public bool IsAdverseWeather() { return !weatherFavorable; } //clima no faavorable
+    public bool AreGatherersIdle() //hormigas idle
     {
         int contador = 0;
         foreach (GameObject gatherer in antManager.antGathererObjectList)
@@ -351,7 +361,36 @@ public class Colony : MonoBehaviour
         //return manteniendo una hormiga idle por lo menos por si acaso
         return contador > 1;
     }
-    public bool IsThereExcessFoodAndHungryLarvas() { /* Implementación */ return false; }
+    public bool IsThereExcessFoodAndHungryLarvas() //Exceso de larvas hambrientas
+    {
+        // Contar cuántas larvas están hambrientas
+        int hungryLarvasCount = 0;
+        foreach (GameObject larva in antManager.antLarvaList)
+        {
+            if (!larva.GetComponent<AntLarva>().alimentada)
+            {
+                hungryLarvasCount++;
+            }
+        }
+
+        //Definimos el umbral
+
+        // Calcular cuántas larvas pueden ser alimentadas con la comida disponible
+        int foodLarva = 1; //un recurso necesita una larva para ser alimentada
+        int larvasThatCanAlimentadas = storageResources / foodLarva;
+
+        // Calcular el umbral como el número de larvas que no pueden ser alimentadas
+        int hungryLarvaUmbral = totalLarvas - larvasThatCanAlimentadas;
+
+        // Asegurar que el umbral no sea negativo
+        if (hungryLarvaUmbral < 0)
+        {
+            hungryLarvaUmbral = 0;
+        }
+
+        // Comparar el número de larvas hambrientas con el umbral proporcionado
+        return hungryLarvasCount > hungryLarvaUmbral;
+    }
 
 
 
@@ -413,7 +452,7 @@ public class Colony : MonoBehaviour
         }
         else if (soldierCount == 0 && workerCount == 0)
         {
-            Debug.Log("NO PUEDO TRANSFORMAR HORMIGAS EN GATHERERS PORQUE NO HAY");
+            Debug.Log("NO PUEDO TRANSFORMAR HORMIGAS EN GATHERERS PORQUE NO HAY O LAS WORKERS LLEVAN RECURSOS");
         }
 
         // Transformar los soldados seleccionados en recolectoras
@@ -440,16 +479,50 @@ public class Colony : MonoBehaviour
     }
     public void AssignMoreSoldiers() 
     {
-        WriteColony("COLONIA BAJO ATAQUE ENEMIGO");
         WriteColony("REASIGNANDO SOLDADOS PARA LA DEFENSA");
 
-        //Lista auxiliar para que no se tripie el foreach
-        List<GameObject> gathererListCopy = new List<GameObject>(antManager.antGathererObjectList);
-
-        foreach (GameObject gatherer in gathererListCopy)
+        if (antManager.antGathererObjectList.Count <= 0)
         {
-            gatherer.GetComponent<AntGatherer>().ChangeRole(AntManager.Role.Soldier);
+            //CASO DE DECREMENTO DE SOLDADOS, TRANSFORMAMOS LAS WORKERS
+            WriteColony("REASIGNANDO LAS OBRERAS EN SOLDADOS, A LUCHAR!");
+            //Lista auxiliar para que no se tripie el foreach
+            if (antManager.antWorkerObjectList.Count != 0) //Si no esta vacia
+            {
+                List<GameObject> workerListCopy = new List<GameObject>(antManager.antWorkerObjectList);
+
+                foreach (GameObject worker in workerListCopy)
+                {
+                    if (worker != null)
+                    {
+                        worker.GetComponent<AntWorker>().ChangeRole(AntManager.Role.Soldier);
+                    }
+                }
+            }
+            else
+            {
+                WriteColony("NO HAY HORMIGAS QUE TRANSFORMAR EN SOLDADOS, ESTAMOS EN PROBLEMAS CAPITAN");
+            }
         }
+
+        else //CASO PRIMERA AMENAZA, TRANSFORMAMOS LAS RECOLECTORAS PRIMERO
+        {
+            WriteColony("REASIGNANDO LAS RECOLECTORAS EN SOLDADOS, A LUCHAR!");
+            //Lista auxiliar para que no se tripie el foreach
+            if (antManager.antGathererObjectList.Count != 0) //Si no esta vacia
+            {
+                List<GameObject> gathererListCopy = new List<GameObject>(antManager.antGathererObjectList);
+
+                foreach (GameObject gatherer in gathererListCopy)
+                {
+                    if (gatherer != null)
+                    {
+                        gatherer.GetComponent<AntGatherer>().ChangeRole(AntManager.Role.Soldier);
+                        totalGatherersToSoldiers++;
+                    }
+                }
+            }
+        }
+        
     }
     public void AssignNewRoleToIdleGatherers() 
     {
@@ -522,7 +595,7 @@ public class Colony : MonoBehaviour
         }
         else if (soldierCount == 0 && gathererCount == 0)
         {
-            Debug.Log("NO PUEDO TRANSFORMAR HORMIGAS EN GATHERERS PORQUE NO HAY");
+            Debug.Log("NO PUEDO TRANSFORMAR HORMIGAS EN WORKERS PORQUE NO HAY O PORQUE LAS GATHERERS LLEVAN RECURSOS");
         }
 
         // Transformar los soldados seleccionados en workers
@@ -607,6 +680,7 @@ public class Colony : MonoBehaviour
             // Remover los soldados transformados de la lista de soldados originales
             antManager.antSoldierObjectList = antManager.antSoldierObjectList.Take(1).ToList();
         }
+        totalGatherersToSoldiers = 0;
     }
     private void IniciarSimulacion()
     {
