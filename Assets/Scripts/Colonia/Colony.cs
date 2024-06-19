@@ -40,6 +40,7 @@ public class Colony : MonoBehaviour
 
     //auxiliar
     private int auxiliarSoldierCount;
+    public bool weatherFavorable;
 
     // UI Elements
     public Slider sliderGatherers;
@@ -61,8 +62,101 @@ public class Colony : MonoBehaviour
     public MonoBehaviour mapScript;
     public MonoBehaviour predatorManagerScript;
 
+    //Acciones y percepciones
+    public ColonyPerceptions perceptions;
+    public ColonyActions actions;
+
+    //FUNCIONES PRINCIPALES DE LA COLONIA
+
+    //Nombramos en forma de Enum el numero de percepciones segun nuestra tabla de percepciones
+    public enum Perception
+    {
+        AtaqueALaColonia,
+        FaltaDeComida,
+        IncapacidadParaRecolectarComida,
+        ExcesoDeHuevosAlmacenados,
+        FaltaDeHuevos,
+        DisminucionDePoblacionDeSoldados,
+        ClimaAdverso,
+        RecolectorasOciosas,
+        ExcesoDeComidaYLarvasHambrientas
+    }
+
+    //Nombramos en forma de Action el numero de acciones segun nuestra tabla de acciones
+    public enum Action
+    {
+        AsignarConstructoras,
+        AsignarRecolectoras,
+        AsignarSoldados,
+        AsignarOtroRolARecolectorasOciosas,
+        AsignarObreras
+    }
+
+    //Funcion en la que vamos a controlar nuestras percepciones, y dependiendo de estas, haremos una accion u otra
+    void ControlColony()
+    {
+        if (perceptions.CheckPerception(Perception.AtaqueALaColonia))
+        {
+            actions.ExecuteAction(Action.AsignarSoldados);
+        }
+        if (perceptions.CheckPerception(Perception.FaltaDeComida))
+        {
+            actions.ExecuteAction(Action.AsignarRecolectoras);
+        }
+        if (perceptions.CheckPerception(Perception.IncapacidadParaRecolectarComida))
+        {
+            actions.ExecuteAction(Action.AsignarOtroRolARecolectorasOciosas);
+        }
+        if (perceptions.CheckPerception(Perception.ExcesoDeHuevosAlmacenados))
+        {
+            actions.ExecuteAction(Action.AsignarConstructoras);
+        }
+        if (perceptions.CheckPerception(Perception.FaltaDeHuevos))
+        {
+            actions.ExecuteAction(Action.AsignarRecolectoras);
+        }
+        if (perceptions.CheckPerception(Perception.DisminucionDePoblacionDeSoldados))
+        {
+            actions.ExecuteAction(Action.AsignarSoldados);
+        }
+        if (perceptions.CheckPerception(Perception.ClimaAdverso))
+        {
+            actions.ExecuteAction(Action.AsignarOtroRolARecolectorasOciosas);
+        }
+        if (perceptions.CheckPerception(Perception.RecolectorasOciosas))
+        {
+            actions.ExecuteAction(Action.AsignarOtroRolARecolectorasOciosas);
+        }
+        if (perceptions.CheckPerception(Perception.ExcesoDeComidaYLarvasHambrientas))
+        {
+            actions.ExecuteAction(Action.AsignarObreras);
+        }
+    }
+
+
+    // Métodos de percepción
+    public bool IsUnderAttack() { /* Implementación */ return false; }
+    public bool IsFoodInsufficient() { /* Implementación */ return false; }
+    public bool AreGatherersUnableToCollectFood() { /* Implementación */ return false; }
+    public bool AreThereTooManyStoredEggs() { /* Implementación */ return false; }
+    public bool IsThereALackOfEggs() { /* Implementación */ return false; }
+    public bool IsSoldierPopulationDecreasing() { /* Implementación */ return false; }
+    public bool IsAdverseWeather() { /* Implementación */ return false; }
+    public bool AreGatherersIdle() { /* Implementación */ return false; }
+    public bool IsThereExcessFoodAndHungryLarvae() { /* Implementación */ return false; }
+
+    // Métodos de acción
+    public void AssignMoreBuilders() { /* Implementación */ }
+    public void AssignMoreGatherers() { /* Implementación */ }
+    public void AssignMoreSoldiers() { /* Implementación */ }
+    public void AssignNewRoleToIdleGatherers() { /* Implementación */ }
+    public void AssignMoreWorkers() { /* Implementación */ }
+
+
+    //FUNCIONES SECUNDARIAS DE LA COLONIA
     private void Start()
     {
+        weatherFavorable = true;
         auxiliarSoldierCount = 0;
         buttonStartSimulation.onClick.AddListener(IniciarSimulacion);
         this.enabled = false; // Desactivar el script al inicio
@@ -144,18 +238,10 @@ public class Colony : MonoBehaviour
         ManageColony();
         //Controlamos
         ControlColony();
-    }
 
-    private void ControlColony()
-    {
-        //Control de hormigas
-        //Si no tenemos ninguna gatherer y no tenemos 2 recursos MINIMO, una worker se tiene que convertir en gatherer
-        int gathererNumber = antManager.antGathererObjectList.Count;
-        int workerNumber = antManager.antWorkerObjectList.Count;
-        int predatorNumber = predatorManager.predators.Count;
-        int resources = storageRoom.GetComponent<Room>().count;
-        int gathererLarvaCount = CountPendingLarvas("Gatherer");
-        int workerLarvaCount = CountPendingLarvas("Worker");
+
+        //auxiliar a antManager
+        antManager.weatherFavorable = weatherFavorable;
     }
 
     private void ManageColony()
@@ -266,10 +352,10 @@ public class Colony : MonoBehaviour
                 antManager.GenerateAnt(-17, -6, role);
                 break;
             case AntManager.Role.Soldier:
-                antManager.GenerateAnt(-10, -10, role);
+                antManager.GenerateAnt(-24, -18, role);
                 break;
             case AntManager.Role.Queen:
-                antManager.GenerateAnt(20, -7, role);
+                antManager.GenerateAnt(50, -13, role);
                 break;
             default:
                 Debug.LogWarning("Unknown ant role: " + role);

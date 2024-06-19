@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class ControlGeneratorPad : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class ControlGeneratorPad : MonoBehaviour
     public Map _map;
     private bool isShared;
     private GameObject button;
+    public GameObject panelWeather;
 
     void Start()
     {
@@ -59,6 +61,8 @@ public class ControlGeneratorPad : MonoBehaviour
             isShared = true;
         }
     }
+
+
 
     //funcion para flipear nuestro boton{
     private void Flip()

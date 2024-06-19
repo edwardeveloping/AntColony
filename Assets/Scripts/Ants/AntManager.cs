@@ -38,6 +38,12 @@ public class AntManager : MonoBehaviour
     public List<GameObject> antSoldierObjectList = new List<GameObject>();
     public List<GameObject> antLarvaList = new List<GameObject>();
 
+    public bool weatherFavorable;
+
+    private void Start()
+    {
+        weatherFavorable = true;
+    }
     public GameObject GenerateAnt(float x, float y, Role role)
     {
         GameObject antObj = null;
@@ -143,5 +149,13 @@ public class AntManager : MonoBehaviour
 
         //Debug.Log("AntGathererList size: " + antGathererObjectList.Count + ", AntList size: " + antObjectList.Count);
         return true;
+    }
+
+    private void Update()
+    {
+        foreach (GameObject gatherer in antGathererObjectList)
+        {
+            gatherer.GetComponent<AntGatherer>().climaFavorable = weatherFavorable;
+        }
     }
 }

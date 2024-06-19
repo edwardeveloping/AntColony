@@ -185,9 +185,11 @@ public class AntGatherer : Ant
             return; // No hacer nada más si la hormiga está muerta
         }
 
-        if (!climaFavorable) // Si el clima no es favorable o está en peligro, esperar
+        if (!climaFavorable && assignedResource != null) // Si el clima no es favorable o está en peligro, esperar
         {
-            return; // Salir de la actualización si está esperando
+            Vector3 posicion = new Vector3(0, -5, 0);
+            MoveTo(posicion); //se mueven a donde spawnean
+            destino = posicion;
         }
 
 
