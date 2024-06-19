@@ -38,6 +38,13 @@ public class AntGatherer : Ant
     public SpriteRenderer barkPanel;
     public Sprite[] barkList;
 
+    //Idle
+    public bool isIdle;
+    private Vector3 previousPosition;
+    private float idleTime;
+    private float idleThreshold = 5.0f; // Tiempo en segundos para considerar la hormiga como ociosa
+
+
     private void Start()
     {
         // Obtener el componente SpriteRenderer del GameObject
@@ -57,8 +64,29 @@ public class AntGatherer : Ant
         lastPosition = transform.position;
         timeStanding = 0f;
 
+        previousPosition = transform.position;
+        idleTime = 0f;
+
         // Iniciar la búsqueda de recursos
         StartCoroutine(LookForResourceCor());
+    }
+
+    private void CheckIdleStatus()
+    {
+        if (transform.position == previousPosition && climaFavorable)
+        {
+            idleTime += Time.deltaTime;
+            if (idleTime >= idleThreshold)
+            {
+                isIdle = true;
+            }
+        }
+        else
+        {
+            isIdle = false;
+            idleTime = 0f;
+            previousPosition = transform.position;
+        }
     }
 
     IEnumerator Bark(string text)
@@ -213,6 +241,7 @@ public class AntGatherer : Ant
             Explore();
         }
 
+        CheckIdleStatus(); //Comprobar si hay idle
         SpriteMove(); // Actualizar el movimiento del sprite
     }
 

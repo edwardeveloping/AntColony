@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using TMPro;
 using Unity.VisualScripting;
@@ -17,6 +18,8 @@ public class Colony : MonoBehaviour
     [SerializeField] Map map;
 
     int shells;
+    public bool inDanger;
+    public bool activeDanger;
 
     public Room storageRoom;
 
@@ -59,6 +62,7 @@ public class Colony : MonoBehaviour
 
     // Referencias a otros scripts
     public GameObject gameManager;
+    public GameObject controlInGame;
     public MonoBehaviour mapScript;
     public MonoBehaviour predatorManagerScript;
 
@@ -90,6 +94,100 @@ public class Colony : MonoBehaviour
         AsignarSoldados,
         AsignarOtroRolARecolectorasOciosas,
         AsignarObreras
+    }
+
+    private void Start()
+    {
+        weatherFavorable = true;
+        auxiliarSoldierCount = 0;
+        buttonStartSimulation.onClick.AddListener(IniciarSimulacion);
+        this.enabled = false; // Desactivar el script al inicio
+        gameManager.SetActive(false); // Desactivar el GameManager al inicio
+        mapScript.enabled = false; // Desactivar el script Map al inicio
+        predatorManagerScript.enabled = false;
+
+        // Add listeners to update text values when sliders change
+        sliderGatherers.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderGatherers, textGatherersValue); });
+        sliderWorkers.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderWorkers, textWorkersValue); });
+        sliderSoldiers.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderSoldiers, textSoldiersValue); });
+        sliderPredators.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderPredators, textPredatorsValue); });
+        sliderEscarabajos.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderEscarabajos, textEscarabajosValue); });
+
+        // Initialize text values
+        UpdateSliderValue(sliderGatherers, textGatherersValue);
+        UpdateSliderValue(sliderWorkers, textWorkersValue);
+        UpdateSliderValue(sliderSoldiers, textSoldiersValue);
+        UpdateSliderValue(sliderPredators, textPredatorsValue);
+        UpdateSliderValue(sliderEscarabajos, textEscarabajosValue);
+
+        //ControlInGame
+        controlInGame.SetActive(false);
+        activeDanger = false;
+    }
+
+    private void Update()
+    {
+        ManageColony();
+        //Controlamos
+        ControlColony();
+
+
+        //auxiliar a antManager
+        antManager.weatherFavorable = weatherFavorable;
+
+        if (inDanger)
+        {
+            activeDanger = true;
+        }
+
+        if (!inDanger && activeDanger)
+        {
+            ReorganizeSoldiers();
+            activeDanger = false;
+        }
+    }
+
+    void ReorganizeSoldiers()
+    {
+        int soldierCount = antManager.antSoldierObjectList.Count;
+
+        // Si hay más de 1 soldado, realizar la transformación
+        if (soldierCount > 1)
+        {
+            // Crear una lista temporal para los soldados a transformar
+            List<GameObject> soldiersToTransform = new List<GameObject>();
+
+            for (int i = 1; i < soldierCount; i++) // Empieza desde 1 para mantener 1 soldado en la reserva
+            {
+                soldiersToTransform.Add(antManager.antSoldierObjectList[i]);
+            }
+
+            // Transformar los soldados fuera del bucle para evitar modificar la lista mientras se itera
+            for (int i = 0; i < soldiersToTransform.Count; i++)
+            {
+                GameObject soldierObj = soldiersToTransform[i];
+                AntSoldier soldier = soldierObj.GetComponent<AntSoldier>();
+
+                if (soldier != null)
+                {
+                    if ((i + 1) % 2 == 0) // Usamos (i + 1) porque estamos iterando desde el índice 0 en soldiersToTransform
+                    {
+                        soldier.ChangeRole(AntManager.Role.Gatherer);
+                    }
+                    else
+                    {
+                        soldier.ChangeRole(AntManager.Role.Worker);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("AntSoldier component not found on GameObject");
+                }
+            }
+
+            // Remover los soldados transformados de la lista de soldados originales
+            antManager.antSoldierObjectList = antManager.antSoldierObjectList.Take(1).ToList();
+        }
     }
 
     //Funcion en la que vamos a controlar nuestras percepciones, y dependiendo de estas, haremos una accion u otra
@@ -135,49 +233,62 @@ public class Colony : MonoBehaviour
 
 
     // Métodos de percepción
-    public bool IsUnderAttack() { /* Implementación */ return false; }
+    public bool IsUnderAttack() { return inDanger; }
     public bool IsFoodInsufficient() { /* Implementación */ return false; }
     public bool AreGatherersUnableToCollectFood() { /* Implementación */ return false; }
     public bool AreThereTooManyStoredEggs() { /* Implementación */ return false; }
     public bool IsThereALackOfEggs() { /* Implementación */ return false; }
     public bool IsSoldierPopulationDecreasing() { /* Implementación */ return false; }
     public bool IsAdverseWeather() { /* Implementación */ return false; }
-    public bool AreGatherersIdle() { /* Implementación */ return false; }
+    public bool AreGatherersIdle() 
+    {
+        int contador = 0;
+        foreach (GameObject gatherer in antManager.antGathererObjectList)
+        {
+            //Operador ? para ir practicando 
+            contador += gatherer.GetComponent<AntGatherer>().isIdle ? 1 : 0;
+        }
+
+        //return manteniendo una hormiga idle por lo menos por si acaso
+        return contador > 1;
+    }
     public bool IsThereExcessFoodAndHungryLarvae() { /* Implementación */ return false; }
 
     // Métodos de acción
     public void AssignMoreBuilders() { /* Implementación */ }
     public void AssignMoreGatherers() { /* Implementación */ }
-    public void AssignMoreSoldiers() { /* Implementación */ }
-    public void AssignNewRoleToIdleGatherers() { /* Implementación */ }
+    public void AssignMoreSoldiers() 
+    {
+        Debug.Log("COLONY: COLONIA BAJO ATAQUE ENEMIGO");
+        Debug.Log("REASIGNANDO SOLDADOS PARA LA DEFENSA");
+
+        //Lista auxiliar para que no se tripie el foreach
+        List<GameObject> gathererListCopy = new List<GameObject>(antManager.antGathererObjectList);
+
+        foreach (GameObject gatherer in gathererListCopy)
+        {
+            gatherer.GetComponent<AntGatherer>().ChangeRole(AntManager.Role.Soldier);
+        }
+    }
+    public void AssignNewRoleToIdleGatherers() 
+    {
+        //Creamos lista auxiliar para evitar iteraciones sobre elementos cambiantes donde almacenaremos aquellas que sean Idle
+        var idleGatherers = antManager.antGathererObjectList
+                             .Where(gatherer => gatherer.GetComponent<AntGatherer>().isIdle)
+                             .ToList();
+
+        //cambiamos las idle
+        foreach (GameObject gatherer in idleGatherers)
+        {
+            Debug.Log("COLONY: REASIGNANDO HORMIGA IDLE");
+            gatherer.GetComponent<AntGatherer>().ChangeRole(AntManager.Role.Worker);
+        }
+    }
     public void AssignMoreWorkers() { /* Implementación */ }
 
 
     //FUNCIONES SECUNDARIAS DE LA COLONIA
-    private void Start()
-    {
-        weatherFavorable = true;
-        auxiliarSoldierCount = 0;
-        buttonStartSimulation.onClick.AddListener(IniciarSimulacion);
-        this.enabled = false; // Desactivar el script al inicio
-        gameManager.SetActive(false); // Desactivar el GameManager al inicio
-        mapScript.enabled = false; // Desactivar el script Map al inicio
-        predatorManagerScript.enabled = false;
-
-        // Add listeners to update text values when sliders change
-        sliderGatherers.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderGatherers, textGatherersValue); });
-        sliderWorkers.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderWorkers, textWorkersValue); });
-        sliderSoldiers.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderSoldiers, textSoldiersValue); });
-        sliderPredators.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderPredators, textPredatorsValue); });
-        sliderEscarabajos.onValueChanged.AddListener(delegate { UpdateSliderValue(sliderEscarabajos, textEscarabajosValue); });
-
-        // Initialize text values
-        UpdateSliderValue(sliderGatherers, textGatherersValue);
-        UpdateSliderValue(sliderWorkers, textWorkersValue);
-        UpdateSliderValue(sliderSoldiers, textSoldiersValue);
-        UpdateSliderValue(sliderPredators, textPredatorsValue);
-        UpdateSliderValue(sliderEscarabajos, textEscarabajosValue);
-    }
+    
 
     private void IniciarSimulacion()
     {
@@ -226,6 +337,9 @@ public class Colony : MonoBehaviour
         // Activar el GameManager
         gameManager.SetActive(true);
 
+        //controlinGame
+        controlInGame.SetActive(true);
+
         // Activar el script Map
         mapScript.enabled = true;
 
@@ -233,16 +347,6 @@ public class Colony : MonoBehaviour
         predatorManagerScript.enabled = true;
     }
 
-    private void Update()
-    {
-        ManageColony();
-        //Controlamos
-        ControlColony();
-
-
-        //auxiliar a antManager
-        antManager.weatherFavorable = weatherFavorable;
-    }
 
     private void ManageColony()
     {

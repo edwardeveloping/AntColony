@@ -7,6 +7,7 @@ public class ToggleWeather : MonoBehaviour
 {
     [SerializeField] public Colony colony;
     public GameObject panelWeather;
+    public GameObject panelDanger;
     void Start()
     {
         
@@ -18,7 +19,7 @@ public class ToggleWeather : MonoBehaviour
         
     }
 
-    public void ToggleOperator(bool isWeather)
+    public void ToggleWeatherController(bool isWeather)
     {
         if  (isWeather)
         {
@@ -29,6 +30,20 @@ public class ToggleWeather : MonoBehaviour
         {
             panelWeather.SetActive(true);
             colony.weatherFavorable = false;
+        }
+    }
+
+    public void ToggleDangerController(bool noDanger)
+    {
+        if (noDanger)
+        {
+            panelDanger.SetActive(false);
+            colony.inDanger = false;
+        }
+        else
+        {
+            panelDanger.SetActive(true);
+            colony.inDanger = true;
         }
     }
 }
