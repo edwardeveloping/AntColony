@@ -22,6 +22,8 @@ public class AntGatherer : Ant
     private float flipTime;
     private float flipTimeActual;
 
+    private Vector2 explorePosition;
+
     // Referencia al componente SpriteRenderer
     private SpriteRenderer spriteRenderer;
 
@@ -40,10 +42,12 @@ public class AntGatherer : Ant
 
     //Idle
     public bool isIdle;
+    private bool startIdle;
     private Vector3 previousPosition;
     private float idleTime;
     private float idleThreshold = 5.0f; // Tiempo en segundos para considerar la hormiga como ociosa
 
+    private bool exploration;
 
     private void Start()
     {
@@ -66,6 +70,10 @@ public class AntGatherer : Ant
 
         previousPosition = transform.position;
         idleTime = 0f;
+        idleThreshold = 10f;
+
+        exploration = false;
+        explorePosition = map.RandomPositionInsideAnthill();
 
         // Iniciar la búsqueda de recursos
         StartCoroutine(LookForResourceCor());
@@ -73,7 +81,7 @@ public class AntGatherer : Ant
 
     private void CheckIdleStatus()
     {
-        if (transform.position == previousPosition)
+        if (startIdle)
         {
             idleTime += Time.deltaTime;
             if (idleTime >= idleThreshold)
@@ -121,11 +129,17 @@ public class AntGatherer : Ant
             assignedResource = map.RequestResource(); // Solicitar un recurso para recoger (se elimina de la lista de disponibles)
             if (assignedResource != null)
             {
+                startIdle = false;
                 MoveTo(assignedResource.transform.position); // Moverse hacia el recurso.
                 destino = assignedResource.transform.position;
                 StartCoroutine(Bark("Buscando comida"));
                 Debug.Log("Lo tengo"); // Mensaje de confirmación de que se ha encontrado un recurso
                 yield break; // Salir de la corrutina cuando se encuentra un recurso
+            }
+            else
+            {
+                startIdle = true;
+                Explore();
             }
 
             yield return new WaitForSeconds(1f); // Esperar 1 segundo antes de volver a intentar
@@ -141,18 +155,25 @@ public class AntGatherer : Ant
     // Explorar cuando no haya recursos asignados
     private void Explore()
     {
-        if (currentExplorationTarget == null || Vector3.Distance(transform.position, (Vector3)currentExplorationTarget) < 1.0f)
-        {
-            // Elegir un nuevo destino aleatorio para explorar
-            currentExplorationTarget = new Vector3(
-                transform.position.x + Random.Range(-10f, 10f),
-                transform.position.y,
-                transform.position.z + Random.Range(-10f, 10f)
-            );
-        }
+        StopCoroutine(LookForResourceCor());
+        exploration = true;
+    }
 
-        MoveTo((Vector3)currentExplorationTarget);
-        Debug.Log("Explorando");
+    private void CheckPosition()
+    {
+        //guardamos posicion del predator
+        float positionX = transform.position.x;
+        float positionY = transform.position.y;
+        Vector2 currentPos = new Vector2(positionX, positionY);
+
+        if (currentPos == explorePosition) //comprobamos que haya llegado a la posicion para actualizarla
+        {
+            exploration = false;
+            //recalculamos posicion nueva
+            explorePosition = map.RandomPositionInsideAnthill();
+            // Iniciar la búsqueda de recursos
+            StartCoroutine(LookForResourceCor());
+        }
     }
 
     // Cuando llega al recurso
@@ -213,6 +234,13 @@ public class AntGatherer : Ant
             return; // No hacer nada más si la hormiga está muerta
         }
 
+        if (exploration)
+        {
+            CheckPosition();
+            MoveTo(explorePosition);
+            destino=explorePosition;
+        }
+
         if (!climaFavorable && assignedResource != null) // Si el clima no es favorable o está en peligro, esperar
         {
             Vector3 posicion = new Vector3(0, -5, 0);
@@ -236,11 +264,6 @@ public class AntGatherer : Ant
             // Si tiene comida cargada y no tiene asignado un recurso, ir a la sala de almacenamiento
             MoveTo(storageRoom.transform.position);
             destino = storageRoom.transform.position;
-        }
-        else if (assignedResource == null && climaFavorable && !comidaCargada)
-        {
-            // Explorar si no hay recursos asignados, el clima es favorable y no está en peligro
-            Explore();
         }
 
         CheckIdleStatus(); //Comprobar si hay idle
