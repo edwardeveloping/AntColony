@@ -15,7 +15,7 @@ public class Map : MonoBehaviour
 
     [SerializeField] GameObject walkableArea;
     [SerializeField] GameObject exterior; // Where resources spawn and enemies patrol.
-    [SerializeField] GameObject interior; // Where resources spawn and enemies patrol.
+    [SerializeField] GameObject[] interior; // Where resources spawn and enemies patrol.
     [SerializeField] GameObject walls;
 
     public int numberOfWalls = 43; //Auxkiliar
@@ -75,10 +75,14 @@ public class Map : MonoBehaviour
 
     public Vector2 RandomPositionInsideAnthill()
     {
-        _interiorXPos = interior.transform.position.x;
-        _interiorYPos = interior.transform.position.y;
-        _interiorWidth = interior.transform.localScale.x;
-        _interiorHeight = interior.transform.localScale.y;
+        //Numero random del interior para que vaya a cualquiera de los interiores
+        System.Random random = new System.Random();
+        int randomIndex = random.Next(0, interior.Length);
+
+        _interiorXPos = interior[randomIndex].transform.position.x;
+        _interiorYPos = interior[randomIndex].transform.position.y;
+        _interiorWidth = interior[randomIndex].transform.localScale.x;
+        _interiorHeight = interior[randomIndex].transform.localScale.y;
 
         float x;
         float y;

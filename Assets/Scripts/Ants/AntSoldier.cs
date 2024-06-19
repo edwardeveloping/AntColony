@@ -31,6 +31,8 @@ public class AntSoldier : Ant
     public SpriteRenderer barkPanel;
     public Sprite[] barkList;
 
+    private Vector2 randomPos;
+
     private void Start()
     {
         // Obtener el componente SpriteRenderer del GameObject
@@ -39,6 +41,7 @@ public class AntSoldier : Ant
         flipTimeActual = flipTime;
         anguloCorreccion = -90f;
         barkPanel.gameObject.SetActive(false);
+        randomPos = _map.RandomPositionInsideAnthill();
     }
     public override void Initialize()
     {
@@ -72,10 +75,22 @@ public class AntSoldier : Ant
         {
             CancelInvoke("Patrol");
             StartCoroutine(Bark("Durmiendo"));
-            MoveTo(waittingZone.position);
-            destino = waittingZone.position;
+            randomPos = _map.RandomPositionInsideAnthill();
             _predatorsKilled = 0;
             _active = false;
+        }
+    }
+
+    private void CheckPosition()
+    {
+        //guardamos posicion del predator
+        float positionX = transform.position.x;
+        float positionY = transform.position.y;
+        Vector2 currentPos = new Vector2(positionX, positionY);
+
+        if (currentPos == randomPos) //comprobamos que haya llegado a la posicion para actualizarla
+        {
+            randomPos = _map.RandomPositionInsideAnthill(); //actualizamos el randomPos
         }
     }
 
@@ -138,6 +153,13 @@ public class AntSoldier : Ant
         {
             MoveTo(_target.transform.position);
             destino = _target.transform.position;
+        }
+
+        if (!_active && _target == null) //Desactivado
+        {
+            CheckPosition();
+            MoveTo(randomPos);
+            destino = randomPos;
         }
 
         SpriteMove();
