@@ -189,6 +189,15 @@ public class Colony : MonoBehaviour
             mensajeLLuvia.SetActive(false);
         }
 
+        if (totalWorkers > totalGatherers && totalGatherers <= 2)
+        {
+            if (antManager.antWorkerObjectList[0] != null)
+            {
+                antManager.antWorkerObjectList[0].GetComponent<AntWorker>().ChangeRole(AntManager.Role.Gatherer);
+            }
+
+        }
+
         queenLife = myQueen.GetComponent<AntQueen>().salud;
     }
 

@@ -23,7 +23,7 @@ public class AntQueen : Ant
     public float salud = 100f;
     public float saludMaxima = 100f;
     public float tasaDeterioroSalud = 0.5f;
-    public float umbralHambre = 20f; // Umbral para determinar cuándo tiene hambre
+    public float umbralHambre = 60f; // Umbral para determinar cuándo tiene hambre
 
 
     private System.Random random = new System.Random();
