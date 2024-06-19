@@ -9,8 +9,9 @@ public class AntSoldier : Ant
     public Transform waittingZone;
 
     const int PATROL_CHANGE_POSITION_TIME = 1;
-    const int PREDATORS_KILLED_THRESHOLD_TO_DEACTIVATE = 2;
+    //const int PREDATORS_KILLED_THRESHOLD_TO_DEACTIVATE = 2;
     const float ATTACK_RANGE_RADIOUS = 2.5f;
+    const float PATROL_DURATION = 8f; // Duración de la patrulla en segundos
 
     // Punto destino para moverse
     public Vector3 destino;
@@ -37,7 +38,9 @@ public class AntSoldier : Ant
     }
     public override void Initialize()
     {
-        _predatorManager.OverPopulatedEvent += Activate; // When prerdatorManagers invokes the event soldiers will activate.
+        // Nos suscribimos al evento
+        Predator.OnAntGathererKilled += Activate;
+        //_predatorManager.OverPopulatedEvent += Activate; // When prerdatorManagers invokes the event soldiers will activate.
 
         MoveTo(waittingZone.position);
         destino = waittingZone.position;
@@ -45,11 +48,17 @@ public class AntSoldier : Ant
 
     public void Activate()
     {
-        if(!_active)
+        if (!_active)
         {
-            InvokeRepeating("Patrol", 0, PATROL_CHANGE_POSITION_TIME);
             _active = true;
+            InvokeRepeating("Patrol", 0, PATROL_CHANGE_POSITION_TIME);
+            StartCoroutine(PatrolDuration());
         }
+    }
+    private IEnumerator PatrolDuration()
+    {
+        yield return new WaitForSeconds(PATROL_DURATION);
+        Deactivate();
     }
 
     public void Deactivate()
@@ -76,20 +85,20 @@ public class AntSoldier : Ant
                 _predatorsKilled++;
                 
                 Debug.Log("Predator slained. Predators Killed: " + _predatorsKilled);
-                CheckIfSatiated();
+                //CheckIfSatiated();
             }
 
             _target = collision.gameObject;
         }
     }
 
-    private void CheckIfSatiated()
-    {
-        if(_predatorsKilled >= PREDATORS_KILLED_THRESHOLD_TO_DEACTIVATE)
-        {
-            Deactivate();
-        }
-    }
+    //private void CheckIfSatiated()
+    //{
+    //    if(_predatorsKilled >= PREDATORS_KILLED_THRESHOLD_TO_DEACTIVATE)
+    //    {
+    //        Deactivate();
+    //    }
+    //}
 
     private void Patrol()
     {

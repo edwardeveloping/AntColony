@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using BehaviourAPI.UnityToolkit;
@@ -41,6 +42,9 @@ public class Predator : MovableObject
     public bool outSideBounds = false;
     public bool confuse = false;
     public bool reproduce = false;
+
+    // Evento que se dispara cuando una avispa mata a una hormiga recolectora
+    public static event Action OnAntGathererKilled;
 
     private void Start()
     {
@@ -216,6 +220,8 @@ public class Predator : MovableObject
                 //Debug.Log("Predator won.");
                 
                 antTarget.GetComponent<AntGatherer>().isDead = true; //la matamos para que libere el recurso asignado en caso de tenerlo
+                OnAntGathererKilled?.Invoke(); // Llamar al evento cuando una hormiga recolectora es asesinada
+                
                 //cambiamos sprite
 
                 spriteRenderer.sprite = spriteWithAnt;

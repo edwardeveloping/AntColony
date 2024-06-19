@@ -23,9 +23,9 @@ public class PredatorManager : MonoBehaviour
     public Sprite waspWithAnt;
 
     const int OVEROPULATED_THRESHOLD = 5;
-    event Action _overPopulated = null; // When it gets called the ant soldiers get activated.
+    //event Action _overPopulated = null; // When it gets called the ant soldiers get activated.
 
-    public event Action OverPopulatedEvent { add { _overPopulated += value; } remove { _overPopulated -= value; } }
+    //public event Action OverPopulatedEvent { add { _overPopulated += value; } remove { _overPopulated -= value; } }
 
     
     public Predator GeneratePredatorAtSpawn()
@@ -58,7 +58,7 @@ public class PredatorManager : MonoBehaviour
         predators.Add(predator);
 
         //
-        if(predators.Count > OVEROPULATED_THRESHOLD) { _overPopulated?.Invoke(); }
+        //if(predators.Count > OVEROPULATED_THRESHOLD) { _overPopulated?.Invoke(); }
         return predator;
     }
 
