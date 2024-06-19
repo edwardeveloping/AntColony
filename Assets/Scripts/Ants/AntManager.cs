@@ -37,6 +37,7 @@ public class AntManager : MonoBehaviour
     public List<GameObject> antWorkerObjectList = new List<GameObject>();
     public List<GameObject> antSoldierObjectList = new List<GameObject>();
     public List<GameObject> antLarvaList = new List<GameObject>();
+    public GameObject antQueen;
 
     public bool weatherFavorable;
 
@@ -92,6 +93,7 @@ public class AntManager : MonoBehaviour
                 antObj = Instantiate(antQueenPrefab, new Vector2(x, y), Quaternion.identity);
                 antObj.GetComponent<AntQueen>().breedingRoom = map.breedingRoom.GetComponent<Room>();
                 antObj.GetComponent<AntQueen>().queenRoom = map.queenRoom.GetComponent<Room>();
+                antQueen = antObj;
                 break;
 
 

@@ -24,15 +24,19 @@ public class Colony : MonoBehaviour
     public Room storageRoom;
 
     //variables para controlar desde el menu de Unity compilando el programa
+    
     private int initial_Gatherers;
     private int initial_Workers;
     private int initial_Soldiers;
     private int initial_Predators;
     private int initial_Beetles;
+    public GameObject myQueen;
+    public float queenLife;
     public int population;
     public int totalGatherers;
     public int totalWorkers;
     public int totalSoldiers;
+    public int totalLarvas;
     public int totalLarvaGatherers;
     public int totalLarvaWorkers;
     public int totalLarvaSoldiers;
@@ -40,6 +44,13 @@ public class Colony : MonoBehaviour
     public int totalBeetles;
     public int storageResources;
     public int mapResources;
+    
+    
+
+    // Atributos de la colonia
+    public int minimumFoodThreshold;
+    public int larvaFoodRequirement; // Cantidad de comida que requiere cada larva
+    public float minimumQueenHealth;
 
     //auxiliar
     private int auxiliarSoldierCount;
@@ -70,7 +81,12 @@ public class Colony : MonoBehaviour
     public ColonyPerceptions perceptions;
     public ColonyActions actions;
 
-    //FUNCIONES PRINCIPALES DE LA COLONIA
+    //COOLDOWNS => Para que la colonia no se sature, meteremos cooldowns y asi se podra evaluar las cosas pasado cierto tiempo
+    private float initCooldown;
+    public float cooldown; // Cooldown de 3 minutos
+    private bool canIsFoodInsuficientValorate;
+
+    //------------------------------------------------------------------------------------------------------------------------------- FUNCIONES PRINCIPALES DE LA COLONIA
 
     //Nombramos en forma de Enum el numero de percepciones segun nuestra tabla de percepciones
     public enum Perception
@@ -123,14 +139,20 @@ public class Colony : MonoBehaviour
         //ControlInGame
         controlInGame.SetActive(false);
         activeDanger = false;
-    }
+        cooldown = 10f;
+        initCooldown = 10f;
+        canIsFoodInsuficientValorate = false;
+        minimumFoodThreshold = 2;
+        larvaFoodRequirement = 1; // Cantidad de comida que requiere cada larva
+        minimumQueenHealth = 90;
+}
 
     private void Update()
     {
         ManageColony();
         //Controlamos
         ControlColony();
-
+        Cooldown();
 
         //auxiliar a antManager
         antManager.weatherFavorable = weatherFavorable;
@@ -145,50 +167,11 @@ public class Colony : MonoBehaviour
             ReorganizeSoldiers();
             activeDanger = false;
         }
+
+        queenLife = myQueen.GetComponent<AntQueen>().salud;
     }
 
-    void ReorganizeSoldiers()
-    {
-        int soldierCount = antManager.antSoldierObjectList.Count;
-
-        // Si hay más de 1 soldado, realizar la transformación
-        if (soldierCount > 1)
-        {
-            // Crear una lista temporal para los soldados a transformar
-            List<GameObject> soldiersToTransform = new List<GameObject>();
-
-            for (int i = 1; i < soldierCount; i++) // Empieza desde 1 para mantener 1 soldado en la reserva
-            {
-                soldiersToTransform.Add(antManager.antSoldierObjectList[i]);
-            }
-
-            // Transformar los soldados fuera del bucle para evitar modificar la lista mientras se itera
-            for (int i = 0; i < soldiersToTransform.Count; i++)
-            {
-                GameObject soldierObj = soldiersToTransform[i];
-                AntSoldier soldier = soldierObj.GetComponent<AntSoldier>();
-
-                if (soldier != null)
-                {
-                    if ((i + 1) % 2 == 0) // Usamos (i + 1) porque estamos iterando desde el índice 0 en soldiersToTransform
-                    {
-                        soldier.ChangeRole(AntManager.Role.Gatherer);
-                    }
-                    else
-                    {
-                        soldier.ChangeRole(AntManager.Role.Worker);
-                    }
-                }
-                else
-                {
-                    Debug.LogWarning("AntSoldier component not found on GameObject");
-                }
-            }
-
-            // Remover los soldados transformados de la lista de soldados originales
-            antManager.antSoldierObjectList = antManager.antSoldierObjectList.Take(1).ToList();
-        }
-    }
+    
 
     //Funcion en la que vamos a controlar nuestras percepciones, y dependiendo de estas, haremos una accion u otra
     void ControlColony()
@@ -234,7 +217,39 @@ public class Colony : MonoBehaviour
 
     // Métodos de percepción
     public bool IsUnderAttack() { return inDanger; }
-    public bool IsFoodInsufficient() { /* Implementación */ return false; }
+    public bool IsFoodInsufficient()
+    {
+        // Verificar si ha pasado el cooldown
+        if (!canIsFoodInsuficientValorate)
+        {
+            return false;
+        }
+
+        // Verificar si los recursos de almacenamiento son insuficientes
+        bool storageResourcesLow = storageResources < minimumFoodThreshold;
+
+        // Calcular la cantidad total de comida requerida por las larvas
+        //int totalLarvaFoodRequirement = totalLarvas * larvaFoodRequirement;
+
+        // Verificar si la comida es insuficiente considerando las larvas y la vida de la reina
+        bool foodLowForLarvasAndQueen = storageResources < minimumFoodThreshold//(totalLarvaFoodRequirement + minimumFoodThreshold)
+                                        && myQueen.GetComponent<AntQueen>().salud < minimumQueenHealth;
+
+        // Considerar la falta de comida si cualquiera de las condiciones es verdadera
+        bool isFoodInsufficient = storageResourcesLow && foodLowForLarvasAndQueen;
+
+        if (isFoodInsufficient)
+        {
+            WriteColony("POCA COMIDA, REORGANIZANDO GATHERERS");
+            cooldown = initCooldown; // Actualizar el tiempo de la última verificación
+            canIsFoodInsuficientValorate = false;
+        }
+
+        // Considerar la falta de comida si cualquiera de las condiciones es verdadera
+        return isFoodInsufficient;
+
+
+    }
     public bool AreGatherersUnableToCollectFood() { /* Implementación */ return false; }
     public bool AreThereTooManyStoredEggs() { /* Implementación */ return false; }
     public bool IsThereALackOfEggs() { /* Implementación */ return false; }
@@ -256,11 +271,51 @@ public class Colony : MonoBehaviour
 
     // Métodos de acción
     public void AssignMoreBuilders() { /* Implementación */ }
-    public void AssignMoreGatherers() { /* Implementación */ }
+    public void AssignMoreGatherers() 
+    {
+        // Convertir todos los soldados en recolectoras, excepto uno
+        List<GameObject> soldiersToTransform = new List<GameObject>();
+        if (antManager.antSoldierObjectList.Count > 1)
+        {
+            for (int i = 1; i < antManager.antSoldierObjectList.Count; i++)
+            {
+                soldiersToTransform.Add(antManager.antSoldierObjectList[i]);
+            }
+        }
+        foreach (GameObject soldierObj in soldiersToTransform)
+        {
+            AntSoldier soldier = soldierObj.GetComponent<AntSoldier>();
+            if (soldier != null)
+            {
+                soldier.ChangeRole(AntManager.Role.Gatherer);
+                antManager.antSoldierObjectList.Remove(soldierObj); // Actualizar la lista de soldados
+            }
+        }
+
+        // Convertir al menos 2 trabajadores en recolectoras, si hay suficientes; si no, convertir solo uno
+        int workersToConvert = Mathf.Min(antManager.antWorkerObjectList.Count, 2);
+        List<GameObject> workersToTransform = new List<GameObject>();
+        if (workersToConvert > 0)
+        {
+            for (int i = 0; i < workersToConvert; i++)
+            {
+                workersToTransform.Add(antManager.antWorkerObjectList[i]);
+            }
+        }
+        foreach (GameObject workerObj in workersToTransform)
+        {
+            AntWorker worker = workerObj.GetComponent<AntWorker>();
+            if (worker != null)
+            {
+                worker.ChangeRole(AntManager.Role.Gatherer);
+                antManager.antWorkerObjectList.Remove(workerObj); // Actualizar la lista de trabajadores
+            }
+        }
+    }
     public void AssignMoreSoldiers() 
     {
-        Debug.Log("COLONY: COLONIA BAJO ATAQUE ENEMIGO");
-        Debug.Log("REASIGNANDO SOLDADOS PARA LA DEFENSA");
+        WriteColony("COLONIA BAJO ATAQUE ENEMIGO");
+        WriteColony("REASIGNANDO SOLDADOS PARA LA DEFENSA");
 
         //Lista auxiliar para que no se tripie el foreach
         List<GameObject> gathererListCopy = new List<GameObject>(antManager.antGathererObjectList);
@@ -280,16 +335,73 @@ public class Colony : MonoBehaviour
         //cambiamos las idle
         foreach (GameObject gatherer in idleGatherers)
         {
-            Debug.Log("COLONY: REASIGNANDO HORMIGA IDLE");
+            WriteColony("REASIGNANDO HORMIGA IDLE");
             gatherer.GetComponent<AntGatherer>().ChangeRole(AntManager.Role.Worker);
         }
     }
     public void AssignMoreWorkers() { /* Implementación */ }
 
 
-    //FUNCIONES SECUNDARIAS DE LA COLONIA
-    
+    //----------------------------------------------------------------------------------------------------------------------------- FUNCIONES SECUNDARIAS DE LA COLONIA
 
+    private void Cooldown()
+    {
+        if (cooldown > 0)
+        {
+            cooldown -= Time.deltaTime;
+        }
+        else
+        {
+            cooldown = 0;
+            canIsFoodInsuficientValorate = true;
+        }
+    }
+    void WriteColony(string s)
+    {
+        Debug.Log("COLONY: " + s);
+    }
+    void ReorganizeSoldiers()
+    {
+        int soldierCount = antManager.antSoldierObjectList.Count;
+
+        // Si hay más de 1 soldado, realizar la transformación
+        if (soldierCount > 1)
+        {
+            // Crear una lista temporal para los soldados a transformar
+            List<GameObject> soldiersToTransform = new List<GameObject>();
+
+            for (int i = 1; i < soldierCount; i++) // Empieza desde 1 para mantener 1 soldado en la reserva
+            {
+                soldiersToTransform.Add(antManager.antSoldierObjectList[i]);
+            }
+
+            // Transformar los soldados fuera del bucle para evitar modificar la lista mientras se itera
+            for (int i = 0; i < soldiersToTransform.Count; i++)
+            {
+                GameObject soldierObj = soldiersToTransform[i];
+                AntSoldier soldier = soldierObj.GetComponent<AntSoldier>();
+
+                if (soldier != null)
+                {
+                    if ((i + 1) % 2 == 0) // Usamos (i + 1) porque estamos iterando desde el índice 0 en soldiersToTransform
+                    {
+                        soldier.ChangeRole(AntManager.Role.Gatherer);
+                    }
+                    else
+                    {
+                        soldier.ChangeRole(AntManager.Role.Worker);
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("AntSoldier component not found on GameObject");
+                }
+            }
+
+            // Remover los soldados transformados de la lista de soldados originales
+            antManager.antSoldierObjectList = antManager.antSoldierObjectList.Take(1).ToList();
+        }
+    }
     private void IniciarSimulacion()
     {
         initial_Gatherers = (int)sliderGatherers.value;
@@ -345,6 +457,9 @@ public class Colony : MonoBehaviour
 
         // Activar el script predatorManaher
         predatorManagerScript.enabled = true;
+
+        //Queen
+        myQueen = antManager.antQueen;
     }
 
 
@@ -381,7 +496,8 @@ public class Colony : MonoBehaviour
         totalLarvaSoldiers = soldierLarvaCount;
         totalPredators = predatorCount;
         totalBeetles = beetleCount;
-        population = totalGatherers + totalWorkers + totalLarvaGatherers + totalLarvaWorkers;
+        population = totalGatherers + totalWorkers + totalSoldiers;
+        totalLarvas = totalLarvaSoldiers + totalLarvaWorkers + totalLarvaGatherers;
     }
 
     private string DecideAntType(int gathererNumber, int workerNumber, int gathererLarvaCount, int workerLarvaCount)
@@ -443,8 +559,8 @@ public class Colony : MonoBehaviour
         text.text = slider.value.ToString();
     }
 
-    //Funciones Auxiliares para el control desde los botones
-
+    //---------------------------------------------------------------------------------------------------------------------------- FUNCIONES AUXILIARES DE LA COLONIA
+    //Funciones para asignar botones del controlInGame
     public void GenerateAnt(AntManager.Role role)
     {
         switch (role)
