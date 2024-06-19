@@ -28,6 +28,9 @@ public class AntSoldier : Ant
     bool _active = false;
     int _predatorsKilled = 0;
 
+    public SpriteRenderer barkPanel;
+    public Sprite[] barkList;
+
     private void Start()
     {
         // Obtener el componente SpriteRenderer del GameObject
@@ -35,6 +38,7 @@ public class AntSoldier : Ant
         flipTime = 0.1f;
         flipTimeActual = flipTime;
         anguloCorreccion = -90f;
+        barkPanel.gameObject.SetActive(false);
     }
     public override void Initialize()
     {
@@ -50,6 +54,7 @@ public class AntSoldier : Ant
     {
         if (!_active)
         {
+            StartCoroutine(Bark("Activo")); //bark
             _active = true;
             InvokeRepeating("Patrol", 0, PATROL_CHANGE_POSITION_TIME);
             StartCoroutine(PatrolDuration());
@@ -66,11 +71,31 @@ public class AntSoldier : Ant
         if (_active)
         {
             CancelInvoke("Patrol");
+            StartCoroutine(Bark("Durmiendo"));
             MoveTo(waittingZone.position);
             destino = waittingZone.position;
             _predatorsKilled = 0;
             _active = false;
         }
+    }
+
+    IEnumerator Bark(string text)
+    {
+        barkPanel.gameObject.SetActive(true);
+        switch (text)
+        {
+            case "Activo":
+                barkPanel.sprite = barkList[0];
+                break;
+            case "Durmiendo":
+                barkPanel.sprite = barkList[1];
+                break;
+
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        barkPanel.gameObject.SetActive(false);
     }
 
 

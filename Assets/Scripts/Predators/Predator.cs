@@ -43,6 +43,9 @@ public class Predator : MovableObject
     public bool confuse = false;
     public bool reproduce = false;
 
+    public SpriteRenderer barkPanel;
+    public Sprite[] barkList;
+
     // Evento que se dispara cuando una avispa mata a una hormiga recolectora
     public static event Action OnAntGathererKilled;
 
@@ -63,6 +66,7 @@ public class Predator : MovableObject
 
         NavMeshAgent navMeshAgent = this.GetComponent<NavMeshAgent>();
         navMeshAgent.speed = 8f;
+        barkPanel.gameObject.SetActive(false);
     }
 
     private void CheckPosition()
@@ -91,6 +95,22 @@ public class Predator : MovableObject
         }
 
         return false;
+    }
+    IEnumerator Bark(string text)
+    {
+        barkPanel.gameObject.SetActive(true);
+        switch (text)
+        {
+            case "Va a morir de hambre":
+                barkPanel.sprite = barkList[0];
+                break;
+            
+
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        barkPanel.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -144,7 +164,10 @@ public class Predator : MovableObject
             this.transform.position = this.transform.position;
         }
 
-
+        /*if (hungry < 50)
+        {
+            StartCoroutine(Bark("Va a morir de hambre"));
+        }*/
 
         if (hungry < 0)
         {
