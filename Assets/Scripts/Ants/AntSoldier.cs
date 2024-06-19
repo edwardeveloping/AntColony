@@ -9,8 +9,9 @@ public class AntSoldier : Ant
     public Transform waittingZone;
 
     const int PATROL_CHANGE_POSITION_TIME = 1;
-    const int PREDATORS_KILLED_THRESHOLD_TO_DEACTIVATE = 2;
+    //const int PREDATORS_KILLED_THRESHOLD_TO_DEACTIVATE = 2;
     const float ATTACK_RANGE_RADIOUS = 2.5f;
+    const float PATROL_DURATION = 8f; // Duración de la patrulla en segundos
 
     // Punto destino para moverse
     public Vector3 destino;
@@ -37,7 +38,9 @@ public class AntSoldier : Ant
     }
     public override void Initialize()
     {
-        _predatorManager.OverPopulatedEvent += Activate; // When prerdatorManagers invokes the event soldiers will activate.
+        // Nos suscribimos al evento
+        Predator.OnAntGathererKilled += Activate;
+        //_predatorManager.OverPopulatedEvent += Activate; // When prerdatorManagers invokes the event soldiers will activate.
 
         MoveTo(waittingZone.position);
         destino = waittingZone.position;
@@ -45,16 +48,22 @@ public class AntSoldier : Ant
 
     public void Activate()
     {
-        if(!_active)
+        if (!_active)
         {
-            InvokeRepeating("Patrol", 0, PATROL_CHANGE_POSITION_TIME);
             _active = true;
+            InvokeRepeating("Patrol", 0, PATROL_CHANGE_POSITION_TIME);
+            StartCoroutine(PatrolDuration());
         }
+    }
+    private IEnumerator PatrolDuration()
+    {
+        yield return new WaitForSeconds(PATROL_DURATION);
+        Deactivate();
     }
 
     public void Deactivate()
     {
-        if(_active) 
+        if (_active)
         {
             CancelInvoke("Patrol");
             MoveTo(waittingZone.position);
@@ -63,44 +72,44 @@ public class AntSoldier : Ant
             _active = false;
         }
     }
-    
+
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(collision.gameObject.tag == "Predator")
+        if (collision.gameObject.tag == "Predator")
         {
-            if((Vector2.Distance(collision.gameObject.transform.position, gameObject.transform.position) <= ATTACK_RANGE_RADIOUS)
+            if ((Vector2.Distance(collision.gameObject.transform.position, gameObject.transform.position) <= ATTACK_RANGE_RADIOUS)
                 && _active)
             {
                 _predatorManager.KillPredator(collision.gameObject.GetComponent<Predator>());
                 _predatorsKilled++;
-                
+
                 Debug.Log("Predator slained. Predators Killed: " + _predatorsKilled);
-                CheckIfSatiated();
+                //CheckIfSatiated();
             }
 
             _target = collision.gameObject;
         }
     }
 
-    private void CheckIfSatiated()
-    {
-        if(_predatorsKilled >= PREDATORS_KILLED_THRESHOLD_TO_DEACTIVATE)
-        {
-            Deactivate();
-        }
-    }
+    //private void CheckIfSatiated()
+    //{
+    //    if(_predatorsKilled >= PREDATORS_KILLED_THRESHOLD_TO_DEACTIVATE)
+    //    {
+    //        Deactivate();
+    //    }
+    //}
 
     private void Patrol()
     {
         Vector3 pos = _map.RandomPositionInsideBounds();
         MoveTo(pos);
-        destino = pos;        
+        destino = pos;
     }
 
     private void Update()
     {
-        if(_active && _target != null) 
+        if (_active && _target != null)
         {
             MoveTo(_target.transform.position);
             destino = _target.transform.position;
@@ -108,9 +117,9 @@ public class AntSoldier : Ant
 
         SpriteMove();
     }
-    public override void ArrivedAtResource(GameObject resource){}
-    public override void ArrivedAtRoom(Room room){}
-    public override void WhenCombatWon(){}
+    public override void ArrivedAtResource(GameObject resource) { }
+    public override void ArrivedAtRoom(Room room) { }
+    public override void WhenCombatWon() { }
 
     private void SpriteMove()
     {
