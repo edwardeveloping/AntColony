@@ -13,9 +13,12 @@ public class PredatorManager : MonoBehaviour
     [SerializeField] GameObject predatorLarvaPrefab;
 
     [SerializeField] Map map;
+    [SerializeField] public Colony colony;
 
     [SerializeField] public Transform predatorSpawn;
 
+    public GameObject AlertaText;
+    public GameObject RegenerandoText;
 
     public List<Predator> predators = new List<Predator>();
     public List<LarvaPredator> larvaPredatorsList = new List<LarvaPredator>();
@@ -27,7 +30,11 @@ public class PredatorManager : MonoBehaviour
 
     //public event Action OverPopulatedEvent { add { _overPopulated += value; } remove { _overPopulated -= value; } }
 
-
+    private void Start()
+    {
+        RegenerandoText.SetActive(false);
+        AlertaText.SetActive(false);
+    }
     public Predator GeneratePredatorAtSpawn()
     {
         return GeneratePredator(predatorSpawn.position.x, predatorSpawn.position.y);
@@ -69,12 +76,21 @@ public class PredatorManager : MonoBehaviour
     private void Update()
     {
         NoPredators();
+
+        if (colony.inDanger)
+        {
+            AlertaText.SetActive(true);
+        }
+
+
     }
 
     public void NoPredators()
     {
         if (predators.Count <= 0)
         {
+            AlertaText.SetActive(false);
+            RegenerandoText.SetActive(true);
             Debug.Log("PREDATOR NEST: NO PREDATORS, GENERANDO NUEVA OLEADA");
             StartCoroutine(GeneratePredatorsOverTime(initialNumPredators));
         }

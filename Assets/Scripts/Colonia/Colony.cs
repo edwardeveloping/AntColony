@@ -314,10 +314,10 @@ public class Colony : MonoBehaviour
         bool storageResourcesLow = storageResources < minimumFoodUmbral;
 
         // Calcular la cantidad total de comida requerida por las larvas
-        int totalLarvaFoodRequirement = totalLarvas * larvaFoodRequirement;
+        //int totalLarvaFoodRequirement = totalLarvas * larvaFoodRequirement;
 
         // Verificar si la comida es insuficiente considerando las larvas y la vida de la reina
-        bool foodLowForLarvasAndQueen = storageResources < (totalLarvaFoodRequirement + minimumFoodUmbral)
+        bool foodLowForLarvasAndQueen = storageResources < minimumFoodUmbral //(totalLarvaFoodRequirement + minimumFoodUmbral)
                                         && myQueen.GetComponent<AntQueen>().salud < minimumQueenHealth;
 
         // Considerar la falta de comida si cualquiera de las condiciones es verdadera

@@ -42,6 +42,8 @@ public class AntSoldier : Ant
         anguloCorreccion = -90f;
         barkPanel.gameObject.SetActive(false);
         randomPos = _map.RandomPositionInsideAnthill();
+
+        this.fightingStrength = 70; //Para que tengan mas ventaja sobre las avispas
     }
     public override void Initialize()
     {
@@ -118,14 +120,23 @@ public class AntSoldier : Ant
     {
         if (collision.gameObject.tag == "Predator")
         {
-            if ((Vector2.Distance(collision.gameObject.transform.position, gameObject.transform.position) <= ATTACK_RANGE_RADIOUS)
-                && _active)
+            if ((Vector2.Distance(collision.gameObject.transform.position, gameObject.transform.position) <= ATTACK_RANGE_RADIOUS))
             {
-                _predatorManager.KillPredator(collision.gameObject.GetComponent<Predator>());
-                _predatorsKilled++;
+                if (this.EnterCombat()) //Predator win
+                {
+                    base.Die();
+                    Debug.Log("Predator wins");
+                }
 
-                Debug.Log("Predator slained. Predators Killed: " + _predatorsKilled);
-                //CheckIfSatiated();
+                else //Ant Win
+                {
+                    _predatorManager.KillPredator(collision.gameObject.GetComponent<Predator>());
+                    _predatorsKilled++;
+
+                    Debug.Log("Predator slained. Predators Killed: " + _predatorsKilled);
+                    //CheckIfSatiated();
+                }
+
             }
 
             _target = collision.gameObject;
@@ -147,20 +158,60 @@ public class AntSoldier : Ant
         destino = pos;
     }
 
-    private void Update()
+    private void ActivateDanger()
     {
-        if (_active && _target != null)
+        //Comprobar todas aquellas avispas que estan dentro del hormiguero, y de ser asi, ir a por ellas
+        // Crear la lista auxiliar utilizando FindAll
+        List<Predator> depredadoresEnAnthill = _predatorManager.predators.FindAll(depredador => depredador.GetComponent<Predator>().inAntHill);
+
+        foreach (var depredador  in depredadoresEnAnthill)
         {
-            MoveTo(_target.transform.position);
-            destino = _target.transform.position;
+            if (depredador != null)
+            {
+                _target = depredador.gameObject; // cogemos el target
+                break;
+            }
+            else
+            {
+                Debug.Log("No hay amenazas");
+            }
+           
         }
 
-        if (!_active && _target == null) //Desactivado
+        depredadoresEnAnthill.Clear(); //Limpiamos la lista
+    }
+
+    private void Update()
+    {
+        if (antManager.GetComponent<AntManager>().colony.GetComponent<Colony>().inDanger)
         {
-            CheckPosition();
-            MoveTo(randomPos);
-            destino = randomPos;
+            if (_target != null)
+            {
+                MoveTo(_target.transform.position);
+                destino = _target.transform.position;
+            }
+            else
+            {
+                ActivateDanger();
+            }
+
         }
+        else
+        {
+            if (_active && _target != null)
+            {
+                MoveTo(_target.transform.position);
+                destino = _target.transform.position;
+            }
+
+            if (!_active && _target == null) //Desactivado
+            {
+                CheckPosition();
+                MoveTo(randomPos);
+                destino = randomPos;
+            }
+        }
+        
 
         SpriteMove();
     }

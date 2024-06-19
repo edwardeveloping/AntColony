@@ -8,7 +8,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class Predator : MovableObject
 {
-    public PredatorManager predatorManager;
+    [SerializeField] public PredatorManager predatorManager;
     public GameObject antTarget;
 
     public float hungry;
@@ -45,6 +45,7 @@ public class Predator : MovableObject
 
     public SpriteRenderer barkPanel;
     public Sprite[] barkList;
+    public bool inAntHill;
 
     // Evento que se dispara cuando una avispa mata a una hormiga recolectora
     public static event Action OnAntGathererKilled;
@@ -67,6 +68,8 @@ public class Predator : MovableObject
         NavMeshAgent navMeshAgent = this.GetComponent<NavMeshAgent>();
         navMeshAgent.speed = 8f;
         barkPanel.gameObject.SetActive(false);
+
+        inAntHill = false;
     }
 
     private void CheckPosition()
@@ -80,6 +83,21 @@ public class Predator : MovableObject
         {
             randomPos = map.RandomPositionInsideBounds(); //actualizamos el randomPos
         }
+    }
+
+    private void CheckAnthillPosition()
+    {
+        //guardamos posicion del predator
+        float positionX = transform.position.x;
+        float positionY = transform.position.y;
+        Vector2 currentPos = new Vector2(positionX, positionY);
+
+        if (currentPos == randomPos) //comprobamos que haya llegado a la posicion para actualizarla
+        {
+            randomPos = map.RandomPositionInsideAnthill(); //actualizamos el randomPos
+        }
+
+        
     }
 
     private bool CheckNestPosition()
@@ -118,14 +136,46 @@ public class Predator : MovableObject
         //Hambre
         hungry -= Time.deltaTime * 8; //Se muere desde predators manager
 
-        if (!confuse && !reproduce)
+        
+
+        if (predatorManager.GetComponent<PredatorManager>().colony.GetComponent<Colony>().inDanger)
         {
-            if (!outSideBounds)
+            outSideBounds = false;
+            if (antTarget != null)
             {
-                if (antTarget != null)
+                MoveTo(antTarget.transform.position);
+                destino = antTarget.transform.position;
+            }
+
+            else
+            {
+                antTarget = null;
+                //randomPos = map.RandomPositionInsideAnthill();
+                CheckAnthillPosition(); //comprobamos que haya llegado a la posicion para actualizarla
+                MoveTo(randomPos);
+                destino = randomPos;
+            }
+        }
+
+        else
+        {
+            if (!confuse && !reproduce)
+            {
+                if (!outSideBounds)
                 {
-                    MoveTo(antTarget.transform.position);
-                    destino = antTarget.transform.position;
+                    if (antTarget != null)
+                    {
+                        MoveTo(antTarget.transform.position);
+                        destino = antTarget.transform.position;
+                    }
+
+                    else
+                    {
+                        antTarget = null;
+                        CheckPosition(); //comprobamos que haya llegado a la posicion para actualizarla
+                        MoveTo(randomPos);
+                        destino = randomPos;
+                    }
                 }
 
                 else
@@ -137,31 +187,23 @@ public class Predator : MovableObject
                 }
             }
 
-            else
+            else if (!confuse && reproduce)
             {
-                antTarget = null;
-                CheckPosition(); //comprobamos que haya llegado a la posicion para actualizarla
-                MoveTo(randomPos);
-                destino = randomPos;
+                //comprobamos que llegue al nido
+                MoveTo(predatorManager.GetComponent<PredatorManager>().predatorSpawn.position);
+                destino = predatorManager.GetComponent<PredatorManager>().predatorSpawn.position;
+                if (CheckNestPosition())
+                {
+                    predatorManager.GenerateLarvaPredator();
+                    spriteRenderer.sprite = originalSprite;
+                    reproduce = false;
+                }
             }
-        }
 
-        else if (!confuse && reproduce)
-        {
-            //comprobamos que llegue al nido
-            MoveTo(predatorManager.GetComponent<PredatorManager>().predatorSpawn.position);
-            destino = predatorManager.GetComponent<PredatorManager>().predatorSpawn.position;
-            if (CheckNestPosition())
+            else if (confuse && !reproduce)
             {
-                predatorManager.GenerateLarvaPredator();
-                spriteRenderer.sprite = originalSprite;
-                reproduce = false;
+                this.transform.position = this.transform.position;
             }
-        }
-
-        else if (confuse && !reproduce)
-        {
-            this.transform.position = this.transform.position;
         }
 
         /*if (hungry < 50)

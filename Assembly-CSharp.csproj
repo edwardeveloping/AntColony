@@ -64,6 +64,7 @@
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + FSM - Radar\Scripts\DestroyVehicles.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + BT - House and Enemy\Scripts\BehaviourRunners\BadBoyRunner.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM - Chicken run\Scripts\BehaviourRunners\ChickenFSMRunner.cs" />
+    <Compile Include="Assets\InteriorArea.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\FSM + FSM - Radar\Scripts\BehaviourRunners\CarFSMAssetRunner.cs" />
     <Compile Include="Assets\Scripts\Predators\PredatorManager.cs" />
     <Compile Include="Assets\BehaviourAPI Unity Package\Demo\BT - House\Scripts\DestroyEffect.cs" />
