@@ -59,7 +59,14 @@ public class AntSoldier : Ant
     {
         if (!_active)
         {
-            StartCoroutine(Bark("Activo")); //bark
+            //bark sin corrutina
+            barkPanel.gameObject.SetActive(true);
+            barkPanel.sprite = barkList[0];
+            
+
+            barkPanel.gameObject.SetActive(false);
+
+            //StartCoroutine(Bark("Activo")); 
             _active = true;
             InvokeRepeating("Patrol", 0, PATROL_CHANGE_POSITION_TIME);
             StartCoroutine(PatrolDuration());
@@ -101,9 +108,9 @@ public class AntSoldier : Ant
         barkPanel.gameObject.SetActive(true);
         switch (text)
         {
-            case "Activo":
+            /*case "Activo":
                 barkPanel.sprite = barkList[0];
-                break;
+                break;*/
             case "Durmiendo":
                 barkPanel.sprite = barkList[1];
                 break;
