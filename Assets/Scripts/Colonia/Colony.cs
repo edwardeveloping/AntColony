@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using TMPro;
 using Unity.VisualScripting;
@@ -17,6 +18,7 @@ public class Colony : MonoBehaviour
     [SerializeField] Map map;
 
     int shells;
+    public bool inDanger;
 
     public Room storageRoom;
 
@@ -59,6 +61,7 @@ public class Colony : MonoBehaviour
 
     // Referencias a otros scripts
     public GameObject gameManager;
+    public GameObject controlInGame;
     public MonoBehaviour mapScript;
     public MonoBehaviour predatorManagerScript;
 
@@ -90,6 +93,18 @@ public class Colony : MonoBehaviour
         AsignarSoldados,
         AsignarOtroRolARecolectorasOciosas,
         AsignarObreras
+    }
+
+
+    private void Update()
+    {
+        ManageColony();
+        //Controlamos
+        ControlColony();
+
+
+        //auxiliar a antManager
+        antManager.weatherFavorable = weatherFavorable;
     }
 
     //Funcion en la que vamos a controlar nuestras percepciones, y dependiendo de estas, haremos una accion u otra
@@ -142,14 +157,38 @@ public class Colony : MonoBehaviour
     public bool IsThereALackOfEggs() { /* Implementación */ return false; }
     public bool IsSoldierPopulationDecreasing() { /* Implementación */ return false; }
     public bool IsAdverseWeather() { /* Implementación */ return false; }
-    public bool AreGatherersIdle() { /* Implementación */ return false; }
+    public bool AreGatherersIdle() 
+    {
+        int contador = 0;
+        foreach (GameObject gatherer in antManager.antGathererObjectList)
+        {
+            //Operador ? para ir practicando 
+            contador += gatherer.GetComponent<AntGatherer>().isIdle ? 1 : 0;
+        }
+
+        //return manteniendo una hormiga idle por lo menos por si acaso
+        return contador > 1;
+    }
     public bool IsThereExcessFoodAndHungryLarvae() { /* Implementación */ return false; }
 
     // Métodos de acción
     public void AssignMoreBuilders() { /* Implementación */ }
     public void AssignMoreGatherers() { /* Implementación */ }
     public void AssignMoreSoldiers() { /* Implementación */ }
-    public void AssignNewRoleToIdleGatherers() { /* Implementación */ }
+    public void AssignNewRoleToIdleGatherers() 
+    {
+        //Creamos lista auxiliar para evitar iteraciones sobre elementos cambiantes donde almacenaremos aquellas que sean Idle
+        var idleGatherers = antManager.antGathererObjectList
+                             .Where(gatherer => gatherer.GetComponent<AntGatherer>().isIdle)
+                             .ToList();
+
+        //cambiamos las idle
+        foreach (GameObject gatherer in idleGatherers)
+        {
+            Debug.Log("COLONY: REASIGNANDO HORMIGA IDLE");
+            gatherer.GetComponent<AntGatherer>().ChangeRole(AntManager.Role.Worker);
+        }
+    }
     public void AssignMoreWorkers() { /* Implementación */ }
 
 
@@ -177,6 +216,9 @@ public class Colony : MonoBehaviour
         UpdateSliderValue(sliderSoldiers, textSoldiersValue);
         UpdateSliderValue(sliderPredators, textPredatorsValue);
         UpdateSliderValue(sliderEscarabajos, textEscarabajosValue);
+
+        //ControlInGame
+        controlInGame.SetActive(false);
     }
 
     private void IniciarSimulacion()
@@ -226,6 +268,9 @@ public class Colony : MonoBehaviour
         // Activar el GameManager
         gameManager.SetActive(true);
 
+        //controlinGame
+        controlInGame.SetActive(true);
+
         // Activar el script Map
         mapScript.enabled = true;
 
@@ -233,16 +278,6 @@ public class Colony : MonoBehaviour
         predatorManagerScript.enabled = true;
     }
 
-    private void Update()
-    {
-        ManageColony();
-        //Controlamos
-        ControlColony();
-
-
-        //auxiliar a antManager
-        antManager.weatherFavorable = weatherFavorable;
-    }
 
     private void ManageColony()
     {
