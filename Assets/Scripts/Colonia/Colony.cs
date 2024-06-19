@@ -62,6 +62,7 @@ public class Colony : MonoBehaviour
     private int auxiliarSoldierCount;
     public bool weatherFavorable;
 
+    public GameObject mensajeLLuvia;
     // UI Elements
     public Slider sliderGatherers;
     public Slider sliderWorkers;
@@ -153,6 +154,7 @@ public class Colony : MonoBehaviour
         minimumLarvaEggsPerIndividual = 5f; //Quiere decir que, por cada 5 individuos de la colonia (independientemente del tipo de hormigas que sean) nos hara falta 1 larva
         maximoLarvas = 5f;
         totalGatherersToSoldiers = 0;
+        mensajeLLuvia.SetActive(false);
     }
 
 
@@ -175,6 +177,16 @@ public class Colony : MonoBehaviour
         {
             ReorganizeSoldiers();
             activeDanger = false;
+        }
+
+        if (!weatherFavorable)
+        {
+            mensajeLLuvia.SetActive(true);
+        }
+
+        if (weatherFavorable)
+        {
+            mensajeLLuvia.SetActive(false);
         }
 
         queenLife = myQueen.GetComponent<AntQueen>().salud;
