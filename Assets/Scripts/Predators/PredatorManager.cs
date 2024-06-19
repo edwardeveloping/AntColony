@@ -82,6 +82,10 @@ public class PredatorManager : MonoBehaviour
             AlertaText.SetActive(true);
         }
 
+        if (predators.Count > 1)
+        {
+            RegenerandoText.SetActive(false);
+        }
 
     }
 
