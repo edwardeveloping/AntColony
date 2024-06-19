@@ -15,6 +15,10 @@ public class Map : MonoBehaviour
 
     [SerializeField] GameObject walkableArea;
     [SerializeField] GameObject exterior; // Where resources spawn and enemies patrol.
+    [SerializeField] GameObject interior; // Where resources spawn and enemies patrol.
+    [SerializeField] GameObject walls;
+
+    public int numberOfWalls = 43; //Auxkiliar
 
     public GameObject storageRoom;
     public GameObject queenRoom; // Where the queen lay eggs.
@@ -28,7 +32,12 @@ public class Map : MonoBehaviour
     SemaphoreSlim meUnasignedResources = new SemaphoreSlim(1);
 
     private float _exteriorXPos, _exteriorYPos, _exteriorWidth, _exteriorHeight;
+    private float _interiorXPos, _interiorYPos, _interiorWidth, _interiorHeight;
 
+    private void Start()
+    {
+        numberOfWalls = 43;
+    }
     public void Initilize()
     {
         for (int i = 0; i< initialNumResources; i++)
@@ -62,6 +71,52 @@ public class Map : MonoBehaviour
         y = Random.Range(_exteriorYPos - _exteriorHeight / 2f, _exteriorYPos + _exteriorHeight / 2f);
 
         return new Vector2(x, y);
+    }
+
+    public Vector2 RandomPositionInsideAnthill()
+    {
+        _interiorXPos = interior.transform.position.x;
+        _interiorYPos = interior.transform.position.y;
+        _interiorWidth = interior.transform.localScale.x;
+        _interiorHeight = interior.transform.localScale.y;
+
+        float x;
+        float y;
+
+        // Generate random coordinate inside the interior area.
+        x = Random.Range(_interiorXPos - _interiorWidth / 2f, _interiorXPos + _interiorWidth / 2f);
+        y = Random.Range(_interiorYPos - _interiorHeight / 2f, _interiorYPos + _interiorHeight / 2f);
+
+        Vector2 position = new Vector2(x, y);
+
+        //Comprobar que no sea dentro de un muro
+        for (int i = 0; i < numberOfWalls; i++)
+        {
+            if (walls.transform.GetChild(i) == null) { break; }
+            //esta dentro del wall, recalcular
+            else if (walls.transform.GetChild(i) != null && IsPositionInsideMuro(position, walls.transform.GetChild(i).gameObject)) { RandomPositionInsideAnthill(); }
+        }
+
+        return position;
+    }
+
+    bool IsPositionInsideMuro(Vector2 position, GameObject wall)
+    {
+        // Obtener el collider del muro
+        Collider muroCollider = wall.GetComponent<Collider>();
+
+        if (muroCollider != null)
+        {
+            // Obtener los límites del collider
+            Bounds muroBounds = muroCollider.bounds;
+
+            // Comprobar si la posición está dentro de los límites
+            return muroBounds.Contains(position);
+        }
+
+        // Si el muro no tiene un collider, devolver falso
+        Debug.Log("El muro no tiene collider");
+        return false;
     }
 
     // RESOURCE MANAGMENT.
