@@ -145,6 +145,15 @@ public class AntManager : MonoBehaviour
             }
         }
 
+        if (antToKill is AntSoldier) // If the ant to kill is a gatherer.
+        {
+            if (!antSoldierObjectList.Remove(antToKill.gameObject)) // Try to remove antGatherer object from antGathererObject list.
+            {
+                Debug.Log("Tried to kill an ant, but it was not found in antSoldierObjectList");
+                return false;
+            }
+        }
+
         Destroy(antToKill.gameObject); // Destroy game object.
 
         //Debug.Log("AntGathererList size: " + antGathererObjectList.Count + ", AntList size: " + antObjectList.Count);

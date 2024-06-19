@@ -73,7 +73,7 @@ public class AntGatherer : Ant
 
     private void CheckIdleStatus()
     {
-        if (transform.position == previousPosition)
+        if (transform.position == previousPosition && climaFavorable)
         {
             idleTime += Time.deltaTime;
             if (idleTime >= idleThreshold)
