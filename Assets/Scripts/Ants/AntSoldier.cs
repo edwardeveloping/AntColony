@@ -60,11 +60,11 @@ public class AntSoldier : Ant
         if (!_active)
         {
             //bark sin corrutina
-            barkPanel.gameObject.SetActive(true);
-            barkPanel.sprite = barkList[0];
+            //barkPanel.gameObject.SetActive(true);
+            //barkPanel.sprite = barkList[0];
             
 
-            barkPanel.gameObject.SetActive(false);
+            //barkPanel.gameObject.SetActive(false);
 
             //StartCoroutine(Bark("Activo")); 
             _active = true;
