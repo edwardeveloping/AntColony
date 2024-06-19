@@ -119,7 +119,6 @@ public class Map : MonoBehaviour
         }
 
         // Si el muro no tiene un collider, devolver falso
-        Debug.Log("El muro no tiene collider");
         return false;
     }
 
